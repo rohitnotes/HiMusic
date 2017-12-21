@@ -67,6 +67,7 @@
     <string name="song_not_available">当前歌曲无法播放，请尝试其他平台</string>
     <string name="create_collect">新建歌单</string>
     <string name="edit_collect">编辑歌单信息</string>
+    <string name="player_error">播放器出现错误，请重新选择歌曲。</string>
 
     <!--filter category-->
     <array name="filter_language">
