@@ -128,14 +128,14 @@ internal class Xiami(val context: Context) : MusicSource {
             val banner = Banner()
             val a = item.select("a").first()
             banner.imgUrl = a.select("img").first().attr("src")
-            LogUtil.d(TAG, banner.imgUrl)
+//            LogUtil.d(TAG, banner.imgUrl)
             val href = a.attr("href")
             when {
-                href.contains("album") -> {
+                href.contains("album/") -> {
                     banner.type = BannerType.ALBUM
                     banner.id = href.substring(href.lastIndexOf("/") + 1).toLong()
                 }
-                href.contains("song") -> {
+                href.contains("song/") -> {
                     banner.type = BannerType.SONG
                     banner.id = href.substring(href.lastIndexOf("/") + 1).toLong()
                 }
