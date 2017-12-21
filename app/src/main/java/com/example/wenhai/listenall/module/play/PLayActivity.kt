@@ -437,11 +437,15 @@ class PLayActivity : AppCompatActivity(), PlayStatusObserver, PlayProxy {
     }
 
     override fun onPlayError(msg: String) {
-
+        runOnUiThread {
+            showToast(getString(R.string.player_error))
+        }
     }
 
     override fun onPlayInfo(msg: String) {
-        showToast(msg)
+        runOnUiThread {
+            showToast(msg)
+        }
     }
 
     override fun onNewSong(song: Song) {
