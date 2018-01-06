@@ -13,13 +13,9 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
 import com.example.wenhai.listenall.R
-import com.example.wenhai.listenall.data.bean.Collect
-import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongs
-import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongsDao
-import com.example.wenhai.listenall.data.bean.Song
-import com.example.wenhai.listenall.data.bean.SongDao
-import com.example.wenhai.listenall.extension.hide
-import com.example.wenhai.listenall.extension.showToast
+import com.example.wenhai.listenall.data.bean.*
+import com.example.wenhai.listenall.ext.hide
+import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.main.local.EditCollectActivity
 import com.example.wenhai.listenall.utils.DAOUtil
 import com.example.wenhai.listenall.utils.GlideApp

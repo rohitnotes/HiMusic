@@ -1,4 +1,4 @@
-package com.example.wenhai.listenall.extension
+package com.example.wenhai.listenall.ext
 
 import android.content.Context
 import android.support.annotation.StringRes

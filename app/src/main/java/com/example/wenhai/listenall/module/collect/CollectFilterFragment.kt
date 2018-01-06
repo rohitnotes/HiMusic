@@ -17,10 +17,10 @@ import butterknife.OnClick
 import butterknife.Unbinder
 import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.bean.Collect
-import com.example.wenhai.listenall.extension.hide
-import com.example.wenhai.listenall.extension.isShowing
-import com.example.wenhai.listenall.extension.show
-import com.example.wenhai.listenall.extension.showToast
+import com.example.wenhai.listenall.ext.hide
+import com.example.wenhai.listenall.ext.isShowing
+import com.example.wenhai.listenall.ext.show
+import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.detail.DetailContract
 import com.example.wenhai.listenall.module.detail.DetailFragment
 import com.example.wenhai.listenall.utils.GlideApp

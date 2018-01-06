@@ -24,8 +24,8 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.Unbinder
 import com.example.wenhai.listenall.R
-import com.example.wenhai.listenall.extension.hide
-import com.example.wenhai.listenall.extension.show
+import com.example.wenhai.listenall.ext.hide
+import com.example.wenhai.listenall.ext.show
 import com.example.wenhai.listenall.module.main.local.LocalFragment
 import com.example.wenhai.listenall.module.main.online.OnLineFragment
 import com.example.wenhai.listenall.module.search.SearchFragment

@@ -8,11 +8,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridView
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.SimpleAdapter
-import android.widget.TextView
+import android.widget.*
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -20,8 +16,8 @@ import butterknife.Unbinder
 import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.MusicProvider
 import com.example.wenhai.listenall.data.bean.Collect
-import com.example.wenhai.listenall.extension.hide
-import com.example.wenhai.listenall.extension.show
+import com.example.wenhai.listenall.ext.hide
+import com.example.wenhai.listenall.ext.show
 import com.example.wenhai.listenall.module.detail.DetailContract
 import com.example.wenhai.listenall.module.detail.DetailFragment
 import com.example.wenhai.listenall.utils.GlideApp

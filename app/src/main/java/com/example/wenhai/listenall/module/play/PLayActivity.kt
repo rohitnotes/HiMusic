@@ -14,12 +14,7 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import android.widget.SeekBar
-import android.widget.TextView
+import android.widget.*
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -29,7 +24,7 @@ import com.example.wenhai.listenall.data.MusicProvider
 import com.example.wenhai.listenall.data.bean.LikedSong
 import com.example.wenhai.listenall.data.bean.LikedSongDao
 import com.example.wenhai.listenall.data.bean.Song
-import com.example.wenhai.listenall.extension.showToast
+import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.play.service.PlayProxy
 import com.example.wenhai.listenall.module.play.service.PlayService
 import com.example.wenhai.listenall.module.play.service.PlayStatusObserver

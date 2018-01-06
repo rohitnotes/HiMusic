@@ -11,9 +11,9 @@ import butterknife.BindView
 import butterknife.OnClick
 import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.bean.Song
-import com.example.wenhai.listenall.extension.hide
-import com.example.wenhai.listenall.extension.show
-import com.example.wenhai.listenall.extension.showToast
+import com.example.wenhai.listenall.ext.hide
+import com.example.wenhai.listenall.ext.show
+import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.artist.detail.ArtistDetailFragment
 import com.example.wenhai.listenall.module.detail.DetailContract
 import com.example.wenhai.listenall.module.detail.DetailFragment
