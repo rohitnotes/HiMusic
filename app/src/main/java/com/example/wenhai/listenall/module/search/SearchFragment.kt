@@ -21,9 +21,9 @@ import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.bean.SearchHistory
 import com.example.wenhai.listenall.data.bean.SearchHistoryDao
 import com.example.wenhai.listenall.data.bean.Song
-import com.example.wenhai.listenall.extension.hide
-import com.example.wenhai.listenall.extension.show
-import com.example.wenhai.listenall.extension.showToast
+import com.example.wenhai.listenall.ext.hide
+import com.example.wenhai.listenall.ext.show
+import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.main.MainFragment
 import com.example.wenhai.listenall.module.play.service.PlayProxy
 import com.example.wenhai.listenall.utils.DAOUtil

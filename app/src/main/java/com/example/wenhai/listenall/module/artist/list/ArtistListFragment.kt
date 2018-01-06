@@ -19,10 +19,10 @@ import butterknife.Unbinder
 import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.ArtistRegion
 import com.example.wenhai.listenall.data.bean.Artist
-import com.example.wenhai.listenall.extension.hide
-import com.example.wenhai.listenall.extension.isShowing
-import com.example.wenhai.listenall.extension.show
-import com.example.wenhai.listenall.extension.showToast
+import com.example.wenhai.listenall.ext.hide
+import com.example.wenhai.listenall.ext.isShowing
+import com.example.wenhai.listenall.ext.show
+import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.artist.detail.ArtistDetailFragment
 import com.example.wenhai.listenall.utils.GlideApp
 import com.example.wenhai.listenall.utils.addFragmentToMainView

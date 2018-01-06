@@ -18,7 +18,7 @@ import butterknife.Unbinder
 import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.bean.PlayHistory
 import com.example.wenhai.listenall.data.bean.Song
-import com.example.wenhai.listenall.extension.showToast
+import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.main.MainActivity
 import com.example.wenhai.listenall.utils.removeFragment
 import com.example.wenhai.listenall.widget.SongOpsDialog

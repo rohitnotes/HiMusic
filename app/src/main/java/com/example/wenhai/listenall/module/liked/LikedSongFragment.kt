@@ -17,7 +17,7 @@ import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.bean.LikedSong
 import com.example.wenhai.listenall.data.bean.LikedSongDao
 import com.example.wenhai.listenall.data.bean.Song
-import com.example.wenhai.listenall.extension.showToast
+import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.main.MainActivity
 import com.example.wenhai.listenall.utils.DAOUtil
 import com.example.wenhai.listenall.widget.SongOpsDialog
