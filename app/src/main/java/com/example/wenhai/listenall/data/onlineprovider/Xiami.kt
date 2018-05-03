@@ -122,7 +122,7 @@ internal class Xiami(val context: Context) : MusicSource {
     fun parseBanners(html: String): List<Banner> {
         val document = Jsoup.parse(html)
         val slider: Element? = document.getElementById("slider")
-        val items: Elements = slider !!.getElementsByClass("item")
+        val items: Elements = slider!!.getElementsByClass("item")
         val banners = ArrayList<Banner>()
         for (item in items) {
             val banner = Banner()
@@ -277,7 +277,7 @@ internal class Xiami(val context: Context) : MusicSource {
     }
 
     private fun parseSongsFromJson(songs: JSONArray?): ArrayList<Song>? {
-        val songCount = songs !!.length()
+        val songCount = songs!!.length()
         val songList = ArrayList<Song>(songCount)
         for (i in 0 until songCount) {
             val song = Song()
@@ -658,8 +658,7 @@ internal class Xiami(val context: Context) : MusicSource {
     private fun parseArtistAlbums(html: String): List<Album> {
         val albums = ArrayList<Album>()
         val document = Jsoup.parse(html)
-        val albumsElement = document.getElementById("artist_albums").
-                getElementsByClass("albumThread_list").first()
+        val albumsElement = document.getElementById("artist_albums").getElementsByClass("albumThread_list").first()
                 .select("li")
         for (albumElement in albumsElement) {
             val album = Album()
@@ -736,7 +735,7 @@ internal class Xiami(val context: Context) : MusicSource {
 
     private fun parseIdFromHref(ref: String): Int {
         val idStr = ref.substring(ref.lastIndexOf('/') + 1)
-        return Integer.valueOf(idStr) !!
+        return Integer.valueOf(idStr)!!
     }
 
     override fun loadOfficialRanking(provider: MusicProvider, callback: LoadRankingCallback) {

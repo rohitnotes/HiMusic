@@ -13,7 +13,11 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.OnClick
 import com.example.wenhai.listenall.R
-import com.example.wenhai.listenall.data.bean.*
+import com.example.wenhai.listenall.data.bean.Collect
+import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongs
+import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongsDao
+import com.example.wenhai.listenall.data.bean.Song
+import com.example.wenhai.listenall.data.bean.SongDao
 import com.example.wenhai.listenall.ext.hide
 import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.main.local.EditCollectActivity
@@ -57,14 +61,14 @@ class SelectCollectDialog(context: Context) : BaseBottomDialog(context) {
 
     inner class CollectAdapter(var collects: List<Collect>) :
             RecyclerView.Adapter<CollectAdapter.ViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_liked_collect, parent, false)
             return ViewHolder(itemView)
         }
 
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val collect = collects[position]
-            holder!!.name.text = collect.title
+            holder.name.text = collect.title
             holder.songNumber.hide()
 //            val displaySongNumber = "${collect.songCount}首"
 //            holder.songNumber.text = displaySongNumber

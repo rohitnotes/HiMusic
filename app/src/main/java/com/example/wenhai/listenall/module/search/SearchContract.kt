@@ -4,7 +4,7 @@ import com.example.wenhai.listenall.base.BasePresenter
 import com.example.wenhai.listenall.base.BaseView
 import com.example.wenhai.listenall.data.bean.Song
 
-class SearchContract {
+interface SearchContract {
     companion object {
         val SONG_NOT_AVAILABLE = "songNotAvailable"
     }

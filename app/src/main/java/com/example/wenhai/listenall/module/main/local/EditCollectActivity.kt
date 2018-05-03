@@ -14,7 +14,11 @@ import butterknife.OnClick
 import butterknife.Unbinder
 import com.example.wenhai.listenall.BuildConfig
 import com.example.wenhai.listenall.R
-import com.example.wenhai.listenall.data.bean.*
+import com.example.wenhai.listenall.data.bean.Collect
+import com.example.wenhai.listenall.data.bean.CollectDao
+import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongs
+import com.example.wenhai.listenall.data.bean.Song
+import com.example.wenhai.listenall.data.bean.SongDao
 import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.detail.DetailFragment
 import com.example.wenhai.listenall.utils.DAOUtil

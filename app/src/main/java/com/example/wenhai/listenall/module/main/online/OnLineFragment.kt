@@ -6,7 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.BaseAdapter
+import android.widget.GridView
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -70,8 +76,8 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
     }
 
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val rootView = inflater!!.inflate(R.layout.fragment_main_online, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val rootView = inflater.inflate(R.layout.fragment_main_online, container, false)
         mUnBinder = ButterKnife.bind(this, rootView)
         initView()
         return rootView
@@ -98,7 +104,7 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
     private fun showDetail(data: Bundle) {
         val detailFragment = DetailFragment()
         detailFragment.arguments = data
-        addFragmentToMainView(fragmentManager, detailFragment)
+        addFragmentToMainView(fragmentManager!!, detailFragment)
     }
 
     private fun initNewAlbumsGridView() {
@@ -136,7 +142,7 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
     }
 
     override fun getViewContext(): Context {
-        return context
+        return context!!
     }
 
     //加载 banner、热门歌单和最新专辑
@@ -152,19 +158,19 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
     fun onClick(view: View) {
         when (view.id) {
             R.id.main_btn_more_collect -> {
-                addFragmentToMainView(fragmentManager, CollectListFragment())
+                addFragmentToMainView(fragmentManager!!, CollectListFragment())
             }
             R.id.main_btn_more_albums -> {
-                addFragmentToMainView(fragmentManager, AlbumListFragment())
+                addFragmentToMainView(fragmentManager!!, AlbumListFragment())
             }
             R.id.main_online_btn_singer -> {
-                addFragmentToMainView(fragmentManager, ArtistListFragment())
+                addFragmentToMainView(fragmentManager!!, ArtistListFragment())
             }
             R.id.main_online_btn_collect -> {
-                addFragmentToMainView(fragmentManager, CollectFilterFragment())
+                addFragmentToMainView(fragmentManager!!, CollectFilterFragment())
             }
             R.id.main_online_btn_ranking_list -> {
-                addFragmentToMainView(fragmentManager, RankingFragment())
+                addFragmentToMainView(fragmentManager!!, RankingFragment())
             }
             R.id.loading_failed -> {
                 loadData()
@@ -179,7 +185,7 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
     }
 
     override fun onFailure(msg: String) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             if (mRefreshLayout.isRefreshing) {
                 mRefreshLayout.finishRefresh(200, false)
             }
@@ -187,16 +193,16 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
                 mLoading.hide()
                 mFailed.show()
             }
-            context.showToast(msg)
+            context!!.showToast(msg)
         }
     }
 
     override fun onHotCollectsLoad(hotCollects: List<Collect>) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             if (mRefreshLayout.isRefreshing) {
                 mRefreshLayout.finishRefresh(200, true)
             }
-            mHotCollectAdapter = HotCollectsAdapter(context, hotCollects.subList(0, 6))
+            mHotCollectAdapter = HotCollectsAdapter(context!!, hotCollects.subList(0, 6))
             mHotCollects.adapter = mHotCollectAdapter
             if (mLoading.isShowing()) {
                 mLoading.hide()
@@ -207,11 +213,11 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
 
 
     override fun onNewAlbumsLoad(newAlbums: List<Album>) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             if (mRefreshLayout.isRefreshing) {
                 mRefreshLayout.finishRefresh(200, true)
             }
-            mNewAlbumAdapter = NewAlbumsAdapter(context, newAlbums.subList(0, 6))
+            mNewAlbumAdapter = NewAlbumsAdapter(context!!, newAlbums.subList(0, 6))
             mNewAlbums.adapter = mNewAlbumAdapter
             if (mLoading.isShowing()) {
                 mLoading.hide()
@@ -222,7 +228,7 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
 
 
     override fun onBannerLoad(banners: List<Banner>) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             if (mRefreshLayout.isRefreshing) {
                 mRefreshLayout.finishRefresh(200, true)
             }

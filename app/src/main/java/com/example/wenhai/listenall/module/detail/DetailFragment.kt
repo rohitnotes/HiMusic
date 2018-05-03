@@ -9,13 +9,24 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.Space
+import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.Unbinder
 import com.example.wenhai.listenall.R
-import com.example.wenhai.listenall.data.bean.*
+import com.example.wenhai.listenall.data.bean.Album
+import com.example.wenhai.listenall.data.bean.Collect
+import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongsDao
+import com.example.wenhai.listenall.data.bean.LikedAlbum
+import com.example.wenhai.listenall.data.bean.LikedAlbumDao
+import com.example.wenhai.listenall.data.bean.LikedCollect
+import com.example.wenhai.listenall.data.bean.LikedCollectDao
+import com.example.wenhai.listenall.data.bean.Song
 import com.example.wenhai.listenall.ext.hide
 import com.example.wenhai.listenall.ext.show
 import com.example.wenhai.listenall.ext.showToast
@@ -24,7 +35,11 @@ import com.example.wenhai.listenall.module.main.local.EditCollectActivity
 import com.example.wenhai.listenall.module.main.local.LocalFragment
 import com.example.wenhai.listenall.module.play.service.PlayProxy
 import com.example.wenhai.listenall.module.ranking.RankingContract
-import com.example.wenhai.listenall.utils.*
+import com.example.wenhai.listenall.utils.DAOUtil
+import com.example.wenhai.listenall.utils.GlideApp
+import com.example.wenhai.listenall.utils.ScreenUtil
+import com.example.wenhai.listenall.utils.getDate
+import com.example.wenhai.listenall.utils.removeFragment
 import com.example.wenhai.listenall.widget.CollectOpsDialog
 import com.example.wenhai.listenall.widget.SongOpsDialog
 
@@ -72,12 +87,12 @@ class DetailFragment : Fragment(), DetailContract.View {
         DetailPresenter(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val contentView = inflater!!.inflate(R.layout.fragment_detail, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val contentView = inflater.inflate(R.layout.fragment_detail, container, false)
         mUnBinder = ButterKnife.bind(this, contentView)
-        mLoadType = arguments.getSerializable(DetailContract.ARGS_LOAD_TYPE) as DetailContract.LoadType
+        mLoadType = arguments!!.getSerializable(DetailContract.ARGS_LOAD_TYPE) as DetailContract.LoadType
         //是否是用户自建歌单
-        isCollectFromUser = arguments.getBoolean(DetailContract.ARGS_IS_USER_COLLECT, false)
+        isCollectFromUser = arguments!!.getBoolean(DetailContract.ARGS_IS_USER_COLLECT, false)
         initView()
         return contentView
     }
@@ -97,12 +112,12 @@ class DetailFragment : Fragment(), DetailContract.View {
             mMore.show()
 
             val lp = mAddToPlay.layoutParams as LinearLayout.LayoutParams
-            lp.marginEnd = ScreenUtil.dp2px(context, 20f)
+            lp.marginEnd = ScreenUtil.dp2px(context!!, 20f)
             mAddToPlay.layoutParams = lp
 
         }
 
-        mSongListAdapter = SongListAdapter(context, ArrayList())
+        mSongListAdapter = SongListAdapter(context!!, ArrayList())
         mSongList.layoutManager = LinearLayoutManager(context)
         mSongList.adapter = mSongListAdapter
         loadDetail()
@@ -114,24 +129,24 @@ class DetailFragment : Fragment(), DetailContract.View {
     private fun loadDetail() {
         when (mLoadType) {
             DetailContract.LoadType.GLOBAL_RANKING -> {//全球排行榜
-                val ranking: RankingContract.GlobalRanking = arguments.getSerializable(DetailContract.ARGS_GLOBAL_RANKING) as RankingContract.GlobalRanking
+                val ranking: RankingContract.GlobalRanking = arguments!!.getSerializable(DetailContract.ARGS_GLOBAL_RANKING) as RankingContract.GlobalRanking
                 mPresenter.loadGlobalRanking(ranking)
             }
             DetailContract.LoadType.OFFICIAL_RANKING -> {//官方排行榜
-                val collect: Collect = arguments.getParcelable(DetailContract.ARGS_COLLECT)
+                val collect: Collect = arguments!!.getParcelable(DetailContract.ARGS_COLLECT)
                 setRankingDetail(collect)
             }
             DetailContract.LoadType.ALBUM -> {//专辑
-                val id = arguments.getLong(DetailContract.ARGS_ID)
+                val id = arguments!!.getLong(DetailContract.ARGS_ID)
                 mPresenter.loadAlbumDetail(id)
             }
             DetailContract.LoadType.COLLECT -> {//歌单
-                val id = arguments.getLong(DetailContract.ARGS_ID)
+                val id = arguments!!.getLong(DetailContract.ARGS_ID)
                 //根据歌单来源加载歌曲列表
                 mPresenter.loadCollectDetail(id, isCollectFromUser)
             }
             DetailContract.LoadType.SONG -> {//歌曲
-                val id = arguments.getLong(DetailContract.ARGS_ID)
+                val id = arguments!!.getLong(DetailContract.ARGS_ID)
                 mPresenter.loadSongDetail(id)
             }
         }
@@ -146,7 +161,7 @@ class DetailFragment : Fragment(), DetailContract.View {
     fun onClick(view: View) {
         when (view.id) {
             R.id.action_bar_back -> {//返回
-                removeFragment(fragmentManager, this)
+                removeFragment(fragmentManager!!, this)
             }
             R.id.detail_play_all -> {//播放全部
                 (activity as MainActivity).playService.replaceList(mSongListAdapter.songList)
@@ -158,7 +173,7 @@ class DetailFragment : Fragment(), DetailContract.View {
                 switchLikedState()
             }
             R.id.detail_download_all -> {//下载全部
-                context.showToast("download all")
+                context!!.showToast("download all")
             }
             R.id.loading_failed -> {//加载失败后点击，重新加载
                 loadDetail()
@@ -175,31 +190,31 @@ class DetailFragment : Fragment(), DetailContract.View {
      */
     private fun switchLikedState() {
         if (mLoadType == DetailContract.LoadType.ALBUM) {
-            val dao = DAOUtil.getSession(context).likedAlbumDao
+            val dao = DAOUtil.getSession(context!!).likedAlbumDao
             var liked = false
             var likedAlbum = isCurAlbumLiked()
             if (likedAlbum != null) {
                 dao.delete(likedAlbum)
-                context.showToast("已取消收藏")
+                context!!.showToast("已取消收藏")
             } else {
                 likedAlbum = LikedAlbum(mAlbum)
                 dao.insert(likedAlbum)
                 liked = true
-                context.showToast("收藏成功")
+                context!!.showToast("收藏成功")
             }
             setLikedIcon(liked)
         } else if (mLoadType == DetailContract.LoadType.COLLECT) {
-            val dao = DAOUtil.getSession(context).likedCollectDao
+            val dao = DAOUtil.getSession(context!!).likedCollectDao
             var liked = false
             var likedCollect = isCurCollectLiked()
             if (likedCollect != null) {
                 dao.delete(likedCollect)
-                context.showToast(R.string.unliked)
+                context!!.showToast(R.string.unliked)
             } else {
                 likedCollect = LikedCollect(mCollect)
                 dao.insert(likedCollect)
                 liked = true
-                context.showToast(R.string.liked)
+                context!!.showToast(R.string.liked)
             }
             setLikedIcon(liked)
         }
@@ -207,7 +222,7 @@ class DetailFragment : Fragment(), DetailContract.View {
 
     private fun isCurAlbumLiked(): LikedAlbum? {
         var likedAlbum: LikedAlbum? = null
-        val dao = DAOUtil.getSession(context).likedAlbumDao
+        val dao = DAOUtil.getSession(context!!).likedAlbumDao
         val list = dao.queryBuilder()
                 .where(LikedAlbumDao.Properties.AlbumId.eq(mAlbum.id),
                         LikedAlbumDao.Properties.ProviderName.eq(mAlbum.supplier.name))
@@ -220,7 +235,7 @@ class DetailFragment : Fragment(), DetailContract.View {
 
     private fun isCurCollectLiked(): LikedCollect? {
         var likedCollect: LikedCollect? = null
-        val dao = DAOUtil.getSession(context).likedCollectDao
+        val dao = DAOUtil.getSession(context!!).likedCollectDao
         val list = dao.queryBuilder().where(LikedCollectDao.Properties.CollectId.eq(mCollect.collectId),
                 LikedCollectDao.Properties.ProviderName.eq(mCollect.source.name))
                 .build()
@@ -240,7 +255,7 @@ class DetailFragment : Fragment(), DetailContract.View {
     }
 
     private fun showCollectOperationDialog() {
-        val collectOpsDialog = CollectOpsDialog(context)
+        val collectOpsDialog = CollectOpsDialog(context!!)
         //监听对歌单进行的操作
         collectOpsDialog.onCollectOperationListener = object : CollectOpsDialog.OnCollectOperationListener {
             override fun onUpdate() {
@@ -251,7 +266,7 @@ class DetailFragment : Fragment(), DetailContract.View {
                 deleteCurCollect()
                 //更新主界面的歌单显示
                 localFragment?.showCollects()
-                removeFragment(fragmentManager, this@DetailFragment)
+                removeFragment(fragmentManager!!, this@DetailFragment)
             }
 
         }
@@ -267,9 +282,9 @@ class DetailFragment : Fragment(), DetailContract.View {
 
     private fun deleteCurCollect() {
         val collectId = mCollect.id
-        val collectDao = DAOUtil.getSession(context).collectDao
+        val collectDao = DAOUtil.getSession(context!!).collectDao
         collectDao.deleteByKey(collectId)
-        val relationDao = DAOUtil.getSession(context).joinCollectsWithSongsDao
+        val relationDao = DAOUtil.getSession(context!!).joinCollectsWithSongsDao
         val existRelations = relationDao.queryBuilder().where(JoinCollectsWithSongsDao.Properties.CollectId.eq(collectId)).list()
         relationDao.deleteInTx(existRelations)
     }
@@ -279,7 +294,7 @@ class DetailFragment : Fragment(), DetailContract.View {
     }
 
     override fun getViewContext(): Context {
-        return context
+        return context!!
     }
 
     override fun onLoading() {
@@ -289,7 +304,7 @@ class DetailFragment : Fragment(), DetailContract.View {
     }
 
     override fun onCollectDetailLoad(collect: Collect) {
-        activity.runOnUiThread({
+        activity!!.runOnUiThread({
             mCollect = collect
             mTitle.text = collect.title
             mArtist.hide()
@@ -310,13 +325,13 @@ class DetailFragment : Fragment(), DetailContract.View {
     }
 
     override fun onGlobalRankingLoad(collect: Collect) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             setRankingDetail(collect)
         }
     }
 
     private fun setRankingDetail(collect: Collect) {
-        activity.runOnUiThread({
+        activity!!.runOnUiThread({
             mActionBarTitle.text = collect.title
             mTitle.text = collect.title
             mArtist.text = collect.desc
@@ -332,7 +347,7 @@ class DetailFragment : Fragment(), DetailContract.View {
     }
 
     override fun onAlbumDetailLoad(album: Album) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             mAlbum = album
             mTitle.text = album.title
             mArtist.show()
@@ -354,10 +369,10 @@ class DetailFragment : Fragment(), DetailContract.View {
     }
 
     override fun onFailure(msg: String) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             mLoading.hide()
             mLoadFailed.show()
-            context.showToast(msg)
+            context!!.showToast(msg)
         }
     }
 
@@ -383,15 +398,15 @@ class DetailFragment : Fragment(), DetailContract.View {
 
     inner class SongListAdapter(val context: Context, var songList: List<Song>) : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
 
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_detail_song_list, parent, false)
             return ViewHolder(itemView)
         }
 
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val song = songList[position]
             val index = "${position + 1}"
-            holder!!.index.text = index
+            holder.index.text = index
             holder.title.text = song.name
             val displayArtistName =
                     if (mLoadType == DetailContract.LoadType.ALBUM) {
@@ -413,7 +428,7 @@ class DetailFragment : Fragment(), DetailContract.View {
                 playSong(song)
             })
             holder.opration.setOnClickListener {
-                val dialog = SongOpsDialog(context, song, activity)
+                val dialog = SongOpsDialog(context, song, activity!!)
                 if (mLoadType == DetailContract.LoadType.COLLECT && isCollectFromUser) {
                     dialog.showDelete = true
                     dialog.deleteListener = View.OnClickListener {

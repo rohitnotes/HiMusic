@@ -26,12 +26,8 @@ class LikedFragment : Fragment() {
 
     private lateinit var mUnbinder: Unbinder
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val itemView = inflater !!.inflate(R.layout.fragment_liked, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val itemView = inflater.inflate(R.layout.fragment_liked, container, false)
         mUnbinder = ButterKnife.bind(this, itemView)
         initView()
         return itemView
@@ -47,7 +43,7 @@ class LikedFragment : Fragment() {
     fun onClick(view: View) {
         when (view.id) {
             R.id.action_bar_back -> {
-                removeFragment(fragmentManager, this)
+                removeFragment(fragmentManager!!, this)
             }
         }
     }

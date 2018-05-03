@@ -50,36 +50,36 @@ class CollectCategoryFragment : Fragment(), MainActivity.OnBackKeyEventListener 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        curCategory = arguments.getString("curCategory")
+        curCategory = arguments!!.getString("curCategory")
         (activity as MainActivity).addBackKeyEventListener(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val contentView = inflater !!.inflate(R.layout.fragment_collect_category, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val contentView = inflater.inflate(R.layout.fragment_collect_category, container, false)
         mUnbinder = ButterKnife.bind(this, contentView)
         initView()
         return contentView
     }
 
     private fun initView() {
-        if (curCategory == context.getString(R.string.main_hot_collect)) {
+        if (curCategory == context!!.getString(R.string.main_hot_collect)) {
             mFilterAll.setBackgroundResource(R.drawable.bg_white_black_border)
         }
-        val lan = context.resources.getStringArray(R.array.filter_language)
+        val lan = context!!.resources.getStringArray(R.array.filter_language)
         val lanList = ArrayList<String>()
         lan.toCollection(lanList)
         setGridLayout(FILTER_LANGUAGE, lanList)
-        val style = context.resources.getStringArray(R.array.filter_style)
+        val style = context!!.resources.getStringArray(R.array.filter_style)
         val styleList = ArrayList<String>()
         style.toCollection(styleList)
         setGridLayout(FILTER_STYLE, styleList)
 
-        val mood = context.resources.getStringArray(R.array.filter_mood)
+        val mood = context!!.resources.getStringArray(R.array.filter_mood)
         val moodList = ArrayList<String>()
         mood.toCollection(moodList)
         setGridLayout(FILTER_MOOD, moodList)
 
-        val scene = context.resources.getStringArray(R.array.filter_scene)
+        val scene = context!!.resources.getStringArray(R.array.filter_scene)
         val sceneList = ArrayList<String>()
         scene.toCollection(sceneList)
         setGridLayout(FILTER_SCENE, sceneList)
@@ -117,7 +117,7 @@ class CollectCategoryFragment : Fragment(), MainActivity.OnBackKeyEventListener 
         headLp.rowSpec = GridLayout.spec(0, 2, GridLayout.FILL, 1f)
         headLp.columnSpec = GridLayout.spec(0, 1, GridLayout.FILL, 1f)
         headLp.bottomMargin = 1
-        headLp.width = ScreenUtil.dp2px(context, 60f)
+        headLp.width = ScreenUtil.dp2px(context!!, 60f)
         headView.layoutParams = headLp
 
         gridLayout.addView(headView)
@@ -131,7 +131,7 @@ class CollectCategoryFragment : Fragment(), MainActivity.OnBackKeyEventListener 
         }
         for (i in 0 until categories.size) {
             val textView = getGridCellTextView(categories[i])
-            if (! TextUtils.isEmpty(textView.text)) {
+            if (!TextUtils.isEmpty(textView.text)) {
                 textView.setOnClickListener {
                     textView.setBackgroundResource(R.drawable.bg_white_black_border)
                     onFilterChosen(textView.text.toString())
@@ -143,9 +143,9 @@ class CollectCategoryFragment : Fragment(), MainActivity.OnBackKeyEventListener 
             val lp = GridLayout.LayoutParams()
             lp.leftMargin = 1
             lp.bottomMargin = 1
-            lp.height = ScreenUtil.dp2px(context, 35f)
+            lp.height = ScreenUtil.dp2px(context!!, 35f)
             //宽度与 head 一样
-            lp.width = ScreenUtil.dp2px(context, 60f)
+            lp.width = ScreenUtil.dp2px(context!!, 60f)
             if (i < columnCount - 1) {
                 lp.columnSpec = GridLayout.spec((i + 1) % columnCount, 1, GridLayout.FILL, 1f)
                 lp.rowSpec = GridLayout.spec((i + 1) / columnCount, 1, GridLayout.FILL, 1f)
@@ -163,10 +163,10 @@ class CollectCategoryFragment : Fragment(), MainActivity.OnBackKeyEventListener 
         curCategory = filter
         for (textView in mFilterTextViews) {
             @Suppress("DEPRECATION")
-            textView.setBackgroundColor(context.resources.getColor(R.color.colorWhite))
+            textView.setBackgroundColor(context!!.resources.getColor(R.color.colorWhite))
         }
         (targetFragment as CollectFilterFragment).setFilterTitle(filter)
-        removeFragment(fragmentManager, this)
+        removeFragment(fragmentManager!!, this)
     }
 
     @SuppressLint("InflateParams")
@@ -203,7 +203,7 @@ class CollectCategoryFragment : Fragment(), MainActivity.OnBackKeyEventListener 
     }
 
     override fun onBackKeyPressed() {
-        removeFragment(fragmentManager, this)
+        removeFragment(fragmentManager!!, this)
         (targetFragment as CollectFilterFragment).setFilterTitleIcon(false)
     }
 

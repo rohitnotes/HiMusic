@@ -55,8 +55,8 @@ internal class CollectListFragment : Fragment(), CollectListContract.View {
         CollectListPresenter(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val contentView = inflater !!.inflate(R.layout.fragment_collect_list, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val contentView = inflater.inflate(R.layout.fragment_collect_list, container, false)
         mUnBinder = ButterKnife.bind(this, contentView)
         initView()
         return contentView
@@ -69,15 +69,15 @@ internal class CollectListFragment : Fragment(), CollectListContract.View {
                 mPresenter.loadCollects(curLoadPage)
             }
             R.id.action_bar_back -> {
-                removeFragment(fragmentManager, this)
+                removeFragment(fragmentManager!!, this)
             }
         }
     }
 
     override fun initView() {
-        mTitle.text = context.getString(R.string.main_hot_collect)
+        mTitle.text = context!!.getString(R.string.main_hot_collect)
         mRvCollectList.layoutManager = LinearLayoutManager(context)
-        mCollectListAdapter = CollectListAdapter(context, ArrayList())
+        mCollectListAdapter = CollectListAdapter(context!!, ArrayList())
         mRvCollectList.adapter = mCollectListAdapter
         mPresenter.loadCollects(curLoadPage)
 
@@ -87,9 +87,9 @@ internal class CollectListFragment : Fragment(), CollectListContract.View {
     }
 
     override fun setCollects(collects: List<Collect>) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             //page++ when current page load success
-            curLoadPage ++
+            curLoadPage++
             if (mRefreshLayout.isLoading) {
                 mRefreshLayout.finishLoadmore(200, true)
             }
@@ -108,7 +108,7 @@ internal class CollectListFragment : Fragment(), CollectListContract.View {
     }
 
     override fun onFailure(msg: String) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             if (mRefreshLayout.isLoading) {
                 mRefreshLayout.finishLoadmore(200, false)
             }
@@ -116,7 +116,7 @@ internal class CollectListFragment : Fragment(), CollectListContract.View {
                 mLoading.hide()
                 mLoadFailed.show()
             }
-            context.showToast(msg)
+            context!!.showToast(msg)
         }
     }
 
@@ -127,7 +127,7 @@ internal class CollectListFragment : Fragment(), CollectListContract.View {
 
 
     override fun getViewContext(): Context {
-        return context
+        return context!!
     }
 
     override fun onDestroyView() {
@@ -137,7 +137,7 @@ internal class CollectListFragment : Fragment(), CollectListContract.View {
 
     inner class CollectListAdapter(val context: Context, private var collects: List<Collect>) : RecyclerView.Adapter<CollectListAdapter.ViewHolder>() {
 
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_collect_list, parent, false)
             return ViewHolder(itemView)
         }
@@ -150,24 +150,24 @@ internal class CollectListFragment : Fragment(), CollectListContract.View {
         override fun getItemCount(): Int = collects.size
 
 
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val collect = collects[position]
-            if (holder != null) {
-                holder.collectTitle.text = collect.title
-                holder.collectDesc.text = collect.desc
-                GlideApp.with(context)
-                        .load(collect.coverUrl)
-                        .placeholder(R.drawable.ic_main_collect)
-                        .into(holder.collectCover)
-                holder.item.setOnClickListener {
-                    val data = Bundle()
-                    val detailFragment = DetailFragment()
-                    data.putLong(DetailContract.ARGS_ID, collect.collectId)
-                    data.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.COLLECT)
-                    detailFragment.arguments = data
-                    addFragmentToMainView(fragmentManager, detailFragment)
-                }
+
+            holder.collectTitle.text = collect.title
+            holder.collectDesc.text = collect.desc
+            GlideApp.with(context)
+                    .load(collect.coverUrl)
+                    .placeholder(R.drawable.ic_main_collect)
+                    .into(holder.collectCover)
+            holder.item.setOnClickListener {
+                val data = Bundle()
+                val detailFragment = DetailFragment()
+                data.putLong(DetailContract.ARGS_ID, collect.collectId)
+                data.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.COLLECT)
+                detailFragment.arguments = data
+                addFragmentToMainView(fragmentManager!!, detailFragment)
             }
+
         }
 
         inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
