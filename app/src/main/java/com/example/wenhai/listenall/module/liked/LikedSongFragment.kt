@@ -29,15 +29,15 @@ class LikedSongFragment : Fragment() {
     private lateinit var mUnbinder: Unbinder
     private lateinit var mLikedSongAdapter: LikedSongsAdapter
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater !!.inflate(R.layout.fragment_liked_song, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_liked_song, container, false)
         mUnbinder = ButterKnife.bind(this, view)
         initView()
         return view
     }
 
     fun initView() {
-        val likedSongDao = DAOUtil.getSession(context).likedSongDao
+        val likedSongDao = DAOUtil.getSession(context!!).likedSongDao
         val likedSongList = likedSongDao.queryBuilder()
                 .orderDesc(LikedSongDao.Properties.LikedTime)
                 .list()
@@ -49,9 +49,9 @@ class LikedSongFragment : Fragment() {
     }
 
     private fun deleteLikedSong(song: LikedSong) {
-        val likedSongDao = DAOUtil.getSession(context).likedSongDao
+        val likedSongDao = DAOUtil.getSession(context!!).likedSongDao
         likedSongDao.delete(song)
-        context.showToast("已取消喜欢")
+        context!!.showToast("已取消喜欢")
     }
 
 
@@ -60,7 +60,7 @@ class LikedSongFragment : Fragment() {
         when (view.id) {
             R.id.liked_shuffle_all -> {
                 if (mLikedSongAdapter.likedSongs.isEmpty()) {
-                    context.showToast(R.string.no_songs_to_play)
+                    context!!.showToast(R.string.no_songs_to_play)
                 } else {
                     //shuffle all liked songs
                     val songList: ArrayList<Song> = ArrayList()
@@ -73,20 +73,20 @@ class LikedSongFragment : Fragment() {
 
 
     inner class LikedSongsAdapter(var likedSongs: ArrayList<LikedSong>) : RecyclerView.Adapter<LikedSongsAdapter.ViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_liked_song, parent, false)
             return ViewHolder(itemView)
         }
 
         override fun getItemCount(): Int = likedSongs.size
 
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val song = likedSongs[position]
-            holder !!.songName.text = song.songName
+            holder.songName.text = song.songName
             val songInfoStr = "${song.artistName} · ${song.albumName}"
             holder.songInfo.text = songInfoStr
             holder.operation.setOnClickListener {
-                val dialog = SongOpsDialog(context, song.song, activity)
+                val dialog = SongOpsDialog(context!!, song.song, activity!!)
                 dialog.showDelete = true
                 dialog.deleteListener = View.OnClickListener {
                     likedSongs.remove(song)

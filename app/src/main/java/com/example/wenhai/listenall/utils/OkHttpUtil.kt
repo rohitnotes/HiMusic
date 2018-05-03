@@ -53,7 +53,7 @@ object OkHttpUtil {
         if (connect != -1) {//有网络连接
             val sp = context.getSharedPreferences(Config.NAME, Context.MODE_PRIVATE)
             val onlyWifi = sp.getBoolean(Config.ONLY_WIFI, false)
-            //判断用户设置
+            //如果网络可用
             if (onlyWifi && connect == ConnectivityManager.TYPE_WIFI || !onlyWifi) {
                 bundle.putInt(ARG_NETWORK_STATE, NETWORK_AVAILABLE)
             } else {
@@ -125,9 +125,10 @@ object OkHttpUtil {
 
 }
 
-open class BaseResponseCallback : ResponseCallBack {
+abstract class BaseResponseCallback : ResponseCallBack {
 
     override fun onStart() {
+
     }
 
     override fun onResponse(response: Response) {
@@ -144,6 +145,7 @@ open class BaseResponseCallback : ResponseCallBack {
     }
 
     override fun onFailure(msg: String) {
+
     }
 
 }

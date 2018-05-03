@@ -54,8 +54,8 @@ class SearchFragment : Fragment(), SearchContract.View {
         SearchPresenter(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val contentView = inflater!!.inflate(R.layout.fragment_search, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val contentView = inflater.inflate(R.layout.fragment_search, container, false)
         mUnBinder = ButterKnife.bind(this, contentView)
         initView()
         return contentView
@@ -66,7 +66,7 @@ class SearchFragment : Fragment(), SearchContract.View {
     }
 
     override fun getViewContext(): Context {
-        return context
+        return context!!
     }
 
     override fun initView() {
@@ -90,7 +90,7 @@ class SearchFragment : Fragment(), SearchContract.View {
 
     fun beginSearch(keyword: String) {
         if (!TextUtils.isEmpty(keyword)) {
-            val mainFragment: MainFragment = fragmentManager.findFragmentById(R.id.main_container) as MainFragment
+            val mainFragment: MainFragment = fragmentManager!!.findFragmentById(R.id.main_container) as MainFragment
             mainFragment.hideSoftInput()
             mPresenter.searchByKeyWord(keyword)
             saveSearchHistory(keyword)
@@ -99,7 +99,7 @@ class SearchFragment : Fragment(), SearchContract.View {
     }
 
     private fun saveSearchHistory(keyword: String) {
-        val dao = DAOUtil.getSession(context).searchHistoryDao
+        val dao = DAOUtil.getSession(context!!).searchHistoryDao
         val queryResult = dao.queryBuilder()
                 .where(SearchHistoryDao.Properties.Keyword.eq(keyword))
                 .list()
@@ -117,7 +117,7 @@ class SearchFragment : Fragment(), SearchContract.View {
         currentContent = CONTENT_SEARCH_HISTORY
 //        mHotSearch.show()
         mSearchView.hide()
-        val dao = DAOUtil.getSession(context).searchHistoryDao
+        val dao = DAOUtil.getSession(context!!).searchHistoryDao
         val query = dao.queryBuilder()
                 .where(SearchHistoryDao.Properties.Keyword.notEq(""))
                 .orderDesc(SearchHistoryDao.Properties.SearchTime)
@@ -142,7 +142,7 @@ class SearchFragment : Fragment(), SearchContract.View {
 
     override fun onSearchRecommendLoaded(recommends: List<String>) {
         if (currentContent == CONTENT_RECOMMEND_KEYWORD) {
-            activity.runOnUiThread {
+            activity!!.runOnUiThread {
                 if (mContentList.adapter is SearchRecommendAdapter) {
                     (mContentList.adapter as SearchRecommendAdapter).setData(recommends)
                 } else {
@@ -155,7 +155,7 @@ class SearchFragment : Fragment(), SearchContract.View {
 
     override fun onSearchResult(songs: List<Song>) {
         if (currentContent == CONTENT_SEARCH_RESULT) {
-            activity.runOnUiThread {
+            activity!!.runOnUiThread {
                 mSearchView.hide()
                 resultSongs = songs
                 mContentList.adapter = ResultSongsAdapter(resultSongs)
@@ -174,9 +174,9 @@ class SearchFragment : Fragment(), SearchContract.View {
     }
 
     override fun onFailure(msg: String) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             if (msg == SearchContract.SONG_NOT_AVAILABLE) {
-                context.showToast(getString(R.string.song_not_available))
+                context!!.showToast(getString(R.string.song_not_available))
             } else {
                 mLoadFailed.show()
                 mLoading.hide()
@@ -187,14 +187,14 @@ class SearchFragment : Fragment(), SearchContract.View {
     }
 
     override fun onSongDetailLoad(song: Song) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             (activity as PlayProxy).playSong(song)
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        val mainFragment: MainFragment = fragmentManager.findFragmentById(R.id.main_container) as MainFragment
+        val mainFragment: MainFragment = fragmentManager!!.findFragmentById(R.id.main_container) as MainFragment
         mainFragment.hideSearchBar()
         mUnBinder.unbind()
     }
@@ -207,26 +207,26 @@ class SearchFragment : Fragment(), SearchContract.View {
 
 
     inner class ResultSongsAdapter(private var songs: List<Song>) : RecyclerView.Adapter<ResultSongsAdapter.ViewHolder>() {
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val song = songs[position]
-            if (holder != null) {
-                holder.songName.text = song.name
-                val displayArtist = "${song.artistName}-${song.albumName}"
-                holder.artist.text = displayArtist
 
-                holder.btnMore.setOnClickListener {
+            holder.songName.text = song.name
+            val displayArtist = "${song.artistName}-${song.albumName}"
+            holder.artist.text = displayArtist
 
-                }
+            holder.btnMore.setOnClickListener {
 
-                holder.item.setOnClickListener {
-                    mPresenter.loadSongDetail(song)
-                }
             }
+
+            holder.item.setOnClickListener {
+                mPresenter.loadSongDetail(song)
+            }
+
         }
 
         override fun getItemCount(): Int = songs.size
 
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_search_result, parent, false)
             return ViewHolder(itemView)
         }
@@ -240,21 +240,21 @@ class SearchFragment : Fragment(), SearchContract.View {
     }
 
     inner class SearchHistoryAdapter(private var history: List<SearchHistory>) : RecyclerView.Adapter<SearchHistoryAdapter.ViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_search_history, parent, false)
             return ViewHolder(itemView)
         }
 
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val searchHistory = history[position]
-            holder!!.historyKeyword.text = searchHistory.keyword
+            holder.historyKeyword.text = searchHistory.keyword
             holder.deleteHistory.setOnClickListener {
-                DAOUtil.getSession(context).searchHistoryDao.delete(searchHistory)
+                DAOUtil.getSession(context!!).searchHistoryDao.delete(searchHistory)
                 showSearchHistory()
             }
             holder.item.setOnClickListener {
                 searchKeyword = searchHistory.keyword
-                val mainFragment: MainFragment = fragmentManager.findFragmentById(R.id.main_container) as MainFragment
+                val mainFragment: MainFragment = fragmentManager!!.findFragmentById(R.id.main_container) as MainFragment
                 mainFragment.setSearchKeyword(searchHistory.keyword)
                 beginSearch(searchHistory.keyword)
             }
@@ -278,17 +278,17 @@ class SearchFragment : Fragment(), SearchContract.View {
         : RecyclerView.Adapter<SearchRecommendAdapter.ViewHolder>() {
         override fun getItemCount(): Int = keywords.size
 
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_search_recommend, parent, false)
             return ViewHolder(itemView)
         }
 
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val recommendKeyword = keywords[position]
-            holder!!.keyword.text = recommendKeyword
+            holder.keyword.text = recommendKeyword
             holder.item.setOnClickListener {
                 searchKeyword = recommendKeyword
-                val mainFragment: MainFragment = fragmentManager.findFragmentById(R.id.main_container) as MainFragment
+                val mainFragment: MainFragment = fragmentManager!!.findFragmentById(R.id.main_container) as MainFragment
                 mainFragment.setSearchKeyword(recommendKeyword)
                 beginSearch(recommendKeyword)
             }

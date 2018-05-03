@@ -75,15 +75,15 @@ class MainFragment : Fragment() {
         LogUtil.d(TAG, "onPause")
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val contentView = inflater !!.inflate(R.layout.fragment_main, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val contentView = inflater.inflate(R.layout.fragment_main, container, false)
         mUnBinder = ButterKnife.bind(this, contentView)
         initView()
         return contentView
     }
 
     fun initView() {
-        mPagerAdapter = MainPagerAdapter(fragmentManager)
+        mPagerAdapter = MainPagerAdapter(fragmentManager!!)
         mPager.adapter = mPagerAdapter
 
         mTab.setupWithViewPager(mPager)
@@ -113,20 +113,20 @@ class MainFragment : Fragment() {
         mEtSearch.removeTextChangedListener(textWatch)
         textWatch = null
         mCancelSearch.hide()
-        removeFragment(fragmentManager, searchFragment)
+        removeFragment(fragmentManager!!, searchFragment)
         hideSoftInput()
     }
 
     fun hideSoftInput() {
         mEtSearch.clearFocus()
-        val inputManager: InputMethodManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputManager: InputMethodManager = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.hideSoftInputFromWindow(mEtSearch.windowToken, 0)
     }
 
     @Suppress("DEPRECATION")
     private fun showSearchBar() {
         searchFragment = SearchFragment()
-        addFragmentToView(fragmentManager, searchFragment, R.id.main_pager_container)
+        addFragmentToView(fragmentManager!!, searchFragment, R.id.main_pager_container)
 
         mTab.hide()
         mBtnSearch.hide()
@@ -137,10 +137,10 @@ class MainFragment : Fragment() {
 
         textWatch = object : TextWatcher {
             override fun afterTextChanged(editable: Editable?) {
-                val text = editable !!.toString()
+                val text = editable!!.toString()
                 if (text == "") {
                     searchFragment.showSearchHistory()
-                    mEtSearch.setTextColor(context.resources.getColor(R.color.colorGray))
+                    mEtSearch.setTextColor(context!!.resources.getColor(R.color.colorGray))
                 } else {
                     // if user typed keyword ,then load recommend keywords
                     if (isTextChangedByUser) {
@@ -148,7 +148,7 @@ class MainFragment : Fragment() {
                     } else {
                         isTextChangedByUser = true
                     }
-                    mEtSearch.setTextColor(context.resources.getColor(R.color.colorBlack))
+                    mEtSearch.setTextColor(context!!.resources.getColor(R.color.colorBlack))
                 }
             }
 
@@ -161,7 +161,7 @@ class MainFragment : Fragment() {
         mEtSearch.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 val keyword = mEtSearch.text.toString()
-                if (! TextUtils.isEmpty(keyword)) {
+                if (!TextUtils.isEmpty(keyword)) {
                     searchFragment.beginSearch(keyword)
                 }
                 return@setOnEditorActionListener true
@@ -173,7 +173,7 @@ class MainFragment : Fragment() {
 
     private fun showSoftInput() {
         mEtSearch.requestFocus()
-        val inputManager: InputMethodManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputManager: InputMethodManager = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.showSoftInput(mEtSearch, InputMethodManager.SHOW_FORCED)
     }
 

@@ -55,8 +55,8 @@ class ArtistListFragment : Fragment(), ArtistListContract.View {
         ArtistListPresenter(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val contentView = inflater !!.inflate(R.layout.fragment_artist, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val contentView = inflater.inflate(R.layout.fragment_artist, container, false)
         mUnbinder = ButterKnife.bind(this, contentView)
         mTabs = ArrayList(5)
         mTabs.add(contentView.findViewById(R.id.singer_all))
@@ -73,7 +73,7 @@ class ArtistListFragment : Fragment(), ArtistListContract.View {
     }
 
     override fun getViewContext(): Context {
-        return context
+        return context!!
     }
 
 
@@ -90,7 +90,7 @@ class ArtistListFragment : Fragment(), ArtistListContract.View {
     }
 
     override fun onFailure(msg: String) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             if (mRefreshLayout.isLoading) {
                 mRefreshLayout.finishLoadmore(200, false)
             }
@@ -98,13 +98,13 @@ class ArtistListFragment : Fragment(), ArtistListContract.View {
                 mLoading.hide()
                 mLoadFailed.show()
             }
-            context.showToast(msg)
+            context!!.showToast(msg)
         }
     }
 
     override fun onArtistsLoad(artists: List<Artist>) {
-        activity.runOnUiThread {
-            curPage ++
+        activity!!.runOnUiThread {
+            curPage++
             if (mRefreshLayout.isLoading) {
                 mRefreshLayout.finishLoadmore(200, true)
             }
@@ -128,7 +128,7 @@ class ArtistListFragment : Fragment(), ArtistListContract.View {
     fun onClick(view: View) {
         when (view.id) {
             R.id.action_bar_back -> {
-                removeFragment(fragmentManager, this)
+                removeFragment(fragmentManager!!, this)
             }
             R.id.loading_failed -> {
                 mPresenter.loadArtists(curRegion, curPage)
@@ -170,9 +170,9 @@ class ArtistListFragment : Fragment(), ArtistListContract.View {
     @Suppress("DEPRECATION")
     private fun setTab(position: Int) {
         for (tab in mTabs) {
-            tab.setTextColor(context.resources.getColor(R.color.colorGray))
+            tab.setTextColor(context!!.resources.getColor(R.color.colorGray))
         }
-        mTabs[position].setTextColor(context.resources.getColor(R.color.colorBlack))
+        mTabs[position].setTextColor(context!!.resources.getColor(R.color.colorBlack))
     }
 
 
@@ -182,9 +182,9 @@ class ArtistListFragment : Fragment(), ArtistListContract.View {
     }
 
     inner class ArtistAdapter(private val artists: List<Artist>) : RecyclerView.Adapter<ArtistAdapter.ViewHolder>() {
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val artist = artists[position]
-            holder !!.artistName.text = artist.name
+            holder.artistName.text = artist.name
             GlideApp.with(context)
                     .load(artist.miniImgUrl)
                     .placeholder(R.drawable.ic_main_singer)
@@ -194,7 +194,7 @@ class ArtistListFragment : Fragment(), ArtistListContract.View {
                 val data = Bundle()
                 data.putParcelable("artist", artist)
                 artistDetailFragment.arguments = data
-                addFragmentToMainView(fragmentManager, artistDetailFragment)
+                addFragmentToMainView(fragmentManager!!, artistDetailFragment)
             }
         }
 
@@ -208,7 +208,7 @@ class ArtistListFragment : Fragment(), ArtistListContract.View {
             notifyDataSetChanged()
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_artist_list, parent, false)
             return ViewHolder(itemView)
         }

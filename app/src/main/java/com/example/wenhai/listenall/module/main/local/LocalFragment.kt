@@ -46,8 +46,8 @@ class LocalFragment : android.support.v4.app.Fragment() {
     private lateinit var mCollectAdapter: CollectAdapter
     private var curShowType = MY_COLLECT//当前显示的歌单类型（收藏歌单或者自建歌单）
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val rootView = inflater!!.inflate(R.layout.fragment_main_local, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val rootView = inflater.inflate(R.layout.fragment_main_local, container, false)
         mUnBinder = ButterKnife.bind(this, rootView)
         initView()
         return rootView
@@ -73,11 +73,11 @@ class LocalFragment : android.support.v4.app.Fragment() {
             }
 
             R.id.main_local_btn_recent_play -> {//最近播放
-                addFragmentToMainView(fragmentManager, PlayHistoryFragment())
+                addFragmentToMainView(fragmentManager!!, PlayHistoryFragment())
             }
 
             R.id.main_local_btn_liked -> {//收藏
-                addFragmentToMainView(fragmentManager, LikedFragment())
+                addFragmentToMainView(fragmentManager!!, LikedFragment())
             }
 
             R.id.main_local_btn_my_collect -> {//我的歌单
@@ -106,12 +106,12 @@ class LocalFragment : android.support.v4.app.Fragment() {
         setButtonTextColor(curShowType)
         if (curShowType == MY_COLLECT) {//显示自建歌单
             mBtnCreateCollect.show()
-            val collectDao = DAOUtil.getSession(context).collectDao
+            val collectDao = DAOUtil.getSession(context!!).collectDao
             val myCollects = collectDao.queryBuilder().build().list()
             mCollectAdapter.setData(myCollects)
         } else {//显示收藏歌单
             mBtnCreateCollect.hide()
-            val dao = DAOUtil.getSession(context).likedCollectDao
+            val dao = DAOUtil.getSession(context!!).likedCollectDao
             val likedCollectList = dao.queryBuilder()
                     .orderDesc(LikedCollectDao.Properties.LikedTime)
                     .build().list()
@@ -125,11 +125,11 @@ class LocalFragment : android.support.v4.app.Fragment() {
     @Suppress("DEPRECATION")
     private fun setButtonTextColor(select: Int) {
         if (select == MY_COLLECT) {
-            mBtnMyCollect.setTextColor(context.resources.getColor(R.color.colorBlack))
-            mBtnLikedCollect.setTextColor(context.resources.getColor(R.color.colorGray))
+            mBtnMyCollect.setTextColor(context!!.resources.getColor(R.color.colorBlack))
+            mBtnLikedCollect.setTextColor(context!!.resources.getColor(R.color.colorGray))
         } else {
-            mBtnMyCollect.setTextColor(context.resources.getColor(R.color.colorGray))
-            mBtnLikedCollect.setTextColor(context.resources.getColor(R.color.colorBlack))
+            mBtnMyCollect.setTextColor(context!!.resources.getColor(R.color.colorGray))
+            mBtnLikedCollect.setTextColor(context!!.resources.getColor(R.color.colorBlack))
         }
     }
 
@@ -147,13 +147,13 @@ class LocalFragment : android.support.v4.app.Fragment() {
         }
         data.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.COLLECT)
         detailFragment.arguments = data
-        addFragmentToMainView(fragmentManager, detailFragment)
+        addFragmentToMainView(fragmentManager!!, detailFragment)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CREATE_COLLECT && resultCode == RESULT_COLLECT_CREATED) {
-            context.showToast("歌单创建成功")
+            context!!.showToast("歌单创建成功")
         }
     }
 
@@ -163,23 +163,23 @@ class LocalFragment : android.support.v4.app.Fragment() {
     }
 
     companion object {
-        val TAG = "LocalFragment"
-        val MY_COLLECT = 1
-        val LIKED_COLLECT = 2
-        val REQUEST_CREATE_COLLECT = 0x00
-        val RESULT_COLLECT_CREATED = 0x01
+        const val TAG = "LocalFragment"
+        const val MY_COLLECT = 1
+        const val LIKED_COLLECT = 2
+        const val REQUEST_CREATE_COLLECT = 0x00
+        const val RESULT_COLLECT_CREATED = 0x01
     }
 
     inner class CollectAdapter(var collects: List<Collect>)
         : RecyclerView.Adapter<CollectAdapter.ViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_liked_collect, parent, false)
             return ViewHolder(itemView)
         }
 
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val collect = collects[position]
-            holder!!.name.text = collect.title
+            holder.name.text = collect.title
             val songCount = if (collect.isFromUser) {
                 collect.songs.size
             } else {

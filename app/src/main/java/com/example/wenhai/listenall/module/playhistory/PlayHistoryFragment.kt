@@ -38,8 +38,8 @@ class PlayHistoryFragment : Fragment(), PlayHistoryContract.View {
         PlayHistoryPresenter(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val contentView = inflater !!.inflate(R.layout.fragment_play_history, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val contentView = inflater.inflate(R.layout.fragment_play_history, container, false)
         mUnbinder = ButterKnife.bind(this, contentView)
         initView()
         return contentView
@@ -50,18 +50,18 @@ class PlayHistoryFragment : Fragment(), PlayHistoryContract.View {
         mPlayHistoryAdapter = PlayHistoryAdapter(ArrayList())
         mHistoryList.layoutManager = LinearLayoutManager(context)
         mHistoryList.adapter = mPlayHistoryAdapter
-        mPresenter.loadPlayHistory(context)
+        mPresenter.loadPlayHistory(context!!)
     }
 
     @OnClick(R.id.action_bar_back, R.id.play_history_shuffle_all)
     fun onClick(view: View) {
         when (view.id) {
             R.id.action_bar_back -> {
-                removeFragment(fragmentManager, this)
+                removeFragment(fragmentManager!!, this)
             }
             R.id.play_history_shuffle_all -> {
                 if (mPlayHistoryAdapter.playHistoryList.isEmpty()) {
-                    context.showToast(R.string.no_songs_to_play)
+                    context!!.showToast(R.string.no_songs_to_play)
                 } else {
                     val songList = ArrayList<Song>()
                     mPlayHistoryAdapter.playHistoryList.mapTo(songList) { it.song }
@@ -76,7 +76,7 @@ class PlayHistoryFragment : Fragment(), PlayHistoryContract.View {
     }
 
     override fun getViewContext(): Context {
-        return context
+        return context!!
     }
 
     override fun onPlayHistoryLoad(playHistory: List<PlayHistory>) {
@@ -84,7 +84,7 @@ class PlayHistoryFragment : Fragment(), PlayHistoryContract.View {
     }
 
     override fun onNoPlayHistory() {
-        context.showToast(R.string.no_play_history)
+        context!!.showToast(R.string.no_play_history)
     }
 
 
@@ -93,25 +93,25 @@ class PlayHistoryFragment : Fragment(), PlayHistoryContract.View {
     }
 
     override fun onFailure(msg: String) {
-        context.showToast(msg)
+        context!!.showToast(msg)
     }
 
     inner class PlayHistoryAdapter(var playHistoryList: List<PlayHistory>) : RecyclerView.Adapter<PlayHistoryAdapter.ViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_play_history, parent, false)
             return ViewHolder(itemView)
         }
 
         override fun getItemCount(): Int = playHistoryList.size
 
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val playHistory = playHistoryList[position]
-            holder !!.songName.text = playHistory.songName
+            holder.songName.text = playHistory.songName
             holder.playTimes.text = playHistory.playTimes.toString()
             val songInfoStr = "${playHistory.artistName} · ${playHistory.albumName}"
             holder.songInfo.text = songInfoStr
             holder.operation.setOnClickListener {
-                val dialog = SongOpsDialog(context, playHistory.song, activity)
+                val dialog = SongOpsDialog(context!!, playHistory.song, activity!!)
                 dialog.show()
             }
             holder.item.setOnClickListener {

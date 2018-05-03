@@ -14,7 +14,12 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import android.widget.SeekBar
+import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -492,22 +497,22 @@ class PLayActivity : AppCompatActivity(), PlayStatusObserver, PlayProxy {
 
 
     inner class PlayPagerAdapter : PagerAdapter() {
-        override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
             return if (position == 0) {
-                container!!.addView(coverFragment, 0)
+                container.addView(coverFragment, 0)
                 coverFragment
             } else {
-                container!!.addView(lyricFragment, 1)
+                container.addView(lyricFragment, 1)
                 lyricFragment
             }
         }
 
-        override fun isViewFromObject(view: View?, `object`: Any?): Boolean = view == `object`
+        override fun isViewFromObject(view: View, `object`: Any): Boolean = view == `object`
 
         override fun getCount(): Int = 2
 
-        override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
-            container!!.removeViewAt(position)
+        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+            container.removeViewAt(position)
             super.destroyItem(container, position, `object`)
         }
     }

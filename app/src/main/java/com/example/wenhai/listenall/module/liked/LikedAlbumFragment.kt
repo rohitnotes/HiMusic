@@ -26,21 +26,17 @@ class LikedAlbumFragment : Fragment() {
 
     @BindView(R.id.liked_album)
     lateinit var mAlbumList: RecyclerView
-    lateinit private var mUnbinder: Unbinder
+    private lateinit var mUnbinder: Unbinder
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val contentView = inflater !!.inflate(R.layout.fragment_liked_album, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val contentView = inflater.inflate(R.layout.fragment_liked_album, container, false)
         mUnbinder = ButterKnife.bind(this, contentView)
         initView()
         return contentView
     }
 
     private fun initView() {
-        val dao = DAOUtil.getSession(context).likedAlbumDao
+        val dao = DAOUtil.getSession(context!!).likedAlbumDao
         val list: List<LikedAlbum> = dao.queryBuilder()
                 .orderDesc(LikedAlbumDao.Properties.LikedTime)
                 .build()
@@ -55,16 +51,16 @@ class LikedAlbumFragment : Fragment() {
         data.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.ALBUM)
         val detailFragment = DetailFragment()
         detailFragment.arguments = data
-        addFragmentToMainView(parentFragment.fragmentManager, detailFragment)
+        addFragmentToMainView(parentFragment!!.fragmentManager!!, detailFragment)
     }
 
 
     inner class LikedAlbumListAdapter(private val albumList: List<LikedAlbum>) : RecyclerView.Adapter<LikedAlbumListAdapter.ViewHolder>() {
         override fun getItemCount(): Int = albumList.size
 
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val album = albumList[position].album
-            holder !!.albumName.text = album.title
+            holder.albumName.text = album.title
             holder.artistName.text = album.artist
             GlideApp.with(context)
                     .load(album.coverUrl)
@@ -75,7 +71,7 @@ class LikedAlbumFragment : Fragment() {
             }
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_liked_album, parent, false)
             return ViewHolder(itemView)
         }

@@ -59,8 +59,8 @@ class CollectFilterFragment : Fragment(), CollectFilterContract.View {
         CollectFilterPresenter(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val contentView = inflater!!.inflate(R.layout.fragment_collect, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val contentView = inflater.inflate(R.layout.fragment_collect, container, false)
         mUnbinder = ButterKnife.bind(this, contentView)
         initView()
         return contentView
@@ -70,7 +70,7 @@ class CollectFilterFragment : Fragment(), CollectFilterContract.View {
         curCategory = mFilterTitle.text.toString()
         mPresenter.loadCollectByCategory(curCategory, curPage)
         mCollectList.layoutManager = LinearLayoutManager(context)
-        mCollectAdapter = CollectListAdapter(context, ArrayList())
+        mCollectAdapter = CollectListAdapter(context!!, ArrayList())
         mCollectList.adapter = mCollectAdapter
         mRefreshLayout.setOnLoadmoreListener {
             mPresenter.loadCollectByCategory(curCategory, curPage)
@@ -108,7 +108,7 @@ class CollectFilterFragment : Fragment(), CollectFilterContract.View {
                 if (isFilterShown) {
                     mCollectCategoryFragment.onFilterChosen(curCategory)
                 } else {
-                    removeFragment(fragmentManager, this)
+                    removeFragment(fragmentManager!!, this)
                 }
             }
             R.id.collect_filter -> {
@@ -119,7 +119,7 @@ class CollectFilterFragment : Fragment(), CollectFilterContract.View {
                     data.putString("curCategory", curCategory)
                     mCollectCategoryFragment.arguments = data
                     mCollectCategoryFragment.setTargetFragment(this, 0)
-                    addFragmentToView(fragmentManager, mCollectCategoryFragment, R.id.collect_list_container)
+                    addFragmentToView(fragmentManager!!, mCollectCategoryFragment, R.id.collect_list_container)
                     setFilterTitleIcon(true)
                 } else {
                     mCollectCategoryFragment.onFilterChosen(curCategory)
@@ -141,11 +141,11 @@ class CollectFilterFragment : Fragment(), CollectFilterContract.View {
     }
 
     override fun getViewContext(): Context {
-        return context
+        return context!!
     }
 
     override fun onFailure(msg: String) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             if (mRefreshLayout.isLoading) {
                 mRefreshLayout.finishLoadmore(200, false)
             }
@@ -153,7 +153,7 @@ class CollectFilterFragment : Fragment(), CollectFilterContract.View {
                 mLoading.hide()
                 mLoadFailed.show()
             }
-            context.showToast(msg)
+            context!!.showToast(msg)
         }
     }
 
@@ -166,7 +166,7 @@ class CollectFilterFragment : Fragment(), CollectFilterContract.View {
     }
 
     override fun onCollectLoad(collects: List<Collect>) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             if (mRefreshLayout.isLoading) {
                 mRefreshLayout.finishLoadmore(200, true)
             }
@@ -187,7 +187,7 @@ class CollectFilterFragment : Fragment(), CollectFilterContract.View {
 
     inner class CollectListAdapter(val context: Context, var collects: List<Collect>) : RecyclerView.Adapter<CollectListAdapter.ViewHolder>() {
 
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_collect_list, parent, false)
             return ViewHolder(itemView)
         }
@@ -205,24 +205,24 @@ class CollectFilterFragment : Fragment(), CollectFilterContract.View {
         override fun getItemCount(): Int = collects.size
 
 
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val collect = collects[position]
-            if (holder != null) {
-                holder.collectTitle.text = collect.title
-                holder.collectDesc.text = collect.desc
-                GlideApp.with(context)
-                        .load(collect.coverUrl)
-                        .placeholder(R.drawable.ic_main_collect)
-                        .into(holder.collectCover)
-                holder.item.setOnClickListener {
-                    val detailFragment = DetailFragment()
-                    val data = Bundle()
-                    data.putLong(DetailContract.ARGS_ID, collect.collectId)
-                    data.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.COLLECT)
-                    detailFragment.arguments = data
-                    addFragmentToMainView(fragmentManager, detailFragment)
-                }
+
+            holder.collectTitle.text = collect.title
+            holder.collectDesc.text = collect.desc
+            GlideApp.with(context)
+                    .load(collect.coverUrl)
+                    .placeholder(R.drawable.ic_main_collect)
+                    .into(holder.collectCover)
+            holder.item.setOnClickListener {
+                val detailFragment = DetailFragment()
+                val data = Bundle()
+                data.putLong(DetailContract.ARGS_ID, collect.collectId)
+                data.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.COLLECT)
+                detailFragment.arguments = data
+                addFragmentToMainView(fragmentManager!!, detailFragment)
             }
+
         }
 
         inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

@@ -51,16 +51,16 @@ class AlbumListFragment : Fragment(), AlbumListContract.View {
         AlbumListPresenter(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val contentView = inflater !!.inflate(R.layout.fragment_album_list, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val contentView = inflater.inflate(R.layout.fragment_album_list, container, false)
         mUnBinder = ButterKnife.bind(this, contentView)
         initView()
         return contentView
     }
 
     override fun initView() {
-        mTitle.text = context.getString(R.string.main_new_songs)
-        albumAdapter = AlbumListAdapter(context, ArrayList())
+        mTitle.text = context!!.getString(R.string.main_new_songs)
+        albumAdapter = AlbumListAdapter(context!!, ArrayList())
         mNewAlbumList.adapter = albumAdapter
         mNewAlbumList.layoutManager = GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
         mPresenter.loadNewAlbums(curPage)
@@ -72,8 +72,8 @@ class AlbumListFragment : Fragment(), AlbumListContract.View {
     }
 
     override fun onNewAlbumsLoad(albumList: List<Album>) {
-        activity.runOnUiThread {
-            curPage ++
+        activity!!.runOnUiThread {
+            curPage++
             if (mRefreshLayout.isLoading) {
                 mRefreshLayout.finishLoadmore(200, true)
             }
@@ -91,7 +91,7 @@ class AlbumListFragment : Fragment(), AlbumListContract.View {
     }
 
     override fun getViewContext(): Context {
-        return context
+        return context!!
     }
 
     override fun onLoading() {
@@ -103,7 +103,7 @@ class AlbumListFragment : Fragment(), AlbumListContract.View {
     }
 
     override fun onFailure(msg: String) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             if (mRefreshLayout.isLoading) {
                 mRefreshLayout.finishLoadmore(200, false)
             }
@@ -111,7 +111,7 @@ class AlbumListFragment : Fragment(), AlbumListContract.View {
                 mLoading.hide()
                 mLoadFailed.show()
             }
-            context.showToast(msg)
+            context?.showToast(msg)
         }
     }
 
@@ -121,14 +121,14 @@ class AlbumListFragment : Fragment(), AlbumListContract.View {
         data.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.ALBUM)
         val detailFragment = DetailFragment()
         detailFragment.arguments = data
-        addFragmentToMainView(fragmentManager, detailFragment)
+        addFragmentToMainView(fragmentManager!!, detailFragment)
     }
 
     @OnClick(R.id.action_bar_back, R.id.loading_failed)
     fun onClick(view: View) {
         when (view.id) {
             R.id.action_bar_back -> {
-                removeFragment(fragmentManager, this)
+                removeFragment(fragmentManager!!, this)
             }
             R.id.loading_failed -> {
                 mPresenter.loadNewAlbums(curPage)
@@ -143,9 +143,9 @@ class AlbumListFragment : Fragment(), AlbumListContract.View {
 
     inner class AlbumListAdapter(private val context: Context, private val albumList: List<Album>)
         : RecyclerView.Adapter<AlbumListAdapter.ViewHolder>() {
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val album = albumList[position]
-            holder !!.title.text = album.title
+            holder.title.text = album.title
             holder.artist.text = album.artist
             GlideApp.with(context)
                     .load(album.coverUrl)
@@ -158,7 +158,7 @@ class AlbumListFragment : Fragment(), AlbumListContract.View {
 
         override fun getItemCount(): Int = albumList.size
 
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_album_list, parent, false)
             return ViewHolder(itemView)
         }

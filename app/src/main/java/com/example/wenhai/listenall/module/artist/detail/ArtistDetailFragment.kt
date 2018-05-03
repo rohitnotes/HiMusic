@@ -75,11 +75,11 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ArtistDetailPresenter(this)
-        artist = arguments.getParcelable("artist")
+        artist = arguments?.getParcelable("artist")!!
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val contentView = inflater !!.inflate(R.layout.fragment_artist_detail, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val contentView = inflater.inflate(R.layout.fragment_artist_detail, container, false)
 
         mHotSongsView = inflater.inflate(R.layout.fragment_artist_detail_hot_songs, container, false) as LinearLayout
         mHotSongList = mHotSongsView.findViewById(R.id.detail_song_list)
@@ -112,7 +112,7 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
     }
 
     private fun initHotSongView() {
-        mHotSongAdapter = HotSongsAdapter(context, ArrayList())
+        mHotSongAdapter = HotSongsAdapter(context!!, ArrayList())
         mHotSongList.layoutManager = LinearLayoutManager(context)
         mHotSongList.adapter = mHotSongAdapter
         mHotSongRefresh.setOnLoadmoreListener {
@@ -124,7 +124,7 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
     }
 
     private fun initAlbumView() {
-        mAlbumAdapter = AlbumAdapter(context, ArrayList())
+        mAlbumAdapter = AlbumAdapter(context!!, ArrayList())
         mAlbumList.adapter = mAlbumAdapter
         mAlbumList.layoutManager = LinearLayoutManager(context)
         mAlbumRefresh.setOnLoadmoreListener {
@@ -136,7 +136,7 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
     fun onClick(view: View) {
         when (view.id) {
             R.id.action_bar_back -> {
-                removeFragment(fragmentManager, this)
+                removeFragment(fragmentManager!!, this)
             }
         }
     }
@@ -147,18 +147,18 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
     }
 
     override fun getViewContext(): Context {
-        return context
+        return context!!
     }
 
     override fun onFailure(msg: String) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             if (mAlbumRefresh.isLoading) {
                 mAlbumRefresh.finishLoadmore(200, false)
             }
             if (mHotSongRefresh.isLoading) {
                 mHotSongRefresh.finishLoadmore(200, false)
             }
-            context.showToast(msg)
+            context!!.showToast(msg)
         }
     }
 
@@ -166,7 +166,7 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
     }
 
     override fun onArtistDetail(artist: Artist) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             GlideApp.with(this).load(artist.imgUrl)
                     .into(mArtistPhoto)
             mArtistDesc.text = artist.desc
@@ -174,24 +174,24 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
     }
 
     override fun onHotSongsLoad(hotSongs: List<Song>) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             if (mHotSongRefresh.isLoading) {
                 mHotSongRefresh.finishLoadmore(200, true)
             }
-            if (! mShuffleAll.isShowing()) {
+            if (!mShuffleAll.isShowing()) {
                 mShuffleAll.show()
             }
-            curHotSongPage ++
+            curHotSongPage++
             mHotSongAdapter.addData(hotSongs)
         }
     }
 
     override fun onAlbumsLoad(albums: List<Album>) {
-        activity.runOnUiThread {
+        activity!!.runOnUiThread {
             if (mAlbumRefresh.isLoading) {
                 mAlbumRefresh.finishLoadmore(200, true)
             }
-            curAlbumPage ++
+            curAlbumPage++
             mAlbumAdapter.addData(albums)
         }
     }
@@ -207,7 +207,7 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
 
 
     inner class DetailPagerAdapter : PagerAdapter() {
-        override fun instantiateItem(container: ViewGroup?, position: Int): Any {
+        override fun instantiateItem(container: ViewGroup, position: Int): Any {
             val pageView = when (position) {
                 0 -> {
                     mHotSongsView
@@ -222,16 +222,16 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
                     mHotSongsView
                 }
             }
-            container !!.addView(pageView, position)
+            container.addView(pageView, position)
             return pageView
         }
 
-        override fun getItemPosition(`object`: Any?): Int {
+        override fun getItemPosition(`object`: Any): Int {
             return super.getItemPosition(`object`)
         }
 
-        override fun destroyItem(container: ViewGroup?, position: Int, `object`: Any?) {
-            container !!.removeViewAt(position)
+        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+            container.removeViewAt(position)
 //            super.destroyItem(container, position, `object`)
         }
 
@@ -252,7 +252,7 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
             }
         }
 
-        override fun isViewFromObject(view: View?, `object`: Any?): Boolean = view == `object`
+        override fun isViewFromObject(view: View, `object`: Any): Boolean = view == `object`
 
         override fun getCount(): Int = 3
 
@@ -260,10 +260,10 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
 
     inner class HotSongsAdapter(val context: Context, var hotSongs: List<Song>) : RecyclerView.Adapter<HotSongsAdapter.ViewHolder>() {
 
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val song = hotSongs[position]
             val index = "${position + 1}"
-            holder !!.index.text = index
+            holder.index.text = index
             holder.title.text = song.name
             // 虾米没有专辑信息
             if (song.albumName != "") {
@@ -279,7 +279,7 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
 
         override fun getItemCount(): Int = hotSongs.size
 
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_artist_detail_song_list, parent, false)
             return ViewHolder(itemView)
         }
@@ -298,16 +298,16 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
     }
 
     inner class AlbumAdapter(val context: Context, private var albums: List<Album>) : RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_artist_detail_album, parent, false)
             return ViewHolder(itemView)
         }
 
-        override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val album = albums[position]
             GlideApp.with(context).load(album.miniCoverUrl)
                     .placeholder(R.drawable.ic_main_all_music)
-                    .into(holder !!.albumCover)
+                    .into(holder.albumCover)
             holder.albumName.text = album.title
             val publishDate = "发行时间:${album.publishDateStr}"
             holder.albumPublishDate.text = publishDate
@@ -317,7 +317,7 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
                 data.putLong(DetailContract.ARGS_ID, album.id)
                 data.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.ALBUM)
                 detailFragment.arguments = data
-                addFragmentToMainView(fragmentManager, detailFragment)
+                addFragmentToMainView(fragmentManager!!, detailFragment)
 
             }
         }
