@@ -15,11 +15,11 @@ import butterknife.OnClick
 import butterknife.Unbinder
 import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.bean.LikedSong
-import com.example.wenhai.listenall.data.bean.LikedSongDao
+import com.example.wenhai.listenall.data.bean.LikedSong_
 import com.example.wenhai.listenall.data.bean.Song
 import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.main.MainActivity
-import com.example.wenhai.listenall.utils.DAOUtil
+import com.example.wenhai.listenall.utils.BoxUtil
 import com.example.wenhai.listenall.widget.SongOpsDialog
 
 class LikedSongFragment : Fragment() {
@@ -37,20 +37,18 @@ class LikedSongFragment : Fragment() {
     }
 
     fun initView() {
-        val likedSongDao = DAOUtil.getSession(context!!).likedSongDao
-        val likedSongList = likedSongDao.queryBuilder()
-                .orderDesc(LikedSongDao.Properties.LikedTime)
-                .list()
+        val likedSongBox = BoxUtil.getBoxStore(context!!).boxFor(LikedSong::class.java)
+        val likedSongList = likedSongBox.query().orderDesc(LikedSong_.likedTime).build().find()
         val list: ArrayList<LikedSong> = ArrayList()
-        likedSongList.mapTo(list) { it }
+        list.addAll(likedSongList)
         mLikedSongAdapter = LikedSongsAdapter(list)
         mSongs.adapter = mLikedSongAdapter
         mSongs.layoutManager = LinearLayoutManager(context)
     }
 
     private fun deleteLikedSong(song: LikedSong) {
-        val likedSongDao = DAOUtil.getSession(context!!).likedSongDao
-        likedSongDao.delete(song)
+        val likedSongBox = BoxUtil.getBoxStore(context!!).boxFor(LikedSong::class.java)
+        likedSongBox.remove(song)
         context!!.showToast("已取消喜欢")
     }
 

@@ -1,5 +1,6 @@
 package com.example.wenhai.listenall.module.detail
 
+import com.example.wenhai.listenall.MyApp
 import com.example.wenhai.listenall.data.LoadAlbumDetailCallback
 import com.example.wenhai.listenall.data.LoadCollectDetailCallback
 import com.example.wenhai.listenall.data.LoadSingleRankingCallback
@@ -7,10 +8,9 @@ import com.example.wenhai.listenall.data.LoadSongDetailCallback
 import com.example.wenhai.listenall.data.MusicRepository
 import com.example.wenhai.listenall.data.bean.Album
 import com.example.wenhai.listenall.data.bean.Collect
-import com.example.wenhai.listenall.data.bean.CollectDao
+import com.example.wenhai.listenall.data.bean.Collect_
 import com.example.wenhai.listenall.data.bean.Song
 import com.example.wenhai.listenall.module.ranking.RankingContract
-import com.example.wenhai.listenall.utils.DAOUtil
 
 internal class DetailPresenter(val view: DetailContract.View) : DetailContract.Presenter {
 
@@ -40,11 +40,15 @@ internal class DetailPresenter(val view: DetailContract.View) : DetailContract.P
     override fun loadCollectDetail(id: Long, isFromUser: Boolean) {
         if (isFromUser) {
             view.onLoading()
-            val collectDao = DAOUtil.getSession(view.getViewContext()).collectDao
-            val collect = collectDao.queryBuilder()
-                    .where(CollectDao.Properties.Id.eq(id))
-                    .unique()
-            view.onCollectDetailLoad(collect)
+            val app = view.getViewContext().applicationContext as MyApp
+            val collectBox = app.boxStore.boxFor(Collect::class.java)
+            val collect: Collect? = collectBox.query().equal(Collect_.id, id).build().findFirst()
+            if (collect == null) {
+                view.onFailure("没有找到该歌单信息！")
+            } else {
+                view.onCollectDetailLoad(collect)
+            }
+
         } else {
             musicRepository.loadCollectDetail(id, object : LoadCollectDetailCallback {
                 override fun onStart() {

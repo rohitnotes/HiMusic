@@ -14,14 +14,11 @@ import butterknife.BindView
 import butterknife.OnClick
 import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.bean.Collect
-import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongs
-import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongsDao
 import com.example.wenhai.listenall.data.bean.Song
-import com.example.wenhai.listenall.data.bean.SongDao
 import com.example.wenhai.listenall.ext.hide
 import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.main.local.EditCollectActivity
-import com.example.wenhai.listenall.utils.DAOUtil
+import com.example.wenhai.listenall.utils.BoxUtil
 import com.example.wenhai.listenall.utils.GlideApp
 
 class SelectCollectDialog(context: Context) : BaseBottomDialog(context) {
@@ -37,7 +34,7 @@ class SelectCollectDialog(context: Context) : BaseBottomDialog(context) {
 
     override fun initView() {
         collects.layoutManager = LinearLayoutManager(context)
-        val myCollects = DAOUtil.getSession(context).collectDao.queryBuilder().build().list()
+        val myCollects = BoxUtil.getBoxStore(context).boxFor(Collect::class.java).query().build().find()
         collects.adapter = CollectAdapter(myCollects)
     }
 
@@ -84,39 +81,26 @@ class SelectCollectDialog(context: Context) : BaseBottomDialog(context) {
 
         }
 
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         private fun saveNewRelationRecord(collect: Collect) {
-            //添加歌曲到数据库，并获取歌曲在数据库中的id
-            val songId = saveSongToDB(song)
-            //添加关系到数据库
             val collectId = collect.id
-            val dao = DAOUtil.getSession(context).joinCollectsWithSongsDao
-            val resultList = dao.queryBuilder().where(JoinCollectsWithSongsDao.Properties.SongId.eq(songId),
-                    JoinCollectsWithSongsDao.Properties.CollectId.eq(collectId))
-                    .build().list()
-            if (resultList.isEmpty()) {
-                val relation = JoinCollectsWithSongs.newRecord(songId, collectId)
-                if (dao.insert(relation) > 0) {
+            val box = BoxUtil.getBoxStore(context).boxFor(Collect::class.java)
+            val result = box.get(collectId)
+
+            if (result.songs.contains(song)) {
+                context.showToast("歌曲已存在")
+            } else {
+                result.songs.add(song)
+                if (box.put(result) > 0) {
                     context.showToast("添加成功")
                     //更新歌单修改时间
                     collect.updateDate = System.currentTimeMillis() / 1000
-                    DAOUtil.getSession(context).collectDao.update(collect)
-                    //刷新数据，防止缓存导致的数据不更新
-                    collect.resetSongs()
+                    box.put(collect)
+                    //todo:刷新数据，防止缓存导致的数据不更新
+//                    collect.resetSongs()
                 } else {
                     context.showToast("添加失败")
                 }
-            } else {
-                context.showToast("歌曲已存在")
-            }
-        }
-
-        private fun saveSongToDB(song: Song?): Long {
-            val songDao = DAOUtil.getSession(context).songDao
-            val list = songDao.queryBuilder().where(SongDao.Properties.SongId.eq(song?.songId)).list()
-            return if (list.isNotEmpty()) {
-                list[0].id
-            } else {
-                songDao.insert(song)
             }
         }
 

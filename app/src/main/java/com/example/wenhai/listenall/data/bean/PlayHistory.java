@@ -2,9 +2,8 @@ package com.example.wenhai.listenall.data.bean;
 
 import com.example.wenhai.listenall.data.MusicProvider;
 
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.annotation.Id;
+import io.objectbox.annotation.Entity;
+import io.objectbox.annotation.Id;
 
 @Entity
 public class PlayHistory {
@@ -23,7 +22,6 @@ public class PlayHistory {
     private String miniAlbumCoverUrl;
     private String providerName;
 
-    @Generated(hash = 1568489359)
     public PlayHistory(Long id, long playTimeInMills, int playTimes,
                        String songName, long songId, long artistId, long albumId,
                        String coverUrl, String artistName, String albumName,
@@ -43,7 +41,6 @@ public class PlayHistory {
         this.providerName = providerName;
     }
 
-    @Generated(hash = 2145518983)
     public PlayHistory() {
     }
 

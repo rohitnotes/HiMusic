@@ -15,10 +15,10 @@ import butterknife.Unbinder
 import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.bean.Album
 import com.example.wenhai.listenall.data.bean.LikedAlbum
-import com.example.wenhai.listenall.data.bean.LikedAlbumDao
+import com.example.wenhai.listenall.data.bean.LikedAlbum_
 import com.example.wenhai.listenall.module.detail.DetailContract
 import com.example.wenhai.listenall.module.detail.DetailFragment
-import com.example.wenhai.listenall.utils.DAOUtil
+import com.example.wenhai.listenall.utils.BoxUtil
 import com.example.wenhai.listenall.utils.GlideApp
 import com.example.wenhai.listenall.utils.addFragmentToMainView
 
@@ -36,11 +36,8 @@ class LikedAlbumFragment : Fragment() {
     }
 
     private fun initView() {
-        val dao = DAOUtil.getSession(context!!).likedAlbumDao
-        val list: List<LikedAlbum> = dao.queryBuilder()
-                .orderDesc(LikedAlbumDao.Properties.LikedTime)
-                .build()
-                .list()
+        val likedAlbumBox = BoxUtil.getBoxStore(context!!).boxFor(LikedAlbum::class.java)
+        val list = likedAlbumBox.query().orderDesc(LikedAlbum_.likedTime).build().find()
         mAlbumList.adapter = LikedAlbumListAdapter(list)
         mAlbumList.layoutManager = LinearLayoutManager(context)
     }

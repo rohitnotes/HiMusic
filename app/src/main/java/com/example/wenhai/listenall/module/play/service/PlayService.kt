@@ -13,9 +13,9 @@ import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.LoadSongDetailCallback
 import com.example.wenhai.listenall.data.MusicRepository
 import com.example.wenhai.listenall.data.bean.PlayHistory
-import com.example.wenhai.listenall.data.bean.PlayHistoryDao
+import com.example.wenhai.listenall.data.bean.PlayHistory_
 import com.example.wenhai.listenall.data.bean.Song
-import com.example.wenhai.listenall.utils.DAOUtil
+import com.example.wenhai.listenall.utils.BoxUtil
 import com.example.wenhai.listenall.utils.LogUtil
 import com.example.wenhai.listenall.utils.OkHttpUtil
 import java.io.IOException
@@ -25,7 +25,6 @@ import java.io.Serializable
 import java.util.Random
 import java.util.Timer
 import java.util.TimerTask
-import kotlin.collections.ArrayList
 
 class PlayService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnCompletionListener,
@@ -241,21 +240,18 @@ class PlayService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
      * 插入或者更新歌曲播放历史
      */
     private fun insertOrUpdatePlayHistory() {
-        val dao = DAOUtil.getSession(this).playHistoryDao
-        val queryList = dao.queryBuilder()
-                .where(PlayHistoryDao.Properties.SongId.eq(playStatus.currentSong!!.songId))
-                .build()
-                .list()
-        if (queryList.size > 0) {
-            val playHistory = queryList.first()
+        val box = BoxUtil.getBoxStore(this).boxFor(PlayHistory::class.java)
+        val query = box.query().equal(PlayHistory_.songId, playStatus.currentSong!!.songId)
+                .build().findFirst()
+        if (query != null) {
             //更新播放时间和次数
-            playHistory.playTimeInMills = System.currentTimeMillis()
-            playHistory.playTimes += 1
-            dao.update(playHistory)
+            query.playTimeInMills = System.currentTimeMillis()
+            query.playTimes += 1
+            box.put(query)
         } else {
             //创建新的播放纪录
             val playHistory = PlayHistory(playStatus.currentSong)
-            dao.insert(playHistory)
+            box.put(playHistory)
         }
     }
 

@@ -17,7 +17,8 @@ import butterknife.OnClick
 import butterknife.Unbinder
 import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.bean.Collect
-import com.example.wenhai.listenall.data.bean.LikedCollectDao
+import com.example.wenhai.listenall.data.bean.LikedCollect
+import com.example.wenhai.listenall.data.bean.LikedCollect_
 import com.example.wenhai.listenall.ext.hide
 import com.example.wenhai.listenall.ext.show
 import com.example.wenhai.listenall.ext.showToast
@@ -25,7 +26,7 @@ import com.example.wenhai.listenall.module.detail.DetailContract
 import com.example.wenhai.listenall.module.detail.DetailFragment
 import com.example.wenhai.listenall.module.liked.LikedFragment
 import com.example.wenhai.listenall.module.playhistory.PlayHistoryFragment
-import com.example.wenhai.listenall.utils.DAOUtil
+import com.example.wenhai.listenall.utils.BoxUtil
 import com.example.wenhai.listenall.utils.GlideApp
 import com.example.wenhai.listenall.utils.addFragmentToMainView
 
@@ -106,15 +107,13 @@ class LocalFragment : android.support.v4.app.Fragment() {
         setButtonTextColor(curShowType)
         if (curShowType == MY_COLLECT) {//显示自建歌单
             mBtnCreateCollect.show()
-            val collectDao = DAOUtil.getSession(context!!).collectDao
-            val myCollects = collectDao.queryBuilder().build().list()
+            val collectBox = BoxUtil.getBoxStore(context!!).boxFor(Collect::class.java)
+            val myCollects = collectBox.query().build().find()
             mCollectAdapter.setData(myCollects)
         } else {//显示收藏歌单
             mBtnCreateCollect.hide()
-            val dao = DAOUtil.getSession(context!!).likedCollectDao
-            val likedCollectList = dao.queryBuilder()
-                    .orderDesc(LikedCollectDao.Properties.LikedTime)
-                    .build().list()
+            val collectBox = BoxUtil.getBoxStore(context!!).boxFor(LikedCollect::class.java)
+            val likedCollectList = collectBox.query().orderDesc(LikedCollect_.likedTime).build().find()
             val collectList = ArrayList<Collect>()
             likedCollectList.mapTo(collectList) { it.collect }
             mCollectAdapter.setData(collectList)

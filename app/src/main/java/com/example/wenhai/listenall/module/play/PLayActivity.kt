@@ -27,13 +27,13 @@ import butterknife.Unbinder
 import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.MusicProvider
 import com.example.wenhai.listenall.data.bean.LikedSong
-import com.example.wenhai.listenall.data.bean.LikedSongDao
+import com.example.wenhai.listenall.data.bean.LikedSong_
 import com.example.wenhai.listenall.data.bean.Song
 import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.play.service.PlayProxy
 import com.example.wenhai.listenall.module.play.service.PlayService
 import com.example.wenhai.listenall.module.play.service.PlayStatusObserver
-import com.example.wenhai.listenall.utils.DAOUtil
+import com.example.wenhai.listenall.utils.BoxUtil
 import com.example.wenhai.listenall.utils.GlideApp
 import com.example.wenhai.listenall.utils.LogUtil
 import com.example.wenhai.listenall.widget.PlayListDialog
@@ -185,21 +185,19 @@ class PLayActivity : AppCompatActivity(), PlayStatusObserver, PlayProxy {
     }
 
     private fun likeCurrentSong() {
-        val likedSongDao = DAOUtil.getSession(this).likedSongDao
-        val queryList = likedSongDao.queryBuilder()
-                .where(LikedSongDao.Properties.SongId.eq(mCurrentSong!!.songId))
-                .list()
-        if (queryList.isEmpty()) {
+        val likedSongBox = BoxUtil.getBoxStore(this).boxFor(LikedSong::class.java)
+        val query = likedSongBox.query().equal(LikedSong_.songId, mCurrentSong!!.songId)
+                .build().findUnique()
+        if (query == null) {
             //添加当前歌曲到喜欢列表
             val likedSong = LikedSong(mCurrentSong)
-            if (likedSongDao.insert(likedSong) > 0) {
+            if (likedSongBox.put(likedSong) > 0) {
                 showToast(R.string.liked)
                 mBtnLiked.setImageResource(R.drawable.ic_liked)
             }
         } else {
             //将当前歌曲从喜欢列表中移除
-            val likedSong = queryList[0]
-            likedSongDao.delete(likedSong)
+            likedSongBox.remove(query)
             mBtnLiked.setImageResource(R.drawable.ic_like_border)
             showToast(R.string.unliked)
         }
@@ -381,9 +379,9 @@ class PLayActivity : AppCompatActivity(), PlayStatusObserver, PlayProxy {
             setProvider()
             setCover(mCurrentSong!!.albumCoverUrl)
             mTvTotalTime.text = getMinuteLength(mCurrentSong!!.length)
-            val isLiked = DAOUtil.getSession(this).likedSongDao.queryBuilder()
-                    .where(LikedSongDao.Properties.SongId.eq(mCurrentSong!!.songId))
-                    .list().size > 0
+            val isLiked = BoxUtil.getBoxStore(this).boxFor(LikedSong::class.java)
+                    .query().equal(LikedSong_.songId, mCurrentSong!!.songId).build()
+                    .findUnique() != null
             if (isLiked) {
                 mBtnLiked.setImageResource(R.drawable.ic_liked)
             }
@@ -458,9 +456,9 @@ class PLayActivity : AppCompatActivity(), PlayStatusObserver, PlayProxy {
             setProvider()
             setTotalTime(mCurrentSong!!.length)
             setCurTime(0f)
-            val isLiked = DAOUtil.getSession(this).likedSongDao.queryBuilder()
-                    .where(LikedSongDao.Properties.SongId.eq(mCurrentSong!!.songId))
-                    .list().size > 0
+            val isLiked = BoxUtil.getBoxStore(this).boxFor(LikedSong::class.java)
+                    .query().equal(LikedSong_.songId, mCurrentSong!!.songId).build()
+                    .findUnique() != null
             if (isLiked) {
                 mBtnLiked.setImageResource(R.drawable.ic_liked)
             } else {

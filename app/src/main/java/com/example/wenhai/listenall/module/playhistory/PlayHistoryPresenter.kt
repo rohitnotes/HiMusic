@@ -1,8 +1,9 @@
 package com.example.wenhai.listenall.module.playhistory
 
 import android.content.Context
-import com.example.wenhai.listenall.data.bean.PlayHistoryDao
-import com.example.wenhai.listenall.utils.DAOUtil
+import com.example.wenhai.listenall.data.bean.PlayHistory
+import com.example.wenhai.listenall.data.bean.PlayHistory_
+import com.example.wenhai.listenall.utils.BoxUtil
 
 
 internal class PlayHistoryPresenter(val view: PlayHistoryContract.View) : PlayHistoryContract.Presenter {
@@ -11,11 +12,10 @@ internal class PlayHistoryPresenter(val view: PlayHistoryContract.View) : PlayHi
     }
 
     override fun loadPlayHistory(context: Context) {
-        val dao = DAOUtil.getSession(context).playHistoryDao
-        val query = dao.queryBuilder()
-                .orderDesc(PlayHistoryDao.Properties.PlayTimeInMills)
+        val box = BoxUtil.getBoxStore(context).boxFor(PlayHistory::class.java)
+        val playHistoryList = box.query().orderDesc(PlayHistory_.playTimeInMills)
                 .build()
-        val playHistoryList = query.list()
+                .find()
         if (playHistoryList.size > 0) {
             view.onPlayHistoryLoad(playHistoryList)
         } else {

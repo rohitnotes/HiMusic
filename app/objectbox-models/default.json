@@ -1,0 +1,421 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:8224975540726341612",
+      "lastPropertyId": "13:1315743150906690646",
+      "name": "Collect",
+      "properties": [
+        {
+          "id": "1:2654434102670818442",
+          "name": "id"
+        },
+        {
+          "id": "2:4467672434192831420",
+          "name": "title"
+        },
+        {
+          "id": "3:6356709879972051897",
+          "name": "desc"
+        },
+        {
+          "id": "4:7060090901839096711",
+          "name": "collectId"
+        },
+        {
+          "id": "5:7979380285371569630",
+          "name": "coverUrl"
+        },
+        {
+          "id": "6:7289178112449381385",
+          "name": "coverDrawable"
+        },
+        {
+          "id": "7:5025583139002360998",
+          "name": "songCount"
+        },
+        {
+          "id": "8:8360834181619266678",
+          "name": "songDownloadNumber"
+        },
+        {
+          "id": "9:9199781379737727677",
+          "name": "providerName"
+        },
+        {
+          "id": "10:611587424426520523",
+          "name": "playTimes"
+        },
+        {
+          "id": "11:602419219859780724",
+          "name": "createDate"
+        },
+        {
+          "id": "12:5226399822330934220",
+          "name": "updateDate"
+        },
+        {
+          "id": "13:1315743150906690646",
+          "name": "isFromUser"
+        }
+      ],
+      "relations": [
+        {
+          "id": "1:3716576059544234614",
+          "name": "songs"
+        }
+      ]
+    },
+    {
+      "id": "3:7440469284951551323",
+      "lastPropertyId": "14:3894887719043270792",
+      "name": "LikedAlbum",
+      "properties": [
+        {
+          "id": "1:8963718850450023077",
+          "name": "id"
+        },
+        {
+          "id": "2:8294855657359892051",
+          "name": "title"
+        },
+        {
+          "id": "3:618106487793370523",
+          "name": "desc"
+        },
+        {
+          "id": "4:4927853192766354104",
+          "name": "albumId"
+        },
+        {
+          "id": "5:911049803751398547",
+          "name": "artist"
+        },
+        {
+          "id": "6:1229478797749742852",
+          "name": "artistId"
+        },
+        {
+          "id": "7:107790222582273955",
+          "name": "coverUrl"
+        },
+        {
+          "id": "8:858425270971707940",
+          "name": "miniCoverUrl"
+        },
+        {
+          "id": "9:802838861748482818",
+          "name": "songNumber"
+        },
+        {
+          "id": "10:1047254479955348645",
+          "name": "songDownloadNumber"
+        },
+        {
+          "id": "11:7031075587207527803",
+          "name": "providerName"
+        },
+        {
+          "id": "12:684408781087263891",
+          "name": "publishDate"
+        },
+        {
+          "id": "13:8374409415711251249",
+          "name": "publishDateStr"
+        },
+        {
+          "id": "14:3894887719043270792",
+          "name": "likedTime"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:7262203878931930315",
+      "lastPropertyId": "13:6843038872185996679",
+      "name": "LikedCollect",
+      "properties": [
+        {
+          "id": "1:5801974575382036174",
+          "name": "id"
+        },
+        {
+          "id": "2:261689831693520632",
+          "name": "title"
+        },
+        {
+          "id": "3:7891037779315356485",
+          "name": "desc"
+        },
+        {
+          "id": "4:2237722508358771344",
+          "name": "collectId"
+        },
+        {
+          "id": "5:3773843281496730940",
+          "name": "coverUrl"
+        },
+        {
+          "id": "6:624100271781902448",
+          "name": "coverDrawable"
+        },
+        {
+          "id": "7:6193207428322859453",
+          "name": "songCount"
+        },
+        {
+          "id": "8:330363873044525462",
+          "name": "songDownloadNumber"
+        },
+        {
+          "id": "9:4808623842425421662",
+          "name": "providerName"
+        },
+        {
+          "id": "10:5967009466227453489",
+          "name": "playTimes"
+        },
+        {
+          "id": "11:7353711032536004294",
+          "name": "createDate"
+        },
+        {
+          "id": "12:2098728963930873137",
+          "name": "updateDate"
+        },
+        {
+          "id": "13:6843038872185996679",
+          "name": "likedTime"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "5:6445478848450996090",
+      "lastPropertyId": "12:2776527485367201180",
+      "name": "LikedSong",
+      "properties": [
+        {
+          "id": "1:5843482625869235510",
+          "name": "id"
+        },
+        {
+          "id": "2:7829154097518215924",
+          "name": "songName"
+        },
+        {
+          "id": "3:8538981275158077736",
+          "name": "songId"
+        },
+        {
+          "id": "4:6809130906709188561",
+          "name": "artistId"
+        },
+        {
+          "id": "5:3769058327312983797",
+          "name": "albumId"
+        },
+        {
+          "id": "6:4377239182223078665",
+          "name": "coverUrl"
+        },
+        {
+          "id": "7:8560545429209564990",
+          "name": "artistName"
+        },
+        {
+          "id": "8:3893864792602569392",
+          "name": "albumName"
+        },
+        {
+          "id": "9:3615787488996097679",
+          "name": "listenFileUrl"
+        },
+        {
+          "id": "10:4872943572059976415",
+          "name": "miniAlbumCoverUrl"
+        },
+        {
+          "id": "11:4454798475320316538",
+          "name": "providerName"
+        },
+        {
+          "id": "12:2776527485367201180",
+          "name": "likedTime"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "6:8054560752172761621",
+      "lastPropertyId": "13:8020985814348094256",
+      "name": "PlayHistory",
+      "properties": [
+        {
+          "id": "1:8709012809822675110",
+          "name": "id"
+        },
+        {
+          "id": "2:2741028330654255091",
+          "name": "playTimeInMills"
+        },
+        {
+          "id": "3:7242783101156857070",
+          "name": "playTimes"
+        },
+        {
+          "id": "4:362250481107636623",
+          "name": "songName"
+        },
+        {
+          "id": "5:3639392080837699327",
+          "name": "songId"
+        },
+        {
+          "id": "6:3887288659312284041",
+          "name": "artistId"
+        },
+        {
+          "id": "7:3451559082128412232",
+          "name": "albumId"
+        },
+        {
+          "id": "8:4104621964978101310",
+          "name": "coverUrl"
+        },
+        {
+          "id": "9:6034312334904899999",
+          "name": "artistName"
+        },
+        {
+          "id": "10:4063205914011626915",
+          "name": "albumName"
+        },
+        {
+          "id": "11:6782518275279842013",
+          "name": "listenFileUrl"
+        },
+        {
+          "id": "12:9191742040923985368",
+          "name": "miniAlbumCoverUrl"
+        },
+        {
+          "id": "13:8020985814348094256",
+          "name": "providerName"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "7:1135932391837666100",
+      "lastPropertyId": "3:4970298510170906226",
+      "name": "SearchHistory",
+      "properties": [
+        {
+          "id": "1:5440912002283869800",
+          "name": "id"
+        },
+        {
+          "id": "2:934539654951605633",
+          "name": "keyword"
+        },
+        {
+          "id": "3:4970298510170906226",
+          "name": "searchTime"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "8:55135173756659282",
+      "lastPropertyId": "16:8711370734052338751",
+      "name": "Song",
+      "properties": [
+        {
+          "id": "1:385522499622755445",
+          "name": "id"
+        },
+        {
+          "id": "2:2804094875693553563",
+          "name": "songId"
+        },
+        {
+          "id": "3:4556525158667060914",
+          "name": "name"
+        },
+        {
+          "id": "4:3499078418608964959",
+          "name": "length"
+        },
+        {
+          "id": "5:2699597356799922372",
+          "name": "listenFileUrl"
+        },
+        {
+          "id": "6:5756054058217240582",
+          "name": "lyricUrl"
+        },
+        {
+          "id": "7:307253463563298953",
+          "name": "artistName"
+        },
+        {
+          "id": "8:6309672604625878804",
+          "name": "displayArtistName"
+        },
+        {
+          "id": "9:140700608654692398",
+          "name": "artistLogo"
+        },
+        {
+          "id": "10:2108012738589172884",
+          "name": "artistId"
+        },
+        {
+          "id": "11:646335644570234227",
+          "name": "albumId"
+        },
+        {
+          "id": "12:6331391882964415357",
+          "name": "albumName"
+        },
+        {
+          "id": "13:3527296030554132900",
+          "name": "albumCoverUrl"
+        },
+        {
+          "id": "14:843825428284901515",
+          "name": "miniAlbumCoverUrl"
+        },
+        {
+          "id": "15:4433338102268711766",
+          "name": "providerName"
+        },
+        {
+          "id": "16:8711370734052338751",
+          "name": "isPlaying"
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "8:55135173756659282",
+  "lastIndexId": "0:0",
+  "lastRelationId": "1:3716576059544234614",
+  "lastSequenceId": "0:0",
+  "modelVersion": 4,
+  "modelVersionParserMinimum": 4,
+  "retiredEntityUids": [
+    4919111889169369214
+  ],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [
+    1498417419431132169,
+    5219772533918682440,
+    872152304607061796
+  ],
+  "retiredRelationUids": [],
+  "version": 1
+}

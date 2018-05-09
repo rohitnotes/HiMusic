@@ -2,9 +2,8 @@ package com.example.wenhai.listenall.data.bean;
 
 import com.example.wenhai.listenall.data.MusicProvider;
 
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.annotation.Id;
+import io.objectbox.annotation.Entity;
+import io.objectbox.annotation.Id;
 
 @Entity
 public class LikedCollect {
@@ -23,7 +22,6 @@ public class LikedCollect {
     private long updateDate;//更新时间
     private long likedTime;
 
-    @Generated(hash = 1099010734)
     public LikedCollect(Long id, String title, String desc, long collectId,
                         String coverUrl, int coverDrawable, int songCount,
                         int songDownloadNumber, String providerName, int playTimes,
@@ -43,7 +41,6 @@ public class LikedCollect {
         this.likedTime = likedTime;
     }
 
-    @Generated(hash = 1076277660)
     public LikedCollect() {
     }
 
