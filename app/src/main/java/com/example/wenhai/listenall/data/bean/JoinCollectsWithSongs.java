@@ -1,8 +1,11 @@
 package com.example.wenhai.listenall.data.bean;
 
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.annotation.Id;
+import io.objectbox.annotation.Entity;
+import io.objectbox.annotation.Id;
+
+/**
+ * 歌单与歌曲一对多关系
+ */
 
 @Entity
 public class JoinCollectsWithSongs {
@@ -11,15 +14,20 @@ public class JoinCollectsWithSongs {
     private Long songId;
     private Long collectId;
 
-    @Generated(hash = 525280217)
     public JoinCollectsWithSongs(Long id, Long songId, Long collectId) {
         this.id = id;
         this.songId = songId;
         this.collectId = collectId;
     }
 
-    @Generated(hash = 1835803374)
     public JoinCollectsWithSongs() {
+    }
+
+    public static JoinCollectsWithSongs newRecord(long songId, long collectId) {
+        JoinCollectsWithSongs record = new JoinCollectsWithSongs();
+        record.songId = songId;
+        record.collectId = collectId;
+        return record;
     }
 
     public Long getId() {
@@ -44,12 +52,5 @@ public class JoinCollectsWithSongs {
 
     public void setCollectId(Long collectId) {
         this.collectId = collectId;
-    }
-
-    public static JoinCollectsWithSongs newRecord(long songId, long collectId) {
-        JoinCollectsWithSongs record = new JoinCollectsWithSongs();
-        record.songId = songId;
-        record.collectId = collectId;
-        return record;
     }
 }

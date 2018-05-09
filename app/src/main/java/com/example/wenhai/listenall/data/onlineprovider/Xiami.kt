@@ -272,11 +272,11 @@ internal class Xiami(val context: Context) : MusicSource {
         collect.createDate = data.getLong("gmt_create")
         collect.updateDate = data.getLong("gmt_modify")
         collect.playTimes = data.getInt("play_count")
-        collect.songs = parseSongsFromJson(data.getJSONArray("songs"))
+        collect.songs.addAll(parseSongsFromJson(data.getJSONArray("songs")))
         return collect
     }
 
-    private fun parseSongsFromJson(songs: JSONArray?): ArrayList<Song>? {
+    private fun parseSongsFromJson(songs: JSONArray?): ArrayList<Song> {
         val songCount = songs!!.length()
         val songList = ArrayList<Song>(songCount)
         for (i in 0 until songCount) {
@@ -782,7 +782,8 @@ internal class Xiami(val context: Context) : MusicSource {
             }
 
             override fun onHtmlResponse(html: String) {
-                collect.songs = parseRankingSongs(Jsoup.parse(html))
+                val songList = parseRankingSongs(Jsoup.parse(html))
+                collect.songs.addAll(songList)
                 callback.onSuccess(collect)
             }
 
@@ -793,7 +794,7 @@ internal class Xiami(val context: Context) : MusicSource {
 
     }
 
-    private fun parseRankingSongs(document: Document): ArrayList<Song>? {
+    private fun parseRankingSongs(document: Document): List<Song> {
         val songElements = document.getElementsByClass("song")
         val moreElements = document.getElementsByClass("more")
 
@@ -842,7 +843,7 @@ internal class Xiami(val context: Context) : MusicSource {
                     }
                 }
                 collect.source = MusicProvider.XIAMI
-                collect.songs = parseRankingSongs(document)
+                collect.songs.addAll(parseRankingSongs(document))
                 return collect
             } catch (e: IOException) {
                 callback.onFailure("获取排行榜信息失败")
@@ -859,7 +860,5 @@ internal class Xiami(val context: Context) : MusicSource {
                 }
             }
         }
-
-
     }
 }

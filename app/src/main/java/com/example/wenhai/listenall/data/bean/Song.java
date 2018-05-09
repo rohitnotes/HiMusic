@@ -7,19 +7,28 @@ import android.support.annotation.NonNull;
 
 import com.example.wenhai.listenall.data.MusicProvider;
 
-import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Transient;
-
 import java.io.Serializable;
+
+import io.objectbox.annotation.Entity;
+import io.objectbox.annotation.Id;
+import io.objectbox.annotation.Transient;
 
 @Entity
 public final class Song implements Parcelable, Serializable {
+    public static final Parcelable.Creator<Song> CREATOR = new Parcelable.Creator<Song>() {
+        @Override
+        public Song createFromParcel(Parcel in) {
+            return new Song(in);
+        }
+
+        @Override
+        public Song[] newArray(int size) {
+            return new Song[size];
+        }
+    };
+    private static final long serialVersionUID = 10001;
     @Id
     private Long id;
-
-    private static final long serialVersionUID = 10001;
     private long songId;
     private String name;
     private int length;//second
@@ -35,40 +44,9 @@ public final class Song implements Parcelable, Serializable {
     private String miniAlbumCoverUrl;
     @Transient
     private MusicProvider supplier;
-    private String providerName;
 //    private boolean isDownload;
-
+    private String providerName;
     private boolean isPlaying = false;
-
-    @Override
-    public void writeToParcel(@NonNull Parcel dest, int flags) {
-        dest.writeLong(songId);
-        dest.writeString(name);
-        dest.writeInt(length);
-        dest.writeString(listenFileUrl);
-        dest.writeString(lyricUrl);
-        dest.writeString(artistName);
-        dest.writeString(displayArtistName);
-        dest.writeString(artistLogo);
-        dest.writeLong(artistId);
-        dest.writeLong(albumId);
-        dest.writeString(albumName);
-        dest.writeString(albumCoverUrl);
-        dest.writeString(miniAlbumCoverUrl);
-        switch (supplier) {
-            case XIAMI:
-                dest.writeInt(0);
-                break;
-            case QQMUSIC:
-                dest.writeInt(1);
-                break;
-            case NETEASE:
-                dest.writeInt(2);
-                break;
-        }
-        dest.writeInt(isPlaying ? 1 : 0);
-
-    }
 
     public Song() {
 
@@ -103,7 +81,6 @@ public final class Song implements Parcelable, Serializable {
 
     }
 
-    @Generated(hash = 1874810466)
     public Song(Long id, long songId, String name, int length, String listenFileUrl,
                 String lyricUrl, String artistName, String displayArtistName, String artistLogo,
                 long artistId, long albumId, String albumName, String albumCoverUrl,
@@ -127,22 +104,39 @@ public final class Song implements Parcelable, Serializable {
     }
 
     @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeLong(songId);
+        dest.writeString(name);
+        dest.writeInt(length);
+        dest.writeString(listenFileUrl);
+        dest.writeString(lyricUrl);
+        dest.writeString(artistName);
+        dest.writeString(displayArtistName);
+        dest.writeString(artistLogo);
+        dest.writeLong(artistId);
+        dest.writeLong(albumId);
+        dest.writeString(albumName);
+        dest.writeString(albumCoverUrl);
+        dest.writeString(miniAlbumCoverUrl);
+        switch (supplier) {
+            case XIAMI:
+                dest.writeInt(0);
+                break;
+            case QQMUSIC:
+                dest.writeInt(1);
+                break;
+            case NETEASE:
+                dest.writeInt(2);
+                break;
+        }
+        dest.writeInt(isPlaying ? 1 : 0);
+
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }
-
-
-    public static final Parcelable.Creator<Song> CREATOR = new Parcelable.Creator<Song>() {
-        @Override
-        public Song createFromParcel(Parcel in) {
-            return new Song(in);
-        }
-
-        @Override
-        public Song[] newArray(int size) {
-            return new Song[size];
-        }
-    };
 
     public String getArtistName() {
         return artistName;
@@ -248,15 +242,6 @@ public final class Song implements Parcelable, Serializable {
         this.albumCoverUrl = albumCoverUrl;
     }
 
-    public MusicProvider getSupplier() {
-        return supplier;
-    }
-
-    public void setSupplier(MusicProvider supplier) {
-        this.supplier = supplier;
-        this.providerName = supplier.name();
-    }
-
     public String getMiniAlbumCoverUrl() {
         return miniAlbumCoverUrl;
     }
@@ -281,6 +266,15 @@ public final class Song implements Parcelable, Serializable {
             }
         }
         return false;
+    }
+
+    public MusicProvider getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(MusicProvider supplier) {
+        this.supplier = supplier;
+        this.providerName = supplier.name();
     }
 
     @Override

@@ -21,11 +21,12 @@ import butterknife.Unbinder
 import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.bean.Album
 import com.example.wenhai.listenall.data.bean.Collect
-import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongsDao
+import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongs
+import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongs_
 import com.example.wenhai.listenall.data.bean.LikedAlbum
-import com.example.wenhai.listenall.data.bean.LikedAlbumDao
+import com.example.wenhai.listenall.data.bean.LikedAlbum_
 import com.example.wenhai.listenall.data.bean.LikedCollect
-import com.example.wenhai.listenall.data.bean.LikedCollectDao
+import com.example.wenhai.listenall.data.bean.LikedCollect_
 import com.example.wenhai.listenall.data.bean.Song
 import com.example.wenhai.listenall.ext.hide
 import com.example.wenhai.listenall.ext.show
@@ -35,7 +36,7 @@ import com.example.wenhai.listenall.module.main.local.EditCollectActivity
 import com.example.wenhai.listenall.module.main.local.LocalFragment
 import com.example.wenhai.listenall.module.play.service.PlayProxy
 import com.example.wenhai.listenall.module.ranking.RankingContract
-import com.example.wenhai.listenall.utils.DAOUtil
+import com.example.wenhai.listenall.utils.BoxUtil
 import com.example.wenhai.listenall.utils.GlideApp
 import com.example.wenhai.listenall.utils.ScreenUtil
 import com.example.wenhai.listenall.utils.getDate
@@ -190,29 +191,29 @@ class DetailFragment : Fragment(), DetailContract.View {
      */
     private fun switchLikedState() {
         if (mLoadType == DetailContract.LoadType.ALBUM) {
-            val dao = DAOUtil.getSession(context!!).likedAlbumDao
+            val albumBox = BoxUtil.getBoxStore(context!!).boxFor(LikedAlbum::class.java)
             var liked = false
             var likedAlbum = isCurAlbumLiked()
             if (likedAlbum != null) {
-                dao.delete(likedAlbum)
+                albumBox.remove(likedAlbum)
                 context!!.showToast("已取消收藏")
             } else {
                 likedAlbum = LikedAlbum(mAlbum)
-                dao.insert(likedAlbum)
+                albumBox.put(likedAlbum)
                 liked = true
                 context!!.showToast("收藏成功")
             }
             setLikedIcon(liked)
         } else if (mLoadType == DetailContract.LoadType.COLLECT) {
-            val dao = DAOUtil.getSession(context!!).likedCollectDao
+            val collectBox = BoxUtil.getBoxStore(context!!).boxFor(LikedCollect::class.java)
             var liked = false
             var likedCollect = isCurCollectLiked()
             if (likedCollect != null) {
-                dao.delete(likedCollect)
+                collectBox.remove(likedCollect)
                 context!!.showToast(R.string.unliked)
             } else {
                 likedCollect = LikedCollect(mCollect)
-                dao.insert(likedCollect)
+                collectBox.put(likedCollect)
                 liked = true
                 context!!.showToast(R.string.liked)
             }
@@ -222,11 +223,12 @@ class DetailFragment : Fragment(), DetailContract.View {
 
     private fun isCurAlbumLiked(): LikedAlbum? {
         var likedAlbum: LikedAlbum? = null
-        val dao = DAOUtil.getSession(context!!).likedAlbumDao
-        val list = dao.queryBuilder()
-                .where(LikedAlbumDao.Properties.AlbumId.eq(mAlbum.id),
-                        LikedAlbumDao.Properties.ProviderName.eq(mAlbum.supplier.name))
-                .build().list()
+        val albumBox = BoxUtil.getBoxStore(context!!).boxFor(LikedAlbum::class.java)
+        val list = albumBox.query().equal(LikedAlbum_.albumId, mAlbum.id)
+                .and()
+                .equal(LikedAlbum_.providerName, mAlbum.supplier.name)
+                .build()
+                .find()
         if (list.size > 0) {
             likedAlbum = list[0]
         }
@@ -235,11 +237,12 @@ class DetailFragment : Fragment(), DetailContract.View {
 
     private fun isCurCollectLiked(): LikedCollect? {
         var likedCollect: LikedCollect? = null
-        val dao = DAOUtil.getSession(context!!).likedCollectDao
-        val list = dao.queryBuilder().where(LikedCollectDao.Properties.CollectId.eq(mCollect.collectId),
-                LikedCollectDao.Properties.ProviderName.eq(mCollect.source.name))
+        val collectBox = BoxUtil.getBoxStore(context!!).boxFor(LikedCollect::class.java)
+        val list = collectBox.query().equal(LikedCollect_.collectId, mCollect.collectId)
+                .and()
+                .equal(LikedCollect_.providerName, mCollect.source.name)
                 .build()
-                .list()
+                .find()
         if (list.size > 0) {
             likedCollect = list[0]
         }
@@ -282,11 +285,13 @@ class DetailFragment : Fragment(), DetailContract.View {
 
     private fun deleteCurCollect() {
         val collectId = mCollect.id
-        val collectDao = DAOUtil.getSession(context!!).collectDao
-        collectDao.deleteByKey(collectId)
-        val relationDao = DAOUtil.getSession(context!!).joinCollectsWithSongsDao
-        val existRelations = relationDao.queryBuilder().where(JoinCollectsWithSongsDao.Properties.CollectId.eq(collectId)).list()
-        relationDao.deleteInTx(existRelations)
+        val collectBox = BoxUtil.getBoxStore(context!!).boxFor(Collect::class.java)
+        collectBox.remove(collectId)
+        val relationBox = BoxUtil.getBoxStore(context!!).boxFor(JoinCollectsWithSongs::class.java)
+        val relationList = relationBox.query().equal(JoinCollectsWithSongs_.collectId, collectId)
+                .build()
+                .find()
+        relationBox.remove(relationList)
     }
 
     override fun setPresenter(presenter: DetailContract.Presenter) {
@@ -432,13 +437,17 @@ class DetailFragment : Fragment(), DetailContract.View {
                 if (mLoadType == DetailContract.LoadType.COLLECT && isCollectFromUser) {
                     dialog.showDelete = true
                     dialog.deleteListener = View.OnClickListener {
-                        val relationDao = DAOUtil.getSession(context).joinCollectsWithSongsDao
-                        val record = relationDao.queryBuilder()
-                                .where(JoinCollectsWithSongsDao.Properties.CollectId.eq(mCollect.id),
-                                        JoinCollectsWithSongsDao.Properties.SongId.eq(song.id))
-                                .unique()
-                        relationDao.delete(record)
-                        mCollect.resetSongs()
+                        val relationBox = BoxUtil.getBoxStore(context).boxFor(JoinCollectsWithSongs::class.java)
+                        val record = relationBox.query().equal(JoinCollectsWithSongs_.collectId, mCollect.id)
+                                .and()
+                                .equal(JoinCollectsWithSongs_.songId, song.id)
+                                .build()
+                                .findUnique()
+                        if (record != null) {
+                            relationBox.remove(record)
+                        }
+                        //todo:更新歌单歌曲
+//                        mCollect.resetSongs()
                         setData(mCollect.songs)
                     }
                 }
