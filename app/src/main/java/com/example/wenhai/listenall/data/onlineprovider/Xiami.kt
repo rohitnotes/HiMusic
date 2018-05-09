@@ -127,11 +127,8 @@ internal class Xiami(val context: Context) : MusicSource {
         for (item in items) {
             val banner = Banner()
             val a = item.select("a").first()
-            var imgurl = a.select("img").first().attr("src")
-            if (imgurl.startsWith("//")) {
-                imgurl = "https:$imgurl"
-            }
-            banner.imgUrl = imgurl
+            val imgUrl = a.select("img").first().attr("src")
+            banner.imgUrl = maskUrl(imgUrl)
 //            LogUtil.d(TAG, banner.imgUrl)
             val href = a.attr("href")
             when {
@@ -172,14 +169,11 @@ internal class Xiami(val context: Context) : MusicSource {
                         val title = a.attr("title")
                         val ref = a.attr("href")
                         val id = parseIdFromHref(ref)
-                        var coverUrl = a.select("img").first().attr("src")
+                        val coverUrl = a.select("img").first().attr("src")
                         val collect = Collect()
                         collect.collectId = id.toLong()
                         collect.title = title
-                        if (coverUrl.startsWith("//")) {
-                            coverUrl = "https:$coverUrl"
-                        }
-                        collect.coverUrl = coverUrl
+                        collect.coverUrl = maskUrl(coverUrl)
                         collect.source = MusicProvider.XIAMI
                         collectList.add(collect)
                     }
@@ -338,7 +332,8 @@ internal class Xiami(val context: Context) : MusicSource {
                     if (trackList.length() > 0) {
                         val track = trackList.getJSONObject(0)
                         if (TextUtils.isEmpty(song.listenFileUrl)) {
-                            song.listenFileUrl = getListenUrlFromLocation(track.getString("location"))
+                            val fileUrl = getListenUrlFromLocation(track.getString("location"))
+                            song.listenFileUrl = maskUrl(fileUrl)
                         }
 //                        val canFreeListen = track.getJSONObject("purviews").getJSONObject("LISTEN").getString("LOW")
 //                        song.isCanFreeListen = canFreeListen == "FREE"
@@ -346,13 +341,16 @@ internal class Xiami(val context: Context) : MusicSource {
 //                        song.isCanFreeDownload = canFreeDownload == "FREE"
                         song.length = track.getInt("length")
                         try {
-                            song.lyricUrl = track.getString("lyric_url")
+                            val lyricUrl = track.getString("lyric_url")
+                            song.lyricUrl = maskUrl(lyricUrl)
                             LogUtil.d(TAG, "lyric:${song.lyricUrl}")
                         } catch (e: JSONException) {
                             song.lyricUrl = ""
                         }
-                        song.albumCoverUrl = track.getString("album_pic")
-                        song.miniAlbumCoverUrl = track.getString("pic")
+                        song.albumCoverUrl = maskUrl(track.getString("album_pic"))
+//                        LogUtil.e("url",song.albumCoverUrl)
+                        song.miniAlbumCoverUrl = maskUrl(track.getString("pic"))
+//                        LogUtil.e("url",song.miniAlbumCoverUrl)
                         song.albumName = track.getString("album_name")
                         song.albumId = track.getLong("album_id")
                         song.artistName = track.getString("artist")
@@ -802,6 +800,14 @@ internal class Xiami(val context: Context) : MusicSource {
             }
         })
 
+    }
+
+    fun maskUrl(url: String): String {
+        return if (url.startsWith("//")) {
+            "https:$url"
+        } else {
+            url
+        }
     }
 
     private fun parseRankingSongs(document: Document): List<Song> {
