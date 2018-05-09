@@ -19,14 +19,14 @@ import butterknife.OnClick
 import butterknife.Unbinder
 import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.bean.SearchHistory
-import com.example.wenhai.listenall.data.bean.SearchHistoryDao
+import com.example.wenhai.listenall.data.bean.SearchHistory_
 import com.example.wenhai.listenall.data.bean.Song
 import com.example.wenhai.listenall.ext.hide
 import com.example.wenhai.listenall.ext.show
 import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.main.MainFragment
 import com.example.wenhai.listenall.module.play.service.PlayProxy
-import com.example.wenhai.listenall.utils.DAOUtil
+import com.example.wenhai.listenall.utils.BoxUtil
 
 class SearchFragment : Fragment(), SearchContract.View {
 
@@ -99,17 +99,15 @@ class SearchFragment : Fragment(), SearchContract.View {
     }
 
     private fun saveSearchHistory(keyword: String) {
-        val dao = DAOUtil.getSession(context!!).searchHistoryDao
-        val queryResult = dao.queryBuilder()
-                .where(SearchHistoryDao.Properties.Keyword.eq(keyword))
-                .list()
+        val box = BoxUtil.getBoxStore(context!!).boxFor(SearchHistory::class.java)
+        val queryResult = box.query().equal(SearchHistory_.keyword, keyword).build().find()
         if (queryResult.size > 0) {
             val searchHistory = queryResult[0]
             searchHistory.searchTime = System.currentTimeMillis()
-            dao.update(searchHistory)
+            box.put(searchHistory)
         } else {
             val newSearch = SearchHistory(null, keyword, System.currentTimeMillis())
-            dao.insert(newSearch)
+            box.put(newSearch)
         }
     }
 
@@ -117,12 +115,9 @@ class SearchFragment : Fragment(), SearchContract.View {
         currentContent = CONTENT_SEARCH_HISTORY
 //        mHotSearch.show()
         mSearchView.hide()
-        val dao = DAOUtil.getSession(context!!).searchHistoryDao
-        val query = dao.queryBuilder()
-                .where(SearchHistoryDao.Properties.Keyword.notEq(""))
-                .orderDesc(SearchHistoryDao.Properties.SearchTime)
-                .build()
-        val searchHistory = query.list()
+        val box = BoxUtil.getBoxStore(context!!).boxFor(SearchHistory::class.java)
+        val searchHistory = box.query().notEqual(SearchHistory_.keyword, "").orderDesc(SearchHistory_.searchTime)
+                .build().find()
         if (mContentList.adapter is SearchHistoryAdapter) {
             (mContentList.adapter as SearchHistoryAdapter).setData(searchHistory)
         } else {
@@ -249,7 +244,7 @@ class SearchFragment : Fragment(), SearchContract.View {
             val searchHistory = history[position]
             holder.historyKeyword.text = searchHistory.keyword
             holder.deleteHistory.setOnClickListener {
-                DAOUtil.getSession(context!!).searchHistoryDao.delete(searchHistory)
+                BoxUtil.getBoxStore(context!!).boxFor(SearchHistory::class.java).remove(searchHistory)
                 showSearchHistory()
             }
             holder.item.setOnClickListener {
