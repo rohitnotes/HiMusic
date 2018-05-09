@@ -169,6 +169,7 @@ class PlayService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
             if (bundle.getInt(OkHttpUtil.ARG_NETWORK_STATE) == OkHttpUtil.NETWORK_AVAILABLE) {
                 mediaPlayer.reset()
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
+                LogUtil.e("fileUrl", song.listenFileUrl)
                 mediaPlayer.setDataSource(song.listenFileUrl)
                 mediaPlayer.prepareAsync()
                 playStatus.currentSong = song

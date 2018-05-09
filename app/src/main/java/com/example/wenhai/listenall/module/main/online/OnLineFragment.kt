@@ -308,6 +308,7 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
             val cover = itemView.findViewById<ImageView>(R.id.main_iv_hot_collect_cover)
             val title = itemView.findViewById<TextView>(R.id.main_tv_hot_collect_title)
             val collect = hotCollects[position]
+            LogUtil.d("glide", collect.coverUrl)
             GlideApp.with(context).load(collect.coverUrl).placeholder(R.drawable.ic_main_all_music)
                     .into(cover)
             title.text = collect.title
@@ -330,6 +331,7 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
             val title = itemView.findViewById<TextView>(R.id.main_tv_new_album_title)
             val artist = itemView.findViewById<TextView>(R.id.main_tv_new_album_artist)
             val album = newAlbums[position]
+            LogUtil.d("glide", album.coverUrl)
             GlideApp.with(context).load(album.coverUrl).placeholder(R.drawable.ic_main_all_music)
                     .into(cover)
             title.text = album.title
