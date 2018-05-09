@@ -15,13 +15,14 @@ import butterknife.Unbinder
 import com.example.wenhai.listenall.BuildConfig
 import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.bean.Collect
-import com.example.wenhai.listenall.data.bean.CollectDao
+import com.example.wenhai.listenall.data.bean.Collect_
 import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongs
 import com.example.wenhai.listenall.data.bean.Song
-import com.example.wenhai.listenall.data.bean.SongDao
+import com.example.wenhai.listenall.data.bean.Song_
 import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.detail.DetailFragment
-import com.example.wenhai.listenall.utils.DAOUtil
+import com.example.wenhai.listenall.utils.BoxUtil
+import io.objectbox.Box
 
 class EditCollectActivity : AppCompatActivity() {
 
@@ -61,8 +62,8 @@ class EditCollectActivity : AppCompatActivity() {
 
 
     private fun loadCollect() {
-        val collectDao = DAOUtil.getSession(this).collectDao
-        mCollect = collectDao.queryBuilder().where(CollectDao.Properties.Id.eq(collectId)).unique()
+        val collectBox = BoxUtil.getBoxStore(this).boxFor(Collect::class.java)
+        mCollect = collectBox.query().equal(Collect_.id, collectId).build().findUnique()
         collectTitle.setText(mCollect?.title)
         collectIntro.setText(mCollect?.desc)
         //todo:显示封面
@@ -92,14 +93,15 @@ class EditCollectActivity : AppCompatActivity() {
     private fun saveCollect() {
         val title = collectTitle.text.toString()
         val intro = collectIntro.text.toString()
-        val collectDao = DAOUtil.getSession(this).collectDao
-        val existCollect = collectDao.queryBuilder().where(CollectDao.Properties.Title.eq(title)).unique()
+//        val collectDao = BoxUtil.getSession(this).collectDao
+        val collectBox = BoxUtil.getBoxStore(this).boxFor(Collect::class.java)
+        val existCollect = collectBox.query().equal(Collect_.title, title).build().findUnique()
         //名称不重复时保存歌单
         if (action == ACTION_CREATE && existCollect == null) {
-            insertCollect(title, intro, collectDao)
+            insertCollect(title, intro, collectBox)
             finish()
         } else if (action == ACTION_UPDATE && (existCollect == null || existCollect.id == mCollect?.id)) {
-            updateCollect(title, intro, collectDao)
+            updateCollect(title, intro, collectBox)
             setResult(DetailFragment.RESULT_UPDATED)
             finish()
         } else {
@@ -107,7 +109,8 @@ class EditCollectActivity : AppCompatActivity() {
         }
     }
 
-    private fun insertCollect(title: String, intro: String, collectDao: CollectDao) {
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+    private fun insertCollect(title: String, intro: String, collectBox: Box<Collect>) {
         mCollect = Collect()
         mCollect?.isFromUser = true
         //为了和网络加载的时间保持格式统一
@@ -115,7 +118,7 @@ class EditCollectActivity : AppCompatActivity() {
         mCollect?.updateDate = System.currentTimeMillis() / 1000
         mCollect?.title = title
         mCollect?.desc = intro
-        val collectId = collectDao.insert(mCollect)
+        val collectId = collectBox.put(mCollect)
         if (collectId > 0) {
             if (intent.hasExtra("song")) {
                 addSongToCollect(collectId)
@@ -127,10 +130,11 @@ class EditCollectActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateCollect(title: String, intro: String, collectDao: CollectDao) {
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+    private fun updateCollect(title: String, intro: String, collectBox: Box<Collect>) {
         mCollect?.title = title
         mCollect?.desc = intro
-        collectDao.update(mCollect)
+        collectBox.put(mCollect)
     }
 
     private fun addSongToCollect(collectId: Long) {
@@ -138,9 +142,9 @@ class EditCollectActivity : AppCompatActivity() {
         //添加歌曲到数据库，并获取歌曲在数据库中的id
         val songId = saveSongToDB(song)
         //添加关系到数据库
-        val dao = DAOUtil.getSession(this).joinCollectsWithSongsDao
+        val relationBox = BoxUtil.getBoxStore(this).boxFor(JoinCollectsWithSongs::class.java)
         val relation = JoinCollectsWithSongs.newRecord(songId, collectId)
-        if (dao.insert(relation) > 0) {
+        if (relationBox.put(relation) > 0) {
             showToast("添加成功")
             //刷新数据，防止缓存导致的数据不更新
         } else {
@@ -149,12 +153,12 @@ class EditCollectActivity : AppCompatActivity() {
     }
 
     private fun saveSongToDB(song: Song?): Long {
-        val songDao = DAOUtil.getSession(this).songDao
-        val list = songDao.queryBuilder().where(SongDao.Properties.SongId.eq(song?.songId)).list()
+        val songBox = BoxUtil.getBoxStore(this).boxFor(Song::class.java)
+        val list = songBox.query().equal(Song_.songId, song!!.songId).build().find()
         return if (list.isNotEmpty()) {
             list[0].id
         } else {
-            songDao.insert(song)
+            songBox.put(song)
         }
     }
 
