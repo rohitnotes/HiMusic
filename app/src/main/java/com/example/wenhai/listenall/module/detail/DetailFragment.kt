@@ -21,8 +21,6 @@ import butterknife.Unbinder
 import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.bean.Album
 import com.example.wenhai.listenall.data.bean.Collect
-import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongs
-import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongs_
 import com.example.wenhai.listenall.data.bean.LikedAlbum
 import com.example.wenhai.listenall.data.bean.LikedAlbum_
 import com.example.wenhai.listenall.data.bean.LikedCollect
@@ -287,11 +285,6 @@ class DetailFragment : Fragment(), DetailContract.View {
         val collectId = mCollect.id
         val collectBox = BoxUtil.getBoxStore(context!!).boxFor(Collect::class.java)
         collectBox.remove(collectId)
-        val relationBox = BoxUtil.getBoxStore(context!!).boxFor(JoinCollectsWithSongs::class.java)
-        val relationList = relationBox.query().equal(JoinCollectsWithSongs_.collectId, collectId)
-                .build()
-                .find()
-        relationBox.remove(relationList)
     }
 
     override fun setPresenter(presenter: DetailContract.Presenter) {
@@ -437,17 +430,8 @@ class DetailFragment : Fragment(), DetailContract.View {
                 if (mLoadType == DetailContract.LoadType.COLLECT && isCollectFromUser) {
                     dialog.showDelete = true
                     dialog.deleteListener = View.OnClickListener {
-                        val relationBox = BoxUtil.getBoxStore(context).boxFor(JoinCollectsWithSongs::class.java)
-                        val record = relationBox.query().equal(JoinCollectsWithSongs_.collectId, mCollect.id)
-                                .and()
-                                .equal(JoinCollectsWithSongs_.songId, song.id)
-                                .build()
-                                .findUnique()
-                        if (record != null) {
-                            relationBox.remove(record)
-                        }
-                        //todo:更新歌单歌曲
-//                        mCollect.resetSongs()
+                        mCollect.songs.remove(song)
+                        BoxUtil.getBoxStore(context).boxFor(Collect::class.java).put(mCollect)
                         setData(mCollect.songs)
                     }
                 }

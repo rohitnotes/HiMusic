@@ -62,7 +62,7 @@ public class Collect implements Parcelable {
         playTimes = in.readInt();
         createDate = in.readLong();
         updateDate = in.readLong();
-//        songs = in.createTypedArrayList(Song.CREATOR);
+        songs.addAll(in.createTypedArrayList(Song.CREATOR));
         isFromUser = in.readInt() == 1;
     }
 
@@ -208,7 +208,7 @@ public class Collect implements Parcelable {
         parcel.writeInt(playTimes);
         parcel.writeLong(createDate);
         parcel.writeLong(updateDate);
-//        parcel.writeTypedList(songs);
+        parcel.writeTypedList(songs);
         parcel.writeInt(isFromUser ? 1 : 0);
     }
 

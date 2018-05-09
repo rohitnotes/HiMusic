@@ -14,10 +14,7 @@ import butterknife.BindView
 import butterknife.OnClick
 import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.bean.Collect
-import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongs
-import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongs_
 import com.example.wenhai.listenall.data.bean.Song
-import com.example.wenhai.listenall.data.bean.Song_
 import com.example.wenhai.listenall.ext.hide
 import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.main.local.EditCollectActivity
@@ -84,41 +81,26 @@ class SelectCollectDialog(context: Context) : BaseBottomDialog(context) {
 
         }
 
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         private fun saveNewRelationRecord(collect: Collect) {
-            //添加歌曲到数据库，并获取歌曲在数据库中的id
-            val songId = saveSongToDB(song)
-            //添加关系到数据库
             val collectId = collect.id
-            val box = BoxUtil.getBoxStore(context).boxFor(JoinCollectsWithSongs::class.java)
-            val result = box.query().equal(JoinCollectsWithSongs_.songId, songId)
-                    .and()
-                    .equal(JoinCollectsWithSongs_.collectId, collectId)
-                    .build().findUnique()
-            if (result == null) {
-                val relation = JoinCollectsWithSongs.newRecord(songId, collectId)
-                if (box.put(relation) > 0) {
+            val box = BoxUtil.getBoxStore(context).boxFor(Collect::class.java)
+            val result = box.get(collectId)
+
+            if (result.songs.contains(song)) {
+                context.showToast("歌曲已存在")
+            } else {
+                result.songs.add(song)
+                if (box.put(result) > 0) {
                     context.showToast("添加成功")
                     //更新歌单修改时间
                     collect.updateDate = System.currentTimeMillis() / 1000
-                    BoxUtil.getBoxStore(context).boxFor(Collect::class.java).put(collect)
+                    box.put(collect)
                     //todo:刷新数据，防止缓存导致的数据不更新
 //                    collect.resetSongs()
                 } else {
                     context.showToast("添加失败")
                 }
-            } else {
-                context.showToast("歌曲已存在")
-            }
-        }
-
-        private fun saveSongToDB(song: Song?): Long {
-            val songBox = BoxUtil.getBoxStore(context).boxFor(Song::class.java)
-            val record = songBox.query().equal(Song_.songId, song!!.songId)
-                    .build().findFirst()
-            return if (record != null) {
-                record.id
-            } else {
-                songBox.put(song)
             }
         }
 

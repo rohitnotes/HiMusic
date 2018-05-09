@@ -69,26 +69,6 @@
       ]
     },
     {
-      "id": "2:4919111889169369214",
-      "lastPropertyId": "3:872152304607061796",
-      "name": "JoinCollectsWithSongs",
-      "properties": [
-        {
-          "id": "1:1498417419431132169",
-          "name": "id"
-        },
-        {
-          "id": "2:5219772533918682440",
-          "name": "songId"
-        },
-        {
-          "id": "3:872152304607061796",
-          "name": "collectId"
-        }
-      ],
-      "relations": []
-    },
-    {
       "id": "3:7440469284951551323",
       "lastPropertyId": "14:3894887719043270792",
       "name": "LikedAlbum",
@@ -427,9 +407,15 @@
   "lastSequenceId": "0:0",
   "modelVersion": 4,
   "modelVersionParserMinimum": 4,
-  "retiredEntityUids": [],
+  "retiredEntityUids": [
+    4919111889169369214
+  ],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    1498417419431132169,
+    5219772533918682440,
+    872152304607061796
+  ],
   "retiredRelationUids": [],
   "version": 1
 }

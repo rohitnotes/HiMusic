@@ -16,9 +16,7 @@ import com.example.wenhai.listenall.BuildConfig
 import com.example.wenhai.listenall.R
 import com.example.wenhai.listenall.data.bean.Collect
 import com.example.wenhai.listenall.data.bean.Collect_
-import com.example.wenhai.listenall.data.bean.JoinCollectsWithSongs
 import com.example.wenhai.listenall.data.bean.Song
-import com.example.wenhai.listenall.data.bean.Song_
 import com.example.wenhai.listenall.ext.showToast
 import com.example.wenhai.listenall.module.detail.DetailFragment
 import com.example.wenhai.listenall.utils.BoxUtil
@@ -121,7 +119,7 @@ class EditCollectActivity : AppCompatActivity() {
         val collectId = collectBox.put(mCollect)
         if (collectId > 0) {
             if (intent.hasExtra("song")) {
-                addSongToCollect(collectId)
+                addSongToCollect(mCollect!!)
             }
             setResult(LocalFragment.RESULT_COLLECT_CREATED)
             finish()
@@ -137,28 +135,15 @@ class EditCollectActivity : AppCompatActivity() {
         collectBox.put(mCollect)
     }
 
-    private fun addSongToCollect(collectId: Long) {
+    private fun addSongToCollect(collect: Collect) {
         val song = intent.getSerializableExtra("song") as Song
-        //添加歌曲到数据库，并获取歌曲在数据库中的id
-        val songId = saveSongToDB(song)
-        //添加关系到数据库
-        val relationBox = BoxUtil.getBoxStore(this).boxFor(JoinCollectsWithSongs::class.java)
-        val relation = JoinCollectsWithSongs.newRecord(songId, collectId)
-        if (relationBox.put(relation) > 0) {
+        collect.songs.add(song)
+        val collectBox = BoxUtil.getBoxStore(this).boxFor(Collect::class.java)
+        if (collectBox.put(collect) > 0) {
             showToast("添加成功")
             //刷新数据，防止缓存导致的数据不更新
         } else {
             showToast("添加失败")
-        }
-    }
-
-    private fun saveSongToDB(song: Song?): Long {
-        val songBox = BoxUtil.getBoxStore(this).boxFor(Song::class.java)
-        val list = songBox.query().equal(Song_.songId, song!!.songId).build().find()
-        return if (list.isNotEmpty()) {
-            list[0].id
-        } else {
-            songBox.put(song)
         }
     }
 
