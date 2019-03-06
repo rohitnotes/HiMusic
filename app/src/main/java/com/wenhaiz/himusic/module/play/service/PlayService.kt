@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
 import android.text.TextUtils
@@ -26,12 +27,6 @@ import java.util.Random
 import java.util.Timer
 import java.util.TimerTask
 import kotlin.collections.ArrayList
-import kotlin.collections.List
-import kotlin.collections.filterNot
-import kotlin.collections.first
-import kotlin.collections.firstOrNull
-import kotlin.collections.forEach
-import kotlin.collections.indexOf
 
 class PlayService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnCompletionListener,
@@ -145,17 +140,22 @@ class PlayService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
 
         //如果歌曲播放url为空，那么通过网络加载歌曲播放地址后进行播放；否则直接播放歌曲
         if (TextUtils.isEmpty(newPlaySong.listenFileUrl)) {
-            musicRepository.loadSongDetail(newSong, object : LoadSongDetailCallback {
+            musicRepository.loadSongDetail(newPlaySong, object : LoadSongDetailCallback {
+                override fun onSuccess(loadedSong: Song) {
+                    newPlaySong = loadedSong
+                    if (!TextUtils.isEmpty(newPlaySong.listenFileUrl)) {
+                        setSongAndPrepareAsync(newPlaySong)
+                    } else {
+                        notifyPlayStatusChanged(STATUS_ERROR, "歌曲无法播放，可能需要付费。")
+                    }
+                }
+
                 override fun onStart() {
 
                 }
 
                 override fun onFailure(msg: String) {
                     notifyPlayStatusChanged(STATUS_INFO, msg)
-                }
-
-                override fun onSuccess(loadedSong: Song) {
-                    setSongAndPrepareAsync(loadedSong)
                 }
 
             })
@@ -175,9 +175,9 @@ class PlayService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
             //网络可用，进行设置
             if (bundle.getInt(OkHttpUtil.ARG_NETWORK_STATE) == OkHttpUtil.NETWORK_AVAILABLE) {
                 mediaPlayer.reset()
+                LogUtil.d("listenFileUrl", song.listenFileUrl)
+                mediaPlayer.setDataSource(this,Uri.parse(song.listenFileUrl))
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
-                LogUtil.e("fileUrl", song.listenFileUrl)
-                mediaPlayer.setDataSource(song.listenFileUrl)
                 mediaPlayer.prepareAsync()
                 playStatus.currentSong = song
                 notifyPlayStatusChanged(STATUS_NEW_SONG, song)
@@ -204,6 +204,7 @@ class PlayService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
      * 设置播放歌曲准备完成时回调
      */
     override fun onPrepared(player: MediaPlayer?) {
+        LogUtil.d(TAG,"onPrepared")
         //第一次启动，并且 playStatus 是从文件中读取的
         //只定位不播放
         if (isFirstStart) {
@@ -265,6 +266,7 @@ class PlayService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
 
 
     fun start() {
+        LogUtil.d(TAG,"start")
         if (playStatus.currentSong == null) {
             notifyPlayStatusChanged(STATUS_INFO, "当前没有歌曲播放")
         } else if (!mediaPlayer.isPlaying) {
@@ -324,7 +326,7 @@ class PlayService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
                 "文件不符合编码格式"
             }
             else -> {
-                ""
+                "error what = $what,extra = $extra"
             }
         }
         notifyPlayStatusChanged(STATUS_ERROR, msg)

@@ -3,7 +3,6 @@ package com.wenhaiz.himusic.module.artist.detail
 import com.wenhaiz.himusic.data.LoadArtistAlbumsCallback
 import com.wenhaiz.himusic.data.LoadArtistDetailCallback
 import com.wenhaiz.himusic.data.LoadArtistHotSongsCallback
-import com.wenhaiz.himusic.data.LoadSongDetailCallback
 import com.wenhaiz.himusic.data.MusicRepository
 import com.wenhaiz.himusic.data.bean.Album
 import com.wenhaiz.himusic.data.bean.Artist
@@ -76,18 +75,18 @@ internal class ArtistDetailPresenter(val view: ArtistDetailContract.View) : Arti
     }
 
     override fun loadSongDetail(song: Song) {
-        musicRepository.loadSongDetail(song, object : LoadSongDetailCallback {
-            override fun onStart() {
-            }
-
-            override fun onFailure(msg: String) {
-                view.onFailure("当前歌曲无法播放")
-            }
-
-            override fun onSuccess(loadedSong: Song) {
-                view.onSongDetailLoaded(loadedSong)
-            }
-        })
+//        musicRepository.loadSongDetails(song, object : LoadSongDetailCallback {
+//            override fun onStart() {
+//            }
+//
+//            override fun onFailure(msg: String) {
+//                view.onFailure("当前歌曲无法播放")
+//            }
+//
+//            override fun onSuccess(loadedSong: Song) {
+//                view.onSongDetailLoaded(loadedSong)
+//            }
+//        })
     }
 
 }

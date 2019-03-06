@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.wenhaiz.himusic.MyApp;
 import com.wenhaiz.himusic.R;
+import com.wenhaiz.himusic.http.data.BaseData;
 import com.wenhaiz.himusic.http.data.BaseResultData;
 import com.wenhaiz.himusic.http.request.BaseRequest;
 
@@ -26,7 +27,7 @@ public abstract class HttpCallback<T> {
 
     private BaseRequest request;
 
-    public HttpCallback(BaseRequest request) {
+    protected HttpCallback(BaseRequest request) {
         this.request = request;
     }
 
@@ -36,6 +37,7 @@ public abstract class HttpCallback<T> {
     private static final Handler sMainHandler = new Handler(Looper.getMainLooper());
 
 
+    @SuppressWarnings("unchecked")
     void onHttpResponse(Response response) {
         if (response.isSuccessful()) {
             try {
@@ -55,6 +57,8 @@ public abstract class HttpCallback<T> {
                 try {
                     o = gson.fromJson(bodyString, getType());
                 } catch (Exception e) {
+                    e.printStackTrace();
+                    onHttpFailure(ErrorCode.WRONG_FORMAT, MyApp.getAppContext().getString(R.string.error_json));
                     sMainHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -64,29 +68,37 @@ public abstract class HttpCallback<T> {
                     return;
                 }
 
-                if (!(o instanceof BaseResultData)) {
+
+                if (!(o instanceof BaseData) && !(o instanceof BaseResultData)) {
                     onHttpFailure(ErrorCode.WRONG_FORMAT, MyApp.getAppContext().getString(R.string.http_wrong_format));
                     return;
                 }
 
-                BaseResultData data = ((BaseResultData) o);
-                if ("SG_TOKEN_EMPTY".equals(data.getCode())||"SG_INVALID".equals(data.getCode()) || "SG_TOKEN_EXPIRED".equals(data.getCode())) {
-                    onTokenInvalid();
-                    failedRequestBecauseToken.add(this.request);
-                    return;
-                }
+                T t;
 
-                final T t = (T) data.getResultData().getData();
-                if (t == null) {
-                    onHttpFailure(data.getCode(), MyApp.getAppContext().getString(R.string.null_data));
-                    return;
+                if (o instanceof BaseResultData) {
+                    BaseResultData data = ((BaseResultData) o);
+                    if ("SG_TOKEN_EMPTY".equals(data.getCode()) || "SG_INVALID".equals(data.getCode()) || "SG_TOKEN_EXPIRED".equals(data.getCode())) {
+                        onTokenInvalid();
+                        failedRequestBecauseToken.add(this.request);
+                        return;
+                    }
+                    if (data.getResultData().getData() == null) {
+                        onHttpFailure(data.getCode(), MyApp.getAppContext().getString(R.string.null_data));
+                        return;
+                    }
+                    t = (T) data.getResultData().getData();
+                } else {
+                    t = (T) o;
                 }
+                final T result = t;
                 sMainHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        onHttpSuccess(t);
+                        onHttpSuccess(result);
                     }
                 });
+
             } catch (IOException e) {
                 e.printStackTrace();
                 onHttpFailure(response.code() + "", e.getLocalizedMessage());

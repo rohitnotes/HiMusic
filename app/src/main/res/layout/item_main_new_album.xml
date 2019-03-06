@@ -23,7 +23,7 @@
         android:maxLines="1"
         android:text="模特"
         android:textColor="@color/colorBlack"
-        android:textSize="14sp"
+        android:textSize="13sp"
         tools:ignore="HardcodedText" />
 
     <TextView

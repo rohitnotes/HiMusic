@@ -29,6 +29,7 @@ import com.wenhaiz.himusic.data.bean.Song
 import com.wenhaiz.himusic.ext.hide
 import com.wenhaiz.himusic.ext.show
 import com.wenhaiz.himusic.ext.showToast
+import com.wenhaiz.himusic.http.data.CollectDetail
 import com.wenhaiz.himusic.module.main.MainActivity
 import com.wenhaiz.himusic.module.main.local.EditCollectActivity
 import com.wenhaiz.himusic.module.main.local.LocalFragment
@@ -76,7 +77,8 @@ class DetailFragment : Fragment(), DetailContract.View {
     private lateinit var mLoadType: DetailContract.LoadType
 
     private lateinit var mAlbum: Album
-    private lateinit var mCollect: Collect
+    private lateinit var mCollect: CollectDetail
+    private lateinit var collectInfo: CollectDetail.Detail
     private var isCollectFromUser: Boolean = false
     var localFragment: LocalFragment? = null
 
@@ -116,7 +118,7 @@ class DetailFragment : Fragment(), DetailContract.View {
 
         }
 
-        mSongListAdapter = SongListAdapter(context!!, ArrayList())
+        mSongListAdapter = SongListAdapter(context!!)
         mSongList.layoutManager = LinearLayoutManager(context)
         mSongList.adapter = mSongListAdapter
         loadDetail()
@@ -146,7 +148,7 @@ class DetailFragment : Fragment(), DetailContract.View {
             }
             DetailContract.LoadType.SONG -> {//歌曲
                 val id = arguments!!.getLong(DetailContract.ARGS_ID)
-                mPresenter.loadSongDetail(id)
+//                mPresenter.loadSongDetail(id)
             }
         }
     }
@@ -210,10 +212,10 @@ class DetailFragment : Fragment(), DetailContract.View {
                 collectBox.remove(likedCollect)
                 context!!.showToast(R.string.unliked)
             } else {
-                likedCollect = LikedCollect(mCollect)
-                collectBox.put(likedCollect)
-                liked = true
-                context!!.showToast(R.string.liked)
+//                likedCollect = LikedCollect(mCollect)
+//                collectBox.put(likedCollect)
+//                liked = true
+//                context!!.showToast(R.string.liked)
             }
             setLikedIcon(liked)
         }
@@ -236,9 +238,9 @@ class DetailFragment : Fragment(), DetailContract.View {
     private fun isCurCollectLiked(): LikedCollect? {
         var likedCollect: LikedCollect? = null
         val collectBox = BoxUtil.getBoxStore(context!!).boxFor(LikedCollect::class.java)
-        val list = collectBox.query().equal(LikedCollect_.collectId, mCollect.collectId)
+        val list = collectBox.query().equal(LikedCollect_.collectId, collectInfo.listId)
                 .and()
-                .equal(LikedCollect_.providerName, mCollect.source.name)
+                .equal(LikedCollect_.providerName, collectInfo.source.name)
                 .build()
                 .find()
         if (list.size > 0) {
@@ -277,12 +279,12 @@ class DetailFragment : Fragment(), DetailContract.View {
     private fun editCurCollect() {
         val intent = Intent(context, EditCollectActivity::class.java)
         intent.action = EditCollectActivity.ACTION_UPDATE
-        intent.putExtra("collectId", mCollect.id)
+        intent.putExtra("collectId", collectInfo.listId)
         startActivityForResult(intent, REQUEST_UPDATE)
     }
 
     private fun deleteCurCollect() {
-        val collectId = mCollect.id
+        val collectId = collectInfo.listId
         val collectBox = BoxUtil.getBoxStore(context!!).boxFor(Collect::class.java)
         collectBox.remove(collectId)
     }
@@ -301,25 +303,28 @@ class DetailFragment : Fragment(), DetailContract.View {
         mSongList.hide()
     }
 
-    override fun onCollectDetailLoad(collect: Collect) {
-        activity!!.runOnUiThread({
-            mCollect = collect
-            mTitle.text = collect.title
+    override fun onCollectDetailLoad(collect: CollectDetail) {
+        mCollect = collect
+        if (collect.detail == null) {
+            return
+        }
+
+        collectInfo = collect.detail!!
+        mTitle.text = collectInfo.collectName
             mArtist.hide()
-            GlideApp.with(context).load(collect.coverUrl)
+        GlideApp.with(context).load(collectInfo.collectLogo)
                     .placeholder(R.drawable.ic_main_all_music)
-                    .into(mCover)
-            val displayDate = "更新时间：${getDate(collect.updateDate)}"
-            mDate.text = displayDate
-            mSongListAdapter.setData(collect.songs)
+                .into(mCover)
+        val displayDate = "更新时间：${getDate(collectInfo.gmtModify / 1000)}"
+        mDate.text = displayDate
+        mSongListAdapter.setData(collect.songs)
 
-            mLoading.hide()
-            mSongList.show()
+        mLoading.hide()
+        mSongList.show()
 
-            if (!isCollectFromUser && isCurCollectLiked() != null) {
-                setLikedIcon(true)
-            }
-        })
+        if (!isCollectFromUser && isCurCollectLiked() != null) {
+            setLikedIcon(true)
+        }
     }
 
     override fun onGlobalRankingLoad(collect: Collect) {
@@ -367,11 +372,9 @@ class DetailFragment : Fragment(), DetailContract.View {
     }
 
     override fun onFailure(msg: String) {
-        activity!!.runOnUiThread {
             mLoading.hide()
             mLoadFailed.show()
             context!!.showToast(msg)
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -394,7 +397,8 @@ class DetailFragment : Fragment(), DetailContract.View {
         const val RESULT_UPDATED = 0x01
     }
 
-    inner class SongListAdapter(val context: Context, var songList: List<Song>) : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
+    inner class SongListAdapter(val context: Context, var songList: ArrayList<Song> = ArrayList())
+        : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_detail_song_list, parent, false)
@@ -422,17 +426,17 @@ class DetailFragment : Fragment(), DetailContract.View {
                         }
                     }
             holder.artistAlbum.text = displayArtistName
-            holder.item.setOnClickListener({
+            holder.item.setOnClickListener {
                 playSong(song)
-            })
+            }
             holder.opration.setOnClickListener {
                 val dialog = SongOpsDialog(context, song, activity!!)
                 if (mLoadType == DetailContract.LoadType.COLLECT && isCollectFromUser) {
                     dialog.showDelete = true
                     dialog.deleteListener = View.OnClickListener {
-                        mCollect.songs.remove(song)
-                        BoxUtil.getBoxStore(context).boxFor(Collect::class.java).put(mCollect)
-                        setData(mCollect.songs)
+                        //                        mCollect.songs.remove(song)
+//                        BoxUtil.getBoxStore(context).boxFor(Collect::class.java).put(mCollect)
+//                        setData(mCollect.songs)
                     }
                 }
                 dialog.show()
@@ -442,7 +446,11 @@ class DetailFragment : Fragment(), DetailContract.View {
         override fun getItemCount(): Int = songList.size
 
         fun setData(songList: List<Song>) {
-            this.songList = songList
+            if (songList.isEmpty()) {
+                return
+            }
+            this.songList.clear()
+            this.songList.addAll(songList)
             notifyDataSetChanged()
         }
 

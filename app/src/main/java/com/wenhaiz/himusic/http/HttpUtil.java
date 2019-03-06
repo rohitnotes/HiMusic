@@ -36,7 +36,7 @@ public class HttpUtil {
     static final String SP_COOKIES = "cookies_share";
 
     private static final MediaType MEDIA_JSON = MediaType.parse("application/json; charset=utf-8");
-    private static HashMap<String, String> sHeaders = new HashMap<>();
+    public static HashMap<String, String> sHeaders = new HashMap<>();
 
     static {
         sHeaders.put("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) " +

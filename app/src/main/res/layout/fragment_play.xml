@@ -51,6 +51,7 @@
 
     <!--indicator-->
     <LinearLayout
+        android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal">
@@ -83,6 +84,7 @@
 
         <!--seek bar-->
         <LinearLayout
+            android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -120,6 +122,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:gravity="center"
+            android:layout_marginBottom="10dp"
             android:orientation="horizontal">
             <!--play mode-->
             <ImageButton

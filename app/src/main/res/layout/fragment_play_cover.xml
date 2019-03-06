@@ -3,7 +3,9 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:paddingTop="5dp"
+    android:paddingBottom="20dp">
 
     <!--artist name-->
     <LinearLayout
@@ -26,7 +28,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:ellipsize="marquee"
-            android:maxLines="1"
+            android:singleLine="true"
             android:maxWidth="190dp"
             android:text="John Mayer"
             android:textColor="@color/colorBlack"
@@ -41,6 +43,8 @@
 
     <!--cover-->
     <LinearLayout
+        android:layout_above="@+id/play_ll_operation"
+        android:orientation="vertical"
         android:id="@+id/play_ll_cover"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -51,42 +55,43 @@
 
         <ImageView
             android:id="@+id/play_cover"
-            android:layout_width="265dp"
-            android:layout_height="265dp"
+            android:layout_width="275dp"
+            android:layout_height="275dp"
             android:background="@drawable/bg_cover"
             android:padding="1dp"
             android:scaleType="centerCrop"
             tools:ignore="ContentDescription"/>
+
+        <!--provider-->
+        <LinearLayout
+            android:id="@+id/play_ll_provider"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_below="@+id/play_ll_cover"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="Provided by "
+                android:textColor="@color/colorGray"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/play_provider"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="3dp"
+                android:gravity="center_horizontal"
+                android:text="虾米音乐"
+                android:textColor="@color/colorBlack" />
+        </LinearLayout>
     </LinearLayout>
 
-    <!--provider-->
-    <LinearLayout
-        android:id="@+id/play_ll_provider"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/play_ll_cover"
-        android:layout_marginTop="25dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="Provided by "
-            android:textColor="@color/colorGray"
-            android:textSize="12sp"/>
-
-        <TextView
-            android:id="@+id/play_provider"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
-            android:gravity="center_horizontal"
-            android:text="虾米音乐"
-            android:textColor="@color/colorBlack"/>
-    </LinearLayout>
 
     <!--operation-->
     <LinearLayout
@@ -94,8 +99,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@id/play_ll_provider"
         android:gravity="center"
         android:orientation="horizontal">
 

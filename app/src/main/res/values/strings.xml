@@ -68,6 +68,11 @@
     <string name="create_collect">新建歌单</string>
     <string name="edit_collect">编辑歌单信息</string>
     <string name="player_error">播放器出现错误，请重新选择歌曲。</string>
+    <string name="null_data">Error:Null data</string>
+    <string name="http_empty_response">响应体为空</string>
+    <string name="http_frequency_request">请求过于频繁，请稍后再试吧！</string>
+    <string name="http_wrong_format">不能反序列化成对应格式</string>
+    <string name="error_json">Json 解析出错啦！</string>
 
     <!--filter category-->
     <array name="filter_language">

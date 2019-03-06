@@ -3,6 +3,7 @@ package com.wenhaiz.himusic.data.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
 import com.wenhaiz.himusic.data.MusicProvider;
 
 import io.objectbox.annotation.Entity;
@@ -32,9 +33,13 @@ public class Collect implements Parcelable {
     public ToMany<Song> songs;
     @Id(assignable = true)
     private Long id;//本地数据库 id
+    @SerializedName("collectName")
     private String title;
+
     private String desc;//简介
+    @SerializedName("listId")
     private long collectId;//歌单 曲库中的 collectId
+    @SerializedName("collectLogo")
     private String coverUrl;//封面 url
     private int coverDrawable;//封面 drawable
     private int songCount;//包含歌曲数量
@@ -42,6 +47,7 @@ public class Collect implements Parcelable {
     @Transient
     private MusicProvider source;//来源
     private String providerName;
+    @SerializedName("playCount")
     private int playTimes;//播放次数
     private long createDate;//创建时间
     private long updateDate;//更新时间

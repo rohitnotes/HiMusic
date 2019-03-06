@@ -6,6 +6,7 @@ import com.wenhaiz.himusic.data.bean.Artist
 import com.wenhaiz.himusic.data.bean.Banner
 import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Song
+import com.wenhaiz.himusic.http.data.CollectDetail
 import com.wenhaiz.himusic.module.ranking.RankingContract
 
 /**
@@ -46,7 +47,7 @@ interface LoadAlbumCallback : BaseCallBack {
 }
 
 interface LoadCollectDetailCallback : BaseCallBack {
-    fun onSuccess(collect: Collect)
+    fun onSuccess(collect: CollectDetail)
 }
 
 interface LoadAlbumDetailCallback : BaseCallBack {

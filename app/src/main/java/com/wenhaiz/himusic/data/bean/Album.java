@@ -1,19 +1,30 @@
 package com.wenhaiz.himusic.data.bean;
 
+import com.google.gson.annotations.SerializedName;
 import com.wenhaiz.himusic.data.MusicProvider;
 
 import java.util.List;
 
 public class Album {
+    @SerializedName("albumName")
     private String title;
     private String desc;//简介
+    @SerializedName("albumId")
     private long id;//专辑 id
+    @SerializedName("albumStringId")
+    private String albumStringID;
+    @SerializedName("artistName")
     private String artist;
+    @SerializedName("artistId")
     private long artistId;
+    @SerializedName("artistStringId")
+    private String artistStringId;
+    @SerializedName("albumLogo")
     private String coverUrl;//封面 url
     private String miniCoverUrl;//封面 url
     private int songNumber;//包含歌曲数量
     private int songDownloadNumber;//已下载歌曲数量
+    @SerializedName("gmtPublish")
     private long publishDate;//发行时间
     private String publishDateStr;
     private MusicProvider supplier;

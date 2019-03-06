@@ -4,12 +4,11 @@ import com.wenhaiz.himusic.MyApp
 import com.wenhaiz.himusic.data.LoadAlbumDetailCallback
 import com.wenhaiz.himusic.data.LoadCollectDetailCallback
 import com.wenhaiz.himusic.data.LoadSingleRankingCallback
-import com.wenhaiz.himusic.data.LoadSongDetailCallback
 import com.wenhaiz.himusic.data.MusicRepository
 import com.wenhaiz.himusic.data.bean.Album
 import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Collect_
-import com.wenhaiz.himusic.data.bean.Song
+import com.wenhaiz.himusic.http.data.CollectDetail
 import com.wenhaiz.himusic.module.ranking.RankingContract
 
 internal class DetailPresenter(val view: DetailContract.View) : DetailContract.Presenter {
@@ -45,7 +44,7 @@ internal class DetailPresenter(val view: DetailContract.View) : DetailContract.P
             if (collect == null) {
                 view.onFailure("没有找到该歌单信息！")
             } else {
-                view.onCollectDetailLoad(collect)
+//                view.onCollectDetailLoad(collect)
             }
 
         } else {
@@ -58,33 +57,13 @@ internal class DetailPresenter(val view: DetailContract.View) : DetailContract.P
                     view.onFailure(msg)
                 }
 
-                override fun onSuccess(collect: Collect) {
+                override fun onSuccess(collect: CollectDetail) {
                     view.onCollectDetailLoad(collect)
                 }
 
             })
         }
 
-    }
-
-    override fun loadSongDetail(id: Long) {
-        val song = Song()
-        song.songId = id
-        musicRepository.loadSongDetail(song, object : LoadSongDetailCallback {
-            override fun onStart() {
-                view.onLoading()
-            }
-
-            override fun onFailure(msg: String) {
-                view.onFailure(msg)
-            }
-
-            override fun onSuccess(loadedSong: Song) {
-                //加载专辑详情
-                loadAlbumDetail(song.albumId)
-            }
-
-        })
     }
 
 
