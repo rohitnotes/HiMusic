@@ -10,7 +10,7 @@
     android:orientation="vertical"
     android:padding="10dp">
 
-    <com.example.wenhai.listenall.widget.LoadingView
+    <com.wenhaiz.himusic.widget.LoadingView
         android:id="@+id/loading_icon"
         android:layout_width="wrap_content"
         android:layout_height="40dp"

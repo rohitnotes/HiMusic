@@ -52,7 +52,7 @@
 
         </LinearLayout>
 
-        <com.example.wenhai.listenall.widget.ProgressImageButton
+        <com.wenhaiz.himusic.widget.ProgressImageButton
             android:id="@+id/play_bar_control"
             android:layout_width="50dp"
             android:layout_height="50dp"

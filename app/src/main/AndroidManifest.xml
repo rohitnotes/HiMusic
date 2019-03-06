@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="com.example.wenhai.listenall">
+          package="com.wenhaiz.himusic">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -12,13 +12,13 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:name=".MyApp"
+        android:name="com.wenhaiz.himusic.MyApp"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
         <!-- 主界面 -->
         <activity
-            android:name=".module.main.MainActivity"
+            android:name="com.wenhaiz.himusic.module.main.MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustPan">
             <intent-filter>
@@ -30,13 +30,13 @@
 
         <!-- 后台音乐播放 Service -->
         <service
-            android:name=".module.play.service.PlayService"
+            android:name="com.wenhaiz.himusic.module.play.service.PlayService"
             android:enabled="true"
             android:exported="false"/>
 
         <!-- 播放界面 -->
-        <activity android:name=".module.play.PLayActivity"/>
-        <activity android:name=".module.main.local.EditCollectActivity">
+        <activity android:name="com.wenhaiz.himusic.module.play.PLayActivity"/>
+        <activity android:name="com.wenhaiz.himusic.module.main.local.EditCollectActivity">
         </activity>
     </application>
 
