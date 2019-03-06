@@ -40,8 +40,7 @@ internal class DetailPresenter(val view: DetailContract.View) : DetailContract.P
     override fun loadCollectDetail(id: Long, isFromUser: Boolean) {
         if (isFromUser) {
             view.onLoading()
-            val app = view.getViewContext().applicationContext as MyApp
-            val collectBox = app.boxStore.boxFor(Collect::class.java)
+            val collectBox = MyApp.getBoxStore().boxFor(Collect::class.java)
             val collect: Collect? = collectBox.query().equal(Collect_.id, id).build().findFirst()
             if (collect == null) {
                 view.onFailure("没有找到该歌单信息！")

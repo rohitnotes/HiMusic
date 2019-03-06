@@ -10,6 +10,6 @@ object BoxUtil {
     const val TAG = "BoxUtil"
 
     fun getBoxStore(context: Context): BoxStore {
-        return (context.applicationContext as MyApp).boxStore
+        return MyApp.getBoxStore()
     }
 }

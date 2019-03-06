@@ -5,12 +5,12 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'io.objectbox'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.wenhaiz.himusic"
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0.0 Preview"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -46,12 +46,14 @@ dependencies {
     implementation "com.jakewharton:butterknife:$butterknife_version"
     kapt "com.jakewharton:butterknife-compiler:$butterknife_version"
     //Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     //refresh
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.3'
     //LyricView
     implementation 'com.wenhaiz:lyricview:1.0.0'
     //DiskLruCache
     implementation 'com.jakewharton:disklrucache:2.0.2'
+    //gson
+    implementation 'com.google.code.gson:gson:2.8.5'
 }
 
