@@ -1,6 +1,6 @@
 <resources>
     <!--app-->
-    <string name="app_name">Listen All</string>
+    <string name="app_name">Hi Music</string>
 
     <!--slide menu-->
     <string name="slide_menu_only_wifi">仅 Wifi 联网</string>
