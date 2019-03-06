@@ -1,13 +1,11 @@
-# Listen All   
+# Hi Music   
+**本软件仅供个人学习研究，请勿作商业用途。** 
+
 ## 简介
-`Listen All` 是一款汇集 QQ 音乐和虾米音乐平台资源的 Android 音乐播放器。   
+`Hi Music` 是一款简单的 Android 音乐播放器，在线音乐资源来自[虾米音乐](https://www.xiami.com). 
+
 项目采用 `MVP` 架构，使用 [Kotlin](https://kotlinlang.org/docs/reference/) 开发。
 
-它来自于一款 `Chrome` 浏览器插件 [Listen 1](https://github.com/listen1/listen1_chrome_extension)，所有的数据接口都是从这个项目中获取的，非常感谢。
-
-本来打算像 `Listen 1` 一样添加 QQ 音乐、虾米音乐和网易云音乐三个平台的资源（这也是为什么叫 Listen All 的原因），但是最近 QQ 音乐与虾米音乐共享版权后，网易云音乐的资源就先待定了。
-
-目前应用只添加了虾米音乐的资源，主要是想先把主要功能做起来，再添加 QQ 音乐的资源。
 应用界面主要借鉴了主流音乐播放器，并添加了一些自己的设计；功能目前实现了大部分，还有小部分功能未做，比如歌曲缓存、下载、歌词显示和自建歌单等，所以目前的版本定为 `V 1.0.0 Preview`.    
 
 应用还有很多不足，我还在继续努力开发和完善中....
@@ -58,6 +56,8 @@
 - 仅 wifi 联网模式
 - 自建歌单
 
+## 致谢  
+[Listen 1](https://github.com/listen1/listen1_chrome_extension)
 
 
 
