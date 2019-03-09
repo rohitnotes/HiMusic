@@ -11,6 +11,8 @@ public class API {
 
         public static final String GET_ALBUM_LIST = "/api/list/album";
 
+        public static final String GET_ALBUM_DETAIL = "/api/album/initialize";
+
         public static final String GET_SONG_DETAIL = "/api/song/getSongDetails";
         public static final String GET_SONG_PLAY_INFO = "/api/song/getPlayInfo";
 

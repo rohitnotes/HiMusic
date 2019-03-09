@@ -63,6 +63,7 @@ public class CollectDetail {
         @SerializedName("h5Url")
         private String h5Url;
 
+
         private MusicProvider source;
 
         public MusicProvider getSource() {

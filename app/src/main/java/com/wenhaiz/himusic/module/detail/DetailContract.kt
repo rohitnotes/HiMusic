@@ -5,6 +5,7 @@ import com.wenhaiz.himusic.base.BaseView
 import com.wenhaiz.himusic.data.bean.Album
 import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Song
+import com.wenhaiz.himusic.http.data.AlbumDetail
 import com.wenhaiz.himusic.http.data.CollectDetail
 import com.wenhaiz.himusic.module.ranking.RankingContract
 import java.io.Serializable
@@ -18,7 +19,7 @@ interface DetailContract {
     }
 
     interface Presenter : BasePresenter {
-        fun loadAlbumDetail(id: Long)
+        fun loadAlbumDetail(album: Album)
         fun loadCollectDetail(id: Long, isFromUser: Boolean)
 //        fun loadSongDetail(song: Song)
         fun loadGlobalRanking(ranking: RankingContract.GlobalRanking)

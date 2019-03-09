@@ -13,10 +13,12 @@ import com.wenhaiz.himusic.data.bean.BannerType
 import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Song
 import com.wenhaiz.himusic.data.bean.SongDetail
+import com.wenhaiz.himusic.http.data.AlbumDetail
 import com.wenhaiz.himusic.http.data.CollectDetail
 import com.wenhaiz.himusic.http.data.RecommendListNewAlbumInfo
 import com.wenhaiz.himusic.http.data.RecommendListRecommendInfo
 import com.wenhaiz.himusic.http.request.BaseRequest
+import com.wenhaiz.himusic.http.request.GetAlbumDetailRequest
 import com.wenhaiz.himusic.http.request.GetCollectDetailRequest
 import com.wenhaiz.himusic.http.request.GetRecommendAlbumRequest
 import com.wenhaiz.himusic.http.request.GetRecommendCollectRequest
@@ -311,34 +313,24 @@ class Xiami(val context: Context) : MusicSource {
 //    }
 
 
-    override fun loadAlbumDetail(id: Long, callback: LoadAlbumDetailCallback) {
-        val url = BASE_URL + "id=$id" + SUFFIX_ALBUM_DETAIL
-        OkHttpUtil.getForXiami(context, url, object : BaseResponseCallback() {
-            override fun onStart() {
-                callback.onStart()
-            }
+    override fun loadAlbumDetail(album: Album, callback: LoadAlbumDetailCallback) {
+        GetAlbumDetailRequest(album.albumStringID)
+                .setDataCallback(object : BaseRequest.BaseDataCallback<AlbumDetail>() {
+                    override fun onSuccess(data: AlbumDetail) {
+                        album.addDetail(data.albumDetail)
+                        callback.onSuccess(album)
+                    }
 
-            override fun onJsonObjectResponse(jsonObject: JSONObject) {
-                super.onJsonObjectResponse(jsonObject)
-                val album = Album()
-                album.supplier = MusicProvider.XIAMI
-                album.id = jsonObject.getLong("album_id")
-                album.artist = jsonObject.getString("artist_name")
-                album.artistId = jsonObject.getLong("artist_id")
-                album.title = jsonObject.getString("album_name")
-                album.songNumber = jsonObject.getInt("song_count")
-                album.publishDate = jsonObject.getLong("gmt_publish")
-                album.coverUrl = jsonObject.getString("album_logo")
-                album.miniCoverUrl = album.coverUrl + "@1e_1c_100Q_100w_100h"
-                album.songs = parseSongsFromJson(jsonObject.getJSONArray("songs"))
-                callback.onSuccess(album)
-            }
+                    override fun onFailure(code: String?, msg: String?) {
+                        callback.onFailure(msg ?: "")
+                    }
 
-            override fun onFailure(msg: String) {
-                callback.onFailure(msg)
-            }
+                    override fun beforeRequest() {
+                        callback.onStart()
+                    }
 
-        })
+                })
+                .send()
     }
 
     override fun searchByKeyword(keyword: String, callback: LoadSearchResultCallback) {
@@ -660,7 +652,7 @@ class Xiami(val context: Context) : MusicSource {
 
     private fun parseIdFromHref(ref: String): Int {
         val idStr = ref.substring(ref.lastIndexOf('/') + 1)
-        return Integer.valueOf(idStr)!!
+        return Integer.valueOf(idStr)
     }
 
     override fun loadOfficialRanking(provider: MusicProvider, callback: LoadRankingCallback) {

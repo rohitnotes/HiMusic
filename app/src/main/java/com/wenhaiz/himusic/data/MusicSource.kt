@@ -6,6 +6,7 @@ import com.wenhaiz.himusic.data.bean.Artist
 import com.wenhaiz.himusic.data.bean.Banner
 import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Song
+import com.wenhaiz.himusic.http.data.AlbumDetail
 import com.wenhaiz.himusic.http.data.CollectDetail
 import com.wenhaiz.himusic.module.ranking.RankingContract
 
@@ -19,7 +20,7 @@ interface MusicSource {
     fun loadHotCollect(page: Int = 1, callback: LoadCollectCallback)
     fun loadNewAlbum(page: Int = 1, callback: LoadAlbumCallback)
     fun loadCollectDetail(id: Long, callback: LoadCollectDetailCallback)
-    fun loadAlbumDetail(id: Long, callback: LoadAlbumDetailCallback)
+    fun loadAlbumDetail(album: Album, callback: LoadAlbumDetailCallback)
     fun loadSongDetail(song: Song, callback: LoadSongDetailCallback)
     fun searchByKeyword(keyword: String, callback: LoadSearchResultCallback)
     fun loadSearchRecommend(keyword: String, callback: LoadSearchRecommendCallback)

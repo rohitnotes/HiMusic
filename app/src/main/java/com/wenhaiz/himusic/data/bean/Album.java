@@ -2,10 +2,12 @@ package com.wenhaiz.himusic.data.bean;
 
 import com.google.gson.annotations.SerializedName;
 import com.wenhaiz.himusic.data.MusicProvider;
+import com.wenhaiz.himusic.http.data.AlbumDetail;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Album {
+public class Album implements Serializable {
     @SerializedName("albumName")
     private String title;
     private String desc;//简介
@@ -29,6 +31,30 @@ public class Album {
     private String publishDateStr;
     private MusicProvider supplier;
     private List<Song> songs;
+
+    public void addDetail(AlbumDetail.DetailData detailData) {
+        songs = detailData.getSongs();
+        songNumber = detailData.getSongCount();
+        miniCoverUrl = detailData.getAlbumLogoS();
+        desc = detailData.getHtmlDescription();
+        supplier = MusicProvider.XIAMI;
+    }
+
+    public String getAlbumStringID() {
+        return albumStringID;
+    }
+
+    public void setAlbumStringID(String albumStringID) {
+        this.albumStringID = albumStringID;
+    }
+
+    public String getArtistStringId() {
+        return artistStringId;
+    }
+
+    public void setArtistStringId(String artistStringId) {
+        this.artistStringId = artistStringId;
+    }
 
     public String getTitle() {
         return title;
@@ -133,4 +159,6 @@ public class Album {
     public void setSongs(List<Song> songs) {
         this.songs = songs;
     }
+
+
 }

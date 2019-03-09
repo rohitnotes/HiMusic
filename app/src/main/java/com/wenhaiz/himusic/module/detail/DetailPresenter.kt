@@ -8,6 +8,7 @@ import com.wenhaiz.himusic.data.MusicRepository
 import com.wenhaiz.himusic.data.bean.Album
 import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Collect_
+import com.wenhaiz.himusic.http.data.AlbumDetail
 import com.wenhaiz.himusic.http.data.CollectDetail
 import com.wenhaiz.himusic.module.ranking.RankingContract
 
@@ -19,8 +20,8 @@ internal class DetailPresenter(val view: DetailContract.View) : DetailContract.P
         view.setPresenter(this)
     }
 
-    override fun loadAlbumDetail(id: Long) {
-        musicRepository.loadAlbumDetail(id, object : LoadAlbumDetailCallback {
+    override fun loadAlbumDetail(album: Album) {
+        musicRepository.loadAlbumDetail(album, object : LoadAlbumDetailCallback {
             override fun onStart() {
                 view.onLoading()
             }

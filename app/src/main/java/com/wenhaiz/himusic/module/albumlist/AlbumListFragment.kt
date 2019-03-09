@@ -117,7 +117,7 @@ class AlbumListFragment : Fragment(), AlbumListContract.View {
 
     private fun showAlbumDetail(album: Album) {
         val data = Bundle()
-        data.putLong(DetailContract.ARGS_ID, album.id)
+        data.putSerializable(DetailContract.ARGS_ID, album)
         data.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.ALBUM)
         val detailFragment = DetailFragment()
         detailFragment.arguments = data

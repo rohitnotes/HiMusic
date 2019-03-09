@@ -138,8 +138,8 @@ class DetailFragment : Fragment(), DetailContract.View {
                 setRankingDetail(collect)
             }
             DetailContract.LoadType.ALBUM -> {//专辑
-                val id = arguments!!.getLong(DetailContract.ARGS_ID)
-                mPresenter.loadAlbumDetail(id)
+                val album = arguments!!.getSerializable(DetailContract.ARGS_ID) as Album
+                mPresenter.loadAlbumDetail(album)
             }
             DetailContract.LoadType.COLLECT -> {//歌单
                 val id = arguments!!.getLong(DetailContract.ARGS_ID)
@@ -350,12 +350,11 @@ class DetailFragment : Fragment(), DetailContract.View {
     }
 
     override fun onAlbumDetailLoad(album: Album) {
-        activity!!.runOnUiThread {
             mAlbum = album
             mTitle.text = album.title
             mArtist.show()
             mArtist.text = album.artist
-            val displayDate = "发行时间：${getDate(album.publishDate)}"
+            val displayDate = "发行时间：${getDate(album.publishDate/1000)}"
             GlideApp.with(context).load(album.coverUrl)
                     .placeholder(R.drawable.ic_main_all_music)
                     .into(mCover)
@@ -367,14 +366,12 @@ class DetailFragment : Fragment(), DetailContract.View {
             if (isCurAlbumLiked() != null) {
                 setLikedIcon(true)
             }
-        }
-
     }
 
     override fun onFailure(msg: String) {
-            mLoading.hide()
-            mLoadFailed.show()
-            context!!.showToast(msg)
+        mLoading.hide()
+        mLoadFailed.show()
+        context!!.showToast(msg)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
