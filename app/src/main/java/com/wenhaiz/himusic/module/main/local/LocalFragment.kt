@@ -179,7 +179,7 @@ class LocalFragment : android.support.v4.app.Fragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val collect = collects[position]
             holder.name.text = collect.title
-            val songCount = if (collect.isFromUser) {
+            val songCount = if (collect.isFromUser()) {
                 collect.songs.size
             } else {
                 collect.songCount

@@ -13,14 +13,14 @@ import java.io.Serializable
 interface DetailContract {
 
     interface View : BaseView<Presenter> {
-        fun onCollectDetailLoad(collect: CollectDetail)
+        fun onCollectDetailLoad(collect: Collect)
         fun onAlbumDetailLoad(album: Album)
         fun onGlobalRankingLoad(collect: Collect)
     }
 
     interface Presenter : BasePresenter {
         fun loadAlbumDetail(album: Album)
-        fun loadCollectDetail(id: Long, isFromUser: Boolean)
+        fun loadCollectDetail(collect: Collect, isFromUser: Boolean)
 //        fun loadSongDetail(song: Song)
         fun loadGlobalRanking(ranking: RankingContract.GlobalRanking)
     }

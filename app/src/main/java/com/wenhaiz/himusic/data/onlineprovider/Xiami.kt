@@ -45,10 +45,6 @@ class Xiami(val context: Context) : MusicSource {
     companion object {
         @JvmStatic
         val TAG = "Xiami"
-        val BASE_URL = "http://api.xiami.com/web?v=2.0&app_key=1&"
-        val SUFFIX_COLLECT_DETAIL = "&callback=jsonp122&r=collect/detail"
-        val SUFFIX_ALBUM_DETAIL = "&page=1&limit=20&callback=jsonp217&r=album/detail"
-
         val PREFIX_SEARCH_SONG = "http://api.xiami.com/web?v=2.0&app_key=1&key="
         val SUFFIX_SEARCH_SONG = "&page=1&limit=50&callback=jsonp154&r=search/songs"
         val PREFIX_SEARCH_RECOMMEND = "http://www.xiami.com/ajax/search-index?key="
@@ -60,10 +56,6 @@ class Xiami(val context: Context) : MusicSource {
         val PREFIX_SONG_DETAIL = "/song/playlist/id/"
         val SUFFIX_SONG_DETAIL = "/object_name/default/object_id/0/cat/json"
 
-        //singer type:0-全部 1-华语 2-欧美 3-日本 4-韩国
-        //http://www.xiami.com/artist/index/c/2/type/1
-        // c 1-本周流行 2-热门艺人
-//        http://www.xiami.com/artist/index/c/2/type/1/class/0/page/1
         val URL_PREFIX_LOAD_ARTISTS = "/artist/index/c/2/type/"
         val URL_INFIX_LOAD_ARTISTS = "/class/0/page/"
         val URL_HOME = "http://www.xiami.com"
@@ -214,11 +206,11 @@ class Xiami(val context: Context) : MusicSource {
 
     }
 
-    override fun loadCollectDetail(id: Long, callback: LoadCollectDetailCallback) {
-        GetCollectDetailRequest(id).setDataCallback(object : BaseRequest.BaseDataCallback<CollectDetail>() {
+    override fun loadCollectDetail(collect: Collect, callback: LoadCollectDetailCallback) {
+        GetCollectDetailRequest(collect.collectId).setDataCallback(object : BaseRequest.BaseDataCallback<CollectDetail>() {
             override fun onSuccess(data: CollectDetail) {
-                data.detail?.source = MusicProvider.XIAMI
-                callback.onSuccess(data)
+                collect.addDetail(data)
+                callback.onSuccess(collect)
             }
 
             override fun onFailure(code: String?, msg: String?) {

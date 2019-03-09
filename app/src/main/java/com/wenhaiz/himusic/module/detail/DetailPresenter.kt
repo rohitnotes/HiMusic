@@ -37,19 +37,19 @@ internal class DetailPresenter(val view: DetailContract.View) : DetailContract.P
         })
     }
 
-    override fun loadCollectDetail(id: Long, isFromUser: Boolean) {
+    override fun loadCollectDetail(collect: Collect, isFromUser: Boolean) {
         if (isFromUser) {
             view.onLoading()
             val collectBox = MyApp.getBoxStore().boxFor(Collect::class.java)
-            val collect: Collect? = collectBox.query().equal(Collect_.id, id).build().findFirst()
-            if (collect == null) {
+            val findCollect: Collect? = collectBox.query().equal(Collect_.id, collect.id).build().findFirst()
+            if (findCollect == null) {
                 view.onFailure("没有找到该歌单信息！")
             } else {
-//                view.onCollectDetailLoad(collect)
+                view.onCollectDetailLoad(collect)
             }
 
         } else {
-            musicRepository.loadCollectDetail(id, object : LoadCollectDetailCallback {
+            musicRepository.loadCollectDetail(collect, object : LoadCollectDetailCallback {
                 override fun onStart() {
                     view.onLoading()
                 }
@@ -58,7 +58,7 @@ internal class DetailPresenter(val view: DetailContract.View) : DetailContract.P
                     view.onFailure(msg)
                 }
 
-                override fun onSuccess(collect: CollectDetail) {
+                override fun onSuccess(collect: Collect) {
                     view.onCollectDetailLoad(collect)
                 }
 

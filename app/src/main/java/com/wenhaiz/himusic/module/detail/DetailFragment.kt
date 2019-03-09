@@ -77,8 +77,7 @@ class DetailFragment : Fragment(), DetailContract.View {
     private lateinit var mLoadType: DetailContract.LoadType
 
     private lateinit var mAlbum: Album
-    private lateinit var mCollect: CollectDetail
-    private lateinit var collectInfo: CollectDetail.Detail
+    private lateinit var mCollect: Collect
     private var isCollectFromUser: Boolean = false
     var localFragment: LocalFragment? = null
 
@@ -142,9 +141,9 @@ class DetailFragment : Fragment(), DetailContract.View {
                 mPresenter.loadAlbumDetail(album)
             }
             DetailContract.LoadType.COLLECT -> {//歌单
-                val id = arguments!!.getLong(DetailContract.ARGS_ID)
+                val collect = arguments!!.getSerializable(DetailContract.ARGS_ID) as Collect
                 //根据歌单来源加载歌曲列表
-                mPresenter.loadCollectDetail(id, isCollectFromUser)
+                mPresenter.loadCollectDetail(collect, isCollectFromUser)
             }
             DetailContract.LoadType.SONG -> {//歌曲
                 val id = arguments!!.getLong(DetailContract.ARGS_ID)
@@ -212,10 +211,10 @@ class DetailFragment : Fragment(), DetailContract.View {
                 collectBox.remove(likedCollect)
                 context!!.showToast(R.string.unliked)
             } else {
-//                likedCollect = LikedCollect(mCollect)
-//                collectBox.put(likedCollect)
-//                liked = true
-//                context!!.showToast(R.string.liked)
+                likedCollect = LikedCollect(mCollect)
+                collectBox.put(likedCollect)
+                liked = true
+                context!!.showToast(R.string.liked)
             }
             setLikedIcon(liked)
         }
@@ -238,9 +237,9 @@ class DetailFragment : Fragment(), DetailContract.View {
     private fun isCurCollectLiked(): LikedCollect? {
         var likedCollect: LikedCollect? = null
         val collectBox = BoxUtil.getBoxStore(context!!).boxFor(LikedCollect::class.java)
-        val list = collectBox.query().equal(LikedCollect_.collectId, collectInfo.listId)
+        val list = collectBox.query().equal(LikedCollect_.collectId, mCollect.collectId)
                 .and()
-                .equal(LikedCollect_.providerName, collectInfo.source.name)
+                .equal(LikedCollect_.providerName, mCollect.source.name)
                 .build()
                 .find()
         if (list.size > 0) {
@@ -279,12 +278,12 @@ class DetailFragment : Fragment(), DetailContract.View {
     private fun editCurCollect() {
         val intent = Intent(context, EditCollectActivity::class.java)
         intent.action = EditCollectActivity.ACTION_UPDATE
-        intent.putExtra("collectId", collectInfo.listId)
+        intent.putExtra("collectId", mCollect.id)
         startActivityForResult(intent, REQUEST_UPDATE)
     }
 
     private fun deleteCurCollect() {
-        val collectId = collectInfo.listId
+        val collectId = mCollect.id
         val collectBox = BoxUtil.getBoxStore(context!!).boxFor(Collect::class.java)
         collectBox.remove(collectId)
     }
@@ -303,19 +302,15 @@ class DetailFragment : Fragment(), DetailContract.View {
         mSongList.hide()
     }
 
-    override fun onCollectDetailLoad(collect: CollectDetail) {
+    override fun onCollectDetailLoad(collect: Collect) {
         mCollect = collect
-        if (collect.detail == null) {
-            return
-        }
 
-        collectInfo = collect.detail!!
-        mTitle.text = collectInfo.collectName
-            mArtist.hide()
-        GlideApp.with(context).load(collectInfo.collectLogo)
+        mTitle.text = collect.title
+        mArtist.hide()
+        GlideApp.with(context).load(mCollect.coverUrl)
                     .placeholder(R.drawable.ic_main_all_music)
                 .into(mCover)
-        val displayDate = "更新时间：${getDate(collectInfo.gmtModify / 1000)}"
+        val displayDate = "更新时间：${getDate(mCollect.updateDate / 1000)}"
         mDate.text = displayDate
         mSongListAdapter.setData(collect.songs)
 

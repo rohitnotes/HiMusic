@@ -3,6 +3,7 @@ package com.wenhaiz.himusic.data
 import android.content.Context
 import com.wenhaiz.himusic.data.bean.Album
 import com.wenhaiz.himusic.data.bean.Artist
+import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Song
 import com.wenhaiz.himusic.data.onlineprovider.Xiami
 import com.wenhaiz.himusic.module.ranking.RankingContract
@@ -75,8 +76,8 @@ internal class MusicRepository(context: Context) : MusicSource {
     }
 
 
-    override fun loadCollectDetail(id: Long, callback: LoadCollectDetailCallback) {
-        musicSource.loadCollectDetail(id, callback)
+    override fun loadCollectDetail(collect: Collect, callback: LoadCollectDetailCallback) {
+        musicSource.loadCollectDetail(collect, callback)
     }
 
     override fun loadAlbumDetail(album: Album, callback: LoadAlbumDetailCallback) {

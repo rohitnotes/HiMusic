@@ -19,7 +19,7 @@ interface MusicSource {
     fun loadBanner(callback: LoadBannerCallback)
     fun loadHotCollect(page: Int = 1, callback: LoadCollectCallback)
     fun loadNewAlbum(page: Int = 1, callback: LoadAlbumCallback)
-    fun loadCollectDetail(id: Long, callback: LoadCollectDetailCallback)
+    fun loadCollectDetail(collect: Collect, callback: LoadCollectDetailCallback)
     fun loadAlbumDetail(album: Album, callback: LoadAlbumDetailCallback)
     fun loadSongDetail(song: Song, callback: LoadSongDetailCallback)
     fun searchByKeyword(keyword: String, callback: LoadSearchResultCallback)
@@ -48,7 +48,7 @@ interface LoadAlbumCallback : BaseCallBack {
 }
 
 interface LoadCollectDetailCallback : BaseCallBack {
-    fun onSuccess(collect: CollectDetail)
+    fun onSuccess(collect: Collect)
 }
 
 interface LoadAlbumDetailCallback : BaseCallBack {
