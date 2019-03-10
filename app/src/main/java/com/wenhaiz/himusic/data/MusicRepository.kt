@@ -121,8 +121,8 @@ internal class MusicRepository(context: Context) : MusicSource {
         musicSource.loadCollectByCategory(category, page, callback)
     }
 
-    override fun loadOfficialRanking(provider: MusicProvider, callback: LoadRankingCallback) {
-        musicSource.loadOfficialRanking(provider, callback)
+    override fun loadOfficialRanking(callback: LoadRankingCallback) {
+        musicSource.loadOfficialRanking(callback)
     }
 
     override fun loadGlobalRanking(ranking: RankingContract.GlobalRanking, callback: LoadSingleRankingCallback) {

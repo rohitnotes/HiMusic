@@ -43,6 +43,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:textStyle="bold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
@@ -69,6 +70,7 @@
 
                 <!--全球榜-->
                 <LinearLayout
+                    android:layout_marginBottom="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -80,6 +82,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
                         android:text="@string/ranking_global"
+                        android:textStyle="bold"
                         android:textColor="@color/colorBlack"
                         android:textSize="@dimen/main_tab_btn_text_size" />
 
@@ -91,16 +94,14 @@
                         android:layout_marginTop="2dp"
                         android:background="@color/colorDivider" />
 
-                    <GridView
+                    <android.support.v7.widget.RecyclerView
                         android:id="@+id/ranking_global"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:gravity="center_horizontal"
-                        android:numColumns="3"
-                        android:stretchMode="columnWidth">
+                        android:layout_marginTop="10dp"
+                        android:gravity="center">
 
-                    </GridView>
+                    </android.support.v7.widget.RecyclerView>
                 </LinearLayout>
 
             </LinearLayout>

@@ -16,6 +16,8 @@ public class API {
         public static final String GET_SONG_DETAIL = "/api/song/getSongDetails";
         public static final String GET_SONG_PLAY_INFO = "/api/song/getPlayInfo";
 
+        public static final String GET_RANK_LIST = "/api/billboard/getBillboards";
+
         public static String getSongDetailUrl(Long songId) {
             return BASE + "/song/playlist/id/" + songId + "/object_name/default/object_id/0/cat/json";
         }
