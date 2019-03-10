@@ -167,6 +167,7 @@ internal class CollectListFragment : Fragment(), CollectListContract.View {
                 detailFragment.arguments = data
                 addFragmentToMainView(fragmentManager!!, detailFragment)
             }
+            holder.collectSource.text = "from ${collect.source.providerName}"
 
         }
 
@@ -175,6 +176,7 @@ internal class CollectListFragment : Fragment(), CollectListContract.View {
             var collectTitle: TextView = itemView.findViewById(R.id.collect_list_title)
             var collectDesc: TextView = itemView.findViewById(R.id.collect_list_desc)
             var collectCover: ImageView = itemView.findViewById(R.id.collect_list_cover)
+            var collectSource: TextView = itemView.findViewById(R.id.collect_list_source)
 
         }
     }

@@ -21,7 +21,10 @@ import com.wenhaiz.himusic.R
 import com.wenhaiz.himusic.ext.hide
 import com.wenhaiz.himusic.ext.show
 import com.wenhaiz.himusic.http.data.RankList
+import com.wenhaiz.himusic.module.detail.DetailContract
+import com.wenhaiz.himusic.module.detail.DetailFragment
 import com.wenhaiz.himusic.utils.GlideApp
+import com.wenhaiz.himusic.utils.addFragmentToMainView
 import com.wenhaiz.himusic.utils.removeFragment
 
 class RankingFragment : Fragment(), RankingContract.View {
@@ -132,13 +135,13 @@ class RankingFragment : Fragment(), RankingContract.View {
         mOfficialRanking.layoutManager = LinearLayoutManager(context)
     }
 
-    fun showRankingDetail(collect: RankList.Rank) {
-//        val detailFragment = DetailFragment()
-//        val args = Bundle()
-//        args.putParcelable(DetailContract.ARGS_COLLECT, collect)
-//        args.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.OFFICIAL_RANKING)
-//        detailFragment.arguments = args
-//        addFragmentToMainView(fragmentManager!!, detailFragment)
+    fun showRankingDetail(rank: RankList.Rank) {
+        val detailFragment = DetailFragment()
+        val args = Bundle()
+        args.putSerializable(DetailContract.ARGS_ID, rank)
+        args.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.RANKING)
+        detailFragment.arguments = args
+        addFragmentToMainView(fragmentManager!!, detailFragment)
     }
 
     override fun onLoading() {
@@ -211,6 +214,9 @@ class RankingFragment : Fragment(), RankingContract.View {
             val rank = rankingCollects[position]
             holder.tvTitle.text = rank.name
             GlideApp.with(context).load(rank.logoMiddle).into(holder.ivCover)
+            holder.itemView.setOnClickListener {
+                showRankingDetail(rank)
+            }
         }
 
         fun updateData(ranks: List<RankList.Rank>) {

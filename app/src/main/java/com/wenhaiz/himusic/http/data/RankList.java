@@ -1,13 +1,10 @@
 package com.wenhaiz.himusic.http.data;
 
 import com.google.gson.annotations.SerializedName;
-import com.wenhaiz.himusic.data.bean.Collect;
 import com.wenhaiz.himusic.data.bean.Song;
 
 import java.io.Serializable;
 import java.util.List;
-
-import io.objectbox.relation.ToMany;
 
 public class RankList {
 
@@ -67,6 +64,12 @@ public class RankList {
         private String description;
         @SerializedName("items")
         private List<Song> songs;
+
+
+        public void addDetail(RankDetail.Detail detail) {
+            songs.clear();
+            songs.addAll(detail.getSongs());
+        }
 
         public long getBillboardId() {
             return billboardId;

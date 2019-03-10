@@ -15,12 +15,14 @@ import com.wenhaiz.himusic.data.bean.Song
 import com.wenhaiz.himusic.data.bean.SongDetail
 import com.wenhaiz.himusic.http.data.AlbumDetail
 import com.wenhaiz.himusic.http.data.CollectDetail
+import com.wenhaiz.himusic.http.data.RankDetail
 import com.wenhaiz.himusic.http.data.RankList
 import com.wenhaiz.himusic.http.data.RecommendListNewAlbumInfo
 import com.wenhaiz.himusic.http.data.RecommendListRecommendInfo
 import com.wenhaiz.himusic.http.request.BaseRequest
 import com.wenhaiz.himusic.http.request.GetAlbumDetailRequest
 import com.wenhaiz.himusic.http.request.GetCollectDetailRequest
+import com.wenhaiz.himusic.http.request.GetRankDetailRequest
 import com.wenhaiz.himusic.http.request.GetRankListRequest
 import com.wenhaiz.himusic.http.request.GetRecommendAlbumRequest
 import com.wenhaiz.himusic.http.request.GetRecommendCollectRequest
@@ -212,6 +214,28 @@ class Xiami(val context: Context) : MusicSource {
                     it.supplier = MusicProvider.XIAMI
                 }
                 callback.onSuccess(collect)
+            }
+
+            override fun onFailure(code: String?, msg: String?) {
+                callback.onFailure(msg ?: "")
+            }
+
+            override fun beforeRequest() {
+                callback.onStart()
+            }
+
+        }).send()
+    }
+
+
+    override fun loadRankingDetail(rank: RankList.Rank, callback: LoadRankingDetailCallback) {
+        GetRankDetailRequest(rank).setDataCallback(object : BaseRequest.BaseDataCallback<RankDetail>() {
+            override fun onSuccess(data: RankDetail) {
+                data.detail.songs.forEach {
+                    it.supplier = MusicProvider.XIAMI
+                }
+                rank.addDetail(data.detail)
+                callback.onSuccess(rank)
             }
 
             override fun onFailure(code: String?, msg: String?) {
