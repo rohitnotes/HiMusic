@@ -208,6 +208,7 @@ class PLayActivity : AppCompatActivity(), PlayStatusObserver, PlayProxy {
     }
 
     private fun parseLyric(lyricUrl: String?) {
+        //todo 解析虾米歌词 暂时去掉标签即可
         if (lyricUrl != null) {
             val thread = Thread {
                 kotlin.run {
@@ -298,7 +299,7 @@ class PLayActivity : AppCompatActivity(), PlayStatusObserver, PlayProxy {
 
     private fun setCurTime(progress: Float) {
         if (mCurrentSong != null) {
-            mTvCurTime.text = getMinuteLength((progress / 100 * mCurrentSong!!.length).toInt())
+            mTvCurTime.text = getMinuteLength((progress / 100 * mCurrentSong!!.length / 1000).toInt())
         }
     }
 
@@ -375,10 +376,10 @@ class PLayActivity : AppCompatActivity(), PlayStatusObserver, PlayProxy {
         mCurrentSong = playStatus.currentSong
         if (mCurrentSong != null) {
             mSongName.text = mCurrentSong!!.name
-            mTvArtistName.text = mCurrentSong!!.displayArtistName
+            mTvArtistName.text = mCurrentSong!!.artistName
             setProvider()
             setCover(mCurrentSong!!.albumCoverUrl)
-            mTvTotalTime.text = getMinuteLength(mCurrentSong!!.length)
+            mTvTotalTime.text = getMinuteLength(mCurrentSong!!.length / 1000)
             val isLiked = BoxUtil.getBoxStore(this).boxFor(LikedSong::class.java)
                     .query().equal(LikedSong_.songId, mCurrentSong!!.songId).build()
                     .findUnique() != null
@@ -483,6 +484,9 @@ class PLayActivity : AppCompatActivity(), PlayStatusObserver, PlayProxy {
             }
             MusicProvider.NETEASE -> {
                 getString(R.string.provider_netease)
+            }
+            else -> {
+                getString(R.string.provider_xiami)
             }
         }
         mTvProvider.text = providerStr

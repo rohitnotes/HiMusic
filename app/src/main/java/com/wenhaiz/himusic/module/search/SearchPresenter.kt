@@ -2,7 +2,6 @@ package com.wenhaiz.himusic.module.search
 
 import com.wenhaiz.himusic.data.LoadSearchRecommendCallback
 import com.wenhaiz.himusic.data.LoadSearchResultCallback
-import com.wenhaiz.himusic.data.LoadSongDetailCallback
 import com.wenhaiz.himusic.data.MusicRepository
 import com.wenhaiz.himusic.data.bean.Song
 
@@ -49,19 +48,19 @@ internal class SearchPresenter(val view: SearchContract.View) : SearchContract.P
     }
 
     override fun loadSongDetail(song: Song) {
-        musicRepository.loadSongDetail(song, object : LoadSongDetailCallback {
-            override fun onStart() {
-            }
-
-            override fun onFailure(msg: String) {
-                view.onFailure(SearchContract.SONG_NOT_AVAILABLE)
-            }
-
-            override fun onSuccess(loadedSong: Song) {
-                view.onSongDetailLoad(loadedSong)
-            }
-
-        })
+//        musicRepository.loadSongDetail(song, object : LoadSongDetailCallback {
+//            override fun onStart() {
+//            }
+//
+//            override fun onFailure(msg: String) {
+//                view.onFailure(SearchContract.SONG_NOT_AVAILABLE)
+//            }
+//
+//            override fun onSuccess(loadedSong: Song) {
+//                view.onSongDetailLoad(loadedSong)
+//            }
+//
+//        })
     }
 
 }

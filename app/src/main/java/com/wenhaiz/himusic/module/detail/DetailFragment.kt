@@ -29,6 +29,7 @@ import com.wenhaiz.himusic.data.bean.Song
 import com.wenhaiz.himusic.ext.hide
 import com.wenhaiz.himusic.ext.show
 import com.wenhaiz.himusic.ext.showToast
+import com.wenhaiz.himusic.http.data.CollectDetail
 import com.wenhaiz.himusic.module.main.MainActivity
 import com.wenhaiz.himusic.module.main.local.EditCollectActivity
 import com.wenhaiz.himusic.module.main.local.LocalFragment
@@ -116,7 +117,7 @@ class DetailFragment : Fragment(), DetailContract.View {
 
         }
 
-        mSongListAdapter = SongListAdapter(context!!, ArrayList())
+        mSongListAdapter = SongListAdapter(context!!)
         mSongList.layoutManager = LinearLayoutManager(context)
         mSongList.adapter = mSongListAdapter
         loadDetail()
@@ -136,17 +137,17 @@ class DetailFragment : Fragment(), DetailContract.View {
                 setRankingDetail(collect)
             }
             DetailContract.LoadType.ALBUM -> {//专辑
-                val id = arguments!!.getLong(DetailContract.ARGS_ID)
-                mPresenter.loadAlbumDetail(id)
+                val album = arguments!!.getSerializable(DetailContract.ARGS_ID) as Album
+                mPresenter.loadAlbumDetail(album)
             }
             DetailContract.LoadType.COLLECT -> {//歌单
-                val id = arguments!!.getLong(DetailContract.ARGS_ID)
+                val collect = arguments!!.getSerializable(DetailContract.ARGS_ID) as Collect
                 //根据歌单来源加载歌曲列表
-                mPresenter.loadCollectDetail(id, isCollectFromUser)
+                mPresenter.loadCollectDetail(collect, isCollectFromUser)
             }
             DetailContract.LoadType.SONG -> {//歌曲
                 val id = arguments!!.getLong(DetailContract.ARGS_ID)
-                mPresenter.loadSongDetail(id)
+//                mPresenter.loadSongDetail(id)
             }
         }
     }
@@ -302,24 +303,23 @@ class DetailFragment : Fragment(), DetailContract.View {
     }
 
     override fun onCollectDetailLoad(collect: Collect) {
-        activity!!.runOnUiThread({
-            mCollect = collect
-            mTitle.text = collect.title
-            mArtist.hide()
-            GlideApp.with(context).load(collect.coverUrl)
+        mCollect = collect
+
+        mTitle.text = collect.title
+        mArtist.hide()
+        GlideApp.with(context).load(mCollect.coverUrl)
                     .placeholder(R.drawable.ic_main_all_music)
-                    .into(mCover)
-            val displayDate = "更新时间：${getDate(collect.updateDate)}"
-            mDate.text = displayDate
-            mSongListAdapter.setData(collect.songs)
+                .into(mCover)
+        val displayDate = "更新时间：${getDate(mCollect.updateDate / 1000)}"
+        mDate.text = displayDate
+        mSongListAdapter.setData(collect.songs)
 
-            mLoading.hide()
-            mSongList.show()
+        mLoading.hide()
+        mSongList.show()
 
-            if (!isCollectFromUser && isCurCollectLiked() != null) {
-                setLikedIcon(true)
-            }
-        })
+        if (!isCollectFromUser && isCurCollectLiked() != null) {
+            setLikedIcon(true)
+        }
     }
 
     override fun onGlobalRankingLoad(collect: Collect) {
@@ -345,12 +345,11 @@ class DetailFragment : Fragment(), DetailContract.View {
     }
 
     override fun onAlbumDetailLoad(album: Album) {
-        activity!!.runOnUiThread {
             mAlbum = album
             mTitle.text = album.title
             mArtist.show()
             mArtist.text = album.artist
-            val displayDate = "发行时间：${getDate(album.publishDate)}"
+            val displayDate = "发行时间：${getDate(album.publishDate/1000)}"
             GlideApp.with(context).load(album.coverUrl)
                     .placeholder(R.drawable.ic_main_all_music)
                     .into(mCover)
@@ -362,16 +361,12 @@ class DetailFragment : Fragment(), DetailContract.View {
             if (isCurAlbumLiked() != null) {
                 setLikedIcon(true)
             }
-        }
-
     }
 
     override fun onFailure(msg: String) {
-        activity!!.runOnUiThread {
-            mLoading.hide()
-            mLoadFailed.show()
-            context!!.showToast(msg)
-        }
+        mLoading.hide()
+        mLoadFailed.show()
+        context!!.showToast(msg)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -394,7 +389,8 @@ class DetailFragment : Fragment(), DetailContract.View {
         const val RESULT_UPDATED = 0x01
     }
 
-    inner class SongListAdapter(val context: Context, var songList: List<Song>) : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
+    inner class SongListAdapter(val context: Context, var songList: ArrayList<Song> = ArrayList())
+        : RecyclerView.Adapter<SongListAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(R.layout.item_detail_song_list, parent, false)
@@ -422,17 +418,17 @@ class DetailFragment : Fragment(), DetailContract.View {
                         }
                     }
             holder.artistAlbum.text = displayArtistName
-            holder.item.setOnClickListener({
+            holder.item.setOnClickListener {
                 playSong(song)
-            })
+            }
             holder.opration.setOnClickListener {
                 val dialog = SongOpsDialog(context, song, activity!!)
                 if (mLoadType == DetailContract.LoadType.COLLECT && isCollectFromUser) {
                     dialog.showDelete = true
                     dialog.deleteListener = View.OnClickListener {
-                        mCollect.songs.remove(song)
-                        BoxUtil.getBoxStore(context).boxFor(Collect::class.java).put(mCollect)
-                        setData(mCollect.songs)
+                        //                        mCollect.songs.remove(song)
+//                        BoxUtil.getBoxStore(context).boxFor(Collect::class.java).put(mCollect)
+//                        setData(mCollect.songs)
                     }
                 }
                 dialog.show()
@@ -442,7 +438,11 @@ class DetailFragment : Fragment(), DetailContract.View {
         override fun getItemCount(): Int = songList.size
 
         fun setData(songList: List<Song>) {
-            this.songList = songList
+            if (songList.isEmpty()) {
+                return
+            }
+            this.songList.clear()
+            this.songList.addAll(songList)
             notifyDataSetChanged()
         }
 

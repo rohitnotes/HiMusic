@@ -13,13 +13,14 @@
         android:src="@drawable/ic_main_android" />
 
     <TextView
+        android:gravity="center"
         android:id="@+id/main_tv_hot_collect_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginTop="2dp"
         android:maxLines="2"
         android:textColor="@color/colorBlack"
         android:text="几分激动的发难"
-        android:textSize="14sp" />
+        android:textSize="13sp" />
 
 </LinearLayout>

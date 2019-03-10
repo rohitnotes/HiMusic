@@ -95,7 +95,7 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
         mHotCollects.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val collect = mHotCollectAdapter.hotCollects[position]
             val data = Bundle()
-            data.putLong(DetailContract.ARGS_ID, collect.collectId)
+            data.putSerializable(DetailContract.ARGS_ID, collect)
             data.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.COLLECT)
             showDetail(data)
         }
@@ -111,7 +111,7 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
         mNewAlbums.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
             val album = mNewAlbumAdapter.newAlbums[position]
             val data = Bundle()
-            data.putLong(DetailContract.ARGS_ID, album.id)
+            data.putSerializable(DetailContract.ARGS_ID, album)
             data.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.ALBUM)
             showDetail(data)
         }
@@ -198,31 +198,27 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
     }
 
     override fun onHotCollectsLoad(hotCollects: List<Collect>) {
-        activity!!.runOnUiThread {
-            if (mRefreshLayout.isRefreshing) {
-                mRefreshLayout.finishRefresh(200, true)
-            }
-            mHotCollectAdapter = HotCollectsAdapter(context!!, hotCollects.subList(0, 6))
-            mHotCollects.adapter = mHotCollectAdapter
-            if (mLoading.isShowing()) {
-                mLoading.hide()
-                mContent.show()
-            }
+        if (mRefreshLayout.isRefreshing) {
+            mRefreshLayout.finishRefresh(200, true)
+        }
+        mHotCollectAdapter = HotCollectsAdapter(context!!, hotCollects.subList(0, 6))
+        mHotCollects.adapter = mHotCollectAdapter
+        if (mLoading.isShowing()) {
+            mLoading.hide()
+            mContent.show()
         }
     }
 
 
     override fun onNewAlbumsLoad(newAlbums: List<Album>) {
-        activity!!.runOnUiThread {
-            if (mRefreshLayout.isRefreshing) {
-                mRefreshLayout.finishRefresh(200, true)
-            }
-            mNewAlbumAdapter = NewAlbumsAdapter(context!!, newAlbums.subList(0, 6))
-            mNewAlbums.adapter = mNewAlbumAdapter
-            if (mLoading.isShowing()) {
-                mLoading.hide()
-                mContent.show()
-            }
+        if (mRefreshLayout.isRefreshing) {
+            mRefreshLayout.finishRefresh(200, true)
+        }
+        mNewAlbumAdapter = NewAlbumsAdapter(context!!, newAlbums.subList(0, 6))
+        mNewAlbums.adapter = mNewAlbumAdapter
+        if (mLoading.isShowing()) {
+            mLoading.hide()
+            mContent.show()
         }
     }
 

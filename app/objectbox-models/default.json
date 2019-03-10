@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:8224975540726341612",
-      "lastPropertyId": "13:1315743150906690646",
+      "lastPropertyId": "14:1095286827450312635",
       "name": "Collect",
       "properties": [
         {
@@ -59,6 +59,10 @@
         {
           "id": "13:1315743150906690646",
           "name": "isFromUser"
+        },
+        {
+          "id": "14:1095286827450312635",
+          "name": "h5Url"
         }
       ],
       "relations": [
@@ -330,7 +334,7 @@
     },
     {
       "id": "8:55135173756659282",
-      "lastPropertyId": "16:8711370734052338751",
+      "lastPropertyId": "19:791053112934787376",
       "name": "Song",
       "properties": [
         {
@@ -396,6 +400,18 @@
         {
           "id": "16:8711370734052338751",
           "name": "isPlaying"
+        },
+        {
+          "id": "17:3237017817580233304",
+          "name": "songStringId"
+        },
+        {
+          "id": "18:4862550628753336952",
+          "name": "albumStringId"
+        },
+        {
+          "id": "19:791053112934787376",
+          "name": "canListen"
         }
       ],
       "relations": []

@@ -136,12 +136,12 @@ class LocalFragment : android.support.v4.app.Fragment() {
         val data = Bundle()
         val detailFragment = DetailFragment()
         if (curShowType == MY_COLLECT) {
-            data.putLong(DetailContract.ARGS_ID, collect.id)
+            data.putSerializable(DetailContract.ARGS_ID, collect)
             data.putBoolean(DetailContract.ARGS_IS_USER_COLLECT, true)
             //用于删除歌单时刷新显示
             detailFragment.localFragment = this
         } else {
-            data.putLong(DetailContract.ARGS_ID, collect.collectId)
+            data.putSerializable(DetailContract.ARGS_ID, collect)
             data.putBoolean(DetailContract.ARGS_IS_USER_COLLECT, false)
         }
         data.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.COLLECT)
@@ -179,7 +179,7 @@ class LocalFragment : android.support.v4.app.Fragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val collect = collects[position]
             holder.name.text = collect.title
-            val songCount = if (collect.isFromUser) {
+            val songCount = if (collect.isFromUser()) {
                 collect.songs.size
             } else {
                 collect.songCount

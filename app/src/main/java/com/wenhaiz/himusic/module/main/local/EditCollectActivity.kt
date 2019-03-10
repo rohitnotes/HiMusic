@@ -110,7 +110,7 @@ class EditCollectActivity : AppCompatActivity() {
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     private fun insertCollect(title: String, intro: String, collectBox: Box<Collect>) {
         mCollect = Collect()
-        mCollect?.isFromUser = true
+        mCollect?.setIsFromUser(true)
         //为了和网络加载的时间保持格式统一
         mCollect?.createDate = System.currentTimeMillis() / 1000
         mCollect?.updateDate = System.currentTimeMillis() / 1000

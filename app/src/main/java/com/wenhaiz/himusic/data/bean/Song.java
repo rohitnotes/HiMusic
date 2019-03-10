@@ -4,10 +4,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
+import com.google.gson.annotations.SerializedName;
 import com.wenhaiz.himusic.data.MusicProvider;
+import com.wenhaiz.himusic.data.onlineprovider.Xiami;
 
 import java.io.Serializable;
+import java.util.List;
 
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Id;
@@ -28,28 +32,63 @@ public final class Song implements Parcelable, Serializable {
     };
     private static final long serialVersionUID = 10001;
     @Id
-    private Long id;
+    private Long id;//本地数据库 id
+    @SerializedName("songId")
     private long songId;
+    @SerializedName("songStringId")
+    private String songStringId;
+    @SerializedName("songName")
     private String name;
     private int length;//second
     private String listenFileUrl;//xiami
+    @SerializedName("lrcFile")
     private String lyricUrl;//lyric
+    @SerializedName("artistName")
     private String artistName;
-    private String displayArtistName;
-    private String artistLogo;
-    private long artistId;
-    private long albumId;
+    @SerializedName("albumName")
     private String albumName;
+    private String displayArtistName;
+    @SerializedName("artistLogo")
+    private String artistLogo;
+    @SerializedName("artistId")
+    private long artistId;
+    @SerializedName("albumId")
+    private long albumId;
+    @SerializedName("albumStringId")
+    private String albumStringId;
+    @SerializedName("albumLogo")
     private String albumCoverUrl;
     private String miniAlbumCoverUrl;
     @Transient
     private MusicProvider supplier;
 //    private boolean isDownload;
     private String providerName;
-    private boolean isPlaying = false;
+    public boolean isPlaying = false;
+
+    public boolean canListen = true;
+
+
 
     public Song() {
 
+    }
+
+    public void addDetailInfo(SongDetail.DetailData detail) {
+        lyricUrl = Xiami.Companion.maskUrl(detail.getTrackList().get(0).getLyricInfo().getLyricFile());
+        miniAlbumCoverUrl = Xiami.Companion.maskUrl(detail.getTrackList().get(0).getAlbumPic());
+        listenFileUrl = Xiami.Companion.maskUrl(Xiami.Companion.getListenUrlFromLocation(detail.getTrackList().get(0).getLocation()));
+    }
+
+    public void addPlayInfo(List<PlayInfo.Info.InfoBean> infoBeans) {
+        for (PlayInfo.Info.InfoBean info : infoBeans) {
+            if (!TextUtils.isEmpty(info.getListenFile())) {
+                listenFileUrl = info.getListenFile();
+                break;
+            }
+        }
+        if (TextUtils.isEmpty(listenFileUrl)) {
+            canListen = false;
+        }
     }
 
     protected Song(Parcel in) {
@@ -248,6 +287,30 @@ public final class Song implements Parcelable, Serializable {
 
     public void setMiniAlbumCoverUrl(String miniAlbumCoverUrl) {
         this.miniAlbumCoverUrl = miniAlbumCoverUrl;
+    }
+
+    public String getSongStringId() {
+        return songStringId;
+    }
+
+    public void setSongStringId(String songStringId) {
+        this.songStringId = songStringId;
+    }
+
+    public String getAlbumStringId() {
+        return albumStringId;
+    }
+
+    public void setAlbumStringId(String albumStringId) {
+        this.albumStringId = albumStringId;
+    }
+
+    public boolean isPlaying() {
+        return isPlaying;
+    }
+
+    public void setPlaying(boolean playing) {
+        isPlaying = playing;
     }
 
     public Artist getArtist() {

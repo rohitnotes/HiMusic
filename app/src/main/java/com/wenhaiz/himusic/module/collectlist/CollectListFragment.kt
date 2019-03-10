@@ -162,7 +162,7 @@ internal class CollectListFragment : Fragment(), CollectListContract.View {
             holder.item.setOnClickListener {
                 val data = Bundle()
                 val detailFragment = DetailFragment()
-                data.putLong(DetailContract.ARGS_ID, collect.collectId)
+                data.putSerializable(DetailContract.ARGS_ID, collect)
                 data.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.COLLECT)
                 detailFragment.arguments = data
                 addFragmentToMainView(fragmentManager!!, detailFragment)

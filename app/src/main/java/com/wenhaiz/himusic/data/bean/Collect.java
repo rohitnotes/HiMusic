@@ -3,7 +3,11 @@ package com.wenhaiz.himusic.data.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
 import com.wenhaiz.himusic.data.MusicProvider;
+import com.wenhaiz.himusic.http.data.CollectDetail;
+
+import java.io.Serializable;
 
 import io.objectbox.annotation.Entity;
 import io.objectbox.annotation.Id;
@@ -16,7 +20,7 @@ import io.objectbox.relation.ToMany;
  */
 
 @Entity
-public class Collect implements Parcelable {
+public class Collect implements Parcelable, Serializable {
     public static final Creator<Collect> CREATOR = new Creator<Collect>() {
         @Override
         public Collect createFromParcel(Parcel in) {
@@ -32,9 +36,13 @@ public class Collect implements Parcelable {
     public ToMany<Song> songs;
     @Id(assignable = true)
     private Long id;//本地数据库 id
+    @SerializedName("collectName")
     private String title;
+
     private String desc;//简介
+    @SerializedName("listId")
     private long collectId;//歌单 曲库中的 collectId
+    @SerializedName("collectLogo")
     private String coverUrl;//封面 url
     private int coverDrawable;//封面 drawable
     private int songCount;//包含歌曲数量
@@ -42,12 +50,29 @@ public class Collect implements Parcelable {
     @Transient
     private MusicProvider source;//来源
     private String providerName;
+    @SerializedName("playCount")
     private int playTimes;//播放次数
     private long createDate;//创建时间
     private long updateDate;//更新时间
-    private boolean isFromUser = false;//是否是用户创建的
+    private String h5Url;
+     private boolean isFromUser = false;//是否是用户创建的
 
     public Collect() {
+
+    }
+
+    public void addDetail(CollectDetail detail) {
+        this.source = MusicProvider.XIAMI;
+        songs.addAll(detail.getSongs());
+        if (detail.getDetail() == null) {
+            return;
+        }
+        CollectDetail.Detail detailInfo = detail.getDetail();
+        desc = detailInfo.getCleanDesc();
+        createDate = detailInfo.getGmtCreate();
+        updateDate = detailInfo.getGmtModify();
+        songCount = detailInfo.getSongCount();
+        h5Url = detailInfo.getH5Url();
 
     }
 
@@ -66,6 +91,8 @@ public class Collect implements Parcelable {
         isFromUser = in.readInt() == 1;
     }
 
+
+
     public Collect(Long id, String title, String desc, long collectId,
                    String coverUrl, int coverDrawable, int songCount,
                    int songDownloadNumber, String providerName, int playTimes,
@@ -83,6 +110,30 @@ public class Collect implements Parcelable {
         this.createDate = createDate;
         this.updateDate = updateDate;
         this.isFromUser = isFromUser;
+    }
+
+    public ToMany<Song> getSongs() {
+        return songs;
+    }
+
+    public void setSongs(ToMany<Song> songs) {
+        this.songs = songs;
+    }
+
+    public String getH5Url() {
+        return h5Url;
+    }
+
+    public void setH5Url(String h5Url) {
+        this.h5Url = h5Url;
+    }
+
+    public boolean isFromUser() {
+        return isFromUser;
+    }
+
+    public void setFromUser(boolean fromUser) {
+        isFromUser = fromUser;
     }
 
     public String getTitle() {
