@@ -4,9 +4,7 @@ import com.wenhaiz.himusic.base.BasePresenter
 import com.wenhaiz.himusic.base.BaseView
 import com.wenhaiz.himusic.data.bean.Album
 import com.wenhaiz.himusic.data.bean.Collect
-import com.wenhaiz.himusic.data.bean.Song
-import com.wenhaiz.himusic.http.data.AlbumDetail
-import com.wenhaiz.himusic.http.data.CollectDetail
+import com.wenhaiz.himusic.http.data.RankList
 import com.wenhaiz.himusic.module.ranking.RankingContract
 import java.io.Serializable
 
@@ -16,6 +14,7 @@ interface DetailContract {
         fun onCollectDetailLoad(collect: Collect)
         fun onAlbumDetailLoad(album: Album)
         fun onGlobalRankingLoad(collect: Collect)
+        fun onRankingDetailLoad(rank: RankList.Rank)
     }
 
     interface Presenter : BasePresenter {
@@ -23,11 +22,12 @@ interface DetailContract {
         fun loadCollectDetail(collect: Collect, isFromUser: Boolean)
 //        fun loadSongDetail(song: Song)
         fun loadGlobalRanking(ranking: RankingContract.GlobalRanking)
+        fun loadRankingDetail(rank: RankList.Rank)
     }
 
     enum class LoadType : Serializable {
         SONG, COLLECT, ALBUM,
-        GLOBAL_RANKING, OFFICIAL_RANKING;
+        GLOBAL_RANKING, OFFICIAL_RANKING, RANKING;
     }
 
     companion object {

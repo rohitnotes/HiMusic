@@ -1,9 +1,8 @@
 package com.wenhaiz.himusic.module.ranking
 
 import com.wenhaiz.himusic.data.LoadRankingCallback
-import com.wenhaiz.himusic.data.MusicProvider
 import com.wenhaiz.himusic.data.MusicRepository
-import com.wenhaiz.himusic.data.bean.Collect
+import com.wenhaiz.himusic.http.data.RankList
 
 class RankingPresenter(val view: RankingContract.View) : RankingContract.Presenter {
 
@@ -13,15 +12,14 @@ class RankingPresenter(val view: RankingContract.View) : RankingContract.Present
         view.setPresenter(this)
     }
 
-    override fun loadOfficialRanking(provider: MusicProvider) {
-        musicRepository.changeMusicSource(provider, view.getViewContext())
-        musicRepository.loadOfficialRanking(provider, object : LoadRankingCallback {
-            override fun onStart() {
-                view.onLoading()
+    override fun loadRankingList() {
+        musicRepository.loadOfficialRanking(object : LoadRankingCallback {
+            override fun onSuccess(rankList: RankList) {
+                view.onRankingListLoad(rankList)
             }
 
-            override fun onSuccess(collects: List<Collect>) {
-                view.onOfficialRankingLoad(collects)
+            override fun onStart() {
+                view.onLoading()
             }
 
             override fun onFailure(msg: String) {

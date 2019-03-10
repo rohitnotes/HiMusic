@@ -29,7 +29,7 @@ import com.wenhaiz.himusic.data.bean.Song
 import com.wenhaiz.himusic.ext.hide
 import com.wenhaiz.himusic.ext.show
 import com.wenhaiz.himusic.ext.showToast
-import com.wenhaiz.himusic.http.data.CollectDetail
+import com.wenhaiz.himusic.http.data.RankList
 import com.wenhaiz.himusic.module.main.MainActivity
 import com.wenhaiz.himusic.module.main.local.EditCollectActivity
 import com.wenhaiz.himusic.module.main.local.LocalFragment
@@ -128,13 +128,17 @@ class DetailFragment : Fragment(), DetailContract.View {
      */
     private fun loadDetail() {
         when (mLoadType) {
+            DetailContract.LoadType.RANKING -> {
+                val rank: RankList.Rank = arguments!!.getSerializable(DetailContract.ARGS_ID) as RankList.Rank
+                mPresenter.loadRankingDetail(rank)
+            }
             DetailContract.LoadType.GLOBAL_RANKING -> {//全球排行榜
-                val ranking: RankingContract.GlobalRanking = arguments!!.getSerializable(DetailContract.ARGS_GLOBAL_RANKING) as RankingContract.GlobalRanking
-                mPresenter.loadGlobalRanking(ranking)
+//                val ranking: RankingContract.GlobalRanking = arguments!!.getSerializable(DetailContract.ARGS_GLOBAL_RANKING) as RankingContract.GlobalRanking
+//                mPresenter.loadGlobalRanking(ranking)
             }
             DetailContract.LoadType.OFFICIAL_RANKING -> {//官方排行榜
-                val collect: Collect = arguments!!.getParcelable(DetailContract.ARGS_COLLECT)
-                setRankingDetail(collect)
+//                val collect: Collect = arguments!!.getParcelable(DetailContract.ARGS_COLLECT)
+//                setRankingDetail(collect)
             }
             DetailContract.LoadType.ALBUM -> {//专辑
                 val album = arguments!!.getSerializable(DetailContract.ARGS_ID) as Album
@@ -324,24 +328,25 @@ class DetailFragment : Fragment(), DetailContract.View {
 
     override fun onGlobalRankingLoad(collect: Collect) {
         activity!!.runOnUiThread {
-            setRankingDetail(collect)
+            //            setRankingDetail(collect)
         }
     }
 
-    private fun setRankingDetail(collect: Collect) {
-        activity!!.runOnUiThread({
-            mActionBarTitle.text = collect.title
-            mTitle.text = collect.title
-            mArtist.text = collect.desc
-            GlideApp.with(context)
-                    .load(collect.coverDrawable)
-                    .into(mCover)
-            mDate.hide()
-            mSongListAdapter.setData(collect.songs)
+    override fun onRankingDetailLoad(rank: RankList.Rank) {
+        mActionBarTitle.text = rank.name
+        mTitle.text = rank.name
+        mArtist.text = rank.description
+        GlideApp.with(context)
+                .load(rank.logoMiddle)
+                .into(mCover)
+        mDate.hide()
+        mSongListAdapter.setData(rank.songs)
+        mLoading.hide()
+        mSongList.show()
+    }
 
-            mLoading.hide()
-            mSongList.show()
-        })
+    private fun setRankingDetail(rank: RankList.Rank) {
+
     }
 
     override fun onAlbumDetailLoad(album: Album) {

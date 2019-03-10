@@ -6,8 +6,7 @@ import com.wenhaiz.himusic.data.bean.Artist
 import com.wenhaiz.himusic.data.bean.Banner
 import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Song
-import com.wenhaiz.himusic.http.data.AlbumDetail
-import com.wenhaiz.himusic.http.data.CollectDetail
+import com.wenhaiz.himusic.http.data.RankList
 import com.wenhaiz.himusic.module.ranking.RankingContract
 
 /**
@@ -29,8 +28,9 @@ interface MusicSource {
     fun loadArtistHotSongs(artist: Artist, page: Int, callback: LoadArtistHotSongsCallback)
     fun loadArtistAlbums(artist: Artist, page: Int, callback: LoadArtistAlbumsCallback)
     fun loadCollectByCategory(category: String, page: Int, callback: LoadCollectByCategoryCallback)
-    fun loadOfficialRanking(provider: MusicProvider, callback: LoadRankingCallback)
+    fun loadOfficialRanking(callback: LoadRankingCallback)
     fun loadGlobalRanking(ranking: RankingContract.GlobalRanking, callback: LoadSingleRankingCallback)
+    fun loadRankingDetail(rank: RankList.Rank, callback: LoadRankingDetailCallback)
 }
 
 
@@ -88,7 +88,11 @@ interface LoadCollectByCategoryCallback : BaseCallBack {
 }
 
 interface LoadRankingCallback : BaseCallBack {
-    fun onSuccess(collects: List<Collect>)
+    fun onSuccess(rankList: RankList)
+}
+
+interface LoadRankingDetailCallback : BaseCallBack {
+    fun onSuccess(rank: RankList.Rank)
 }
 
 interface LoadSingleRankingCallback : BaseCallBack {

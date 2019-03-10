@@ -64,6 +64,8 @@ public final class Song implements Parcelable, Serializable {
 //    private boolean isDownload;
     private String providerName;
     public boolean isPlaying = false;
+    @SerializedName("singers")
+    private String singers;
 
     public boolean canListen = true;
 
@@ -117,6 +119,7 @@ public final class Song implements Parcelable, Serializable {
                 break;
         }
         isPlaying = in.readInt() == 1;
+        singers = in.readString();
 
     }
 
@@ -169,6 +172,7 @@ public final class Song implements Parcelable, Serializable {
                 break;
         }
         dest.writeInt(isPlaying ? 1 : 0);
+        dest.writeString(singers);
 
     }
 
@@ -178,6 +182,9 @@ public final class Song implements Parcelable, Serializable {
     }
 
     public String getArtistName() {
+        if (TextUtils.isEmpty(artistName)) {
+            return singers;
+        }
         return artistName;
     }
 
@@ -191,6 +198,22 @@ public final class Song implements Parcelable, Serializable {
             sb.append("/");
         }
         setDisplayArtistName(sb.toString().substring(0, sb.length() - 1));
+    }
+
+    public String getSingers() {
+        return singers;
+    }
+
+    public void setSingers(String singers) {
+        this.singers = singers;
+    }
+
+    public boolean isCanListen() {
+        return canListen;
+    }
+
+    public void setCanListen(boolean canListen) {
+        this.canListen = canListen;
     }
 
     public String getDisplayArtistName() {

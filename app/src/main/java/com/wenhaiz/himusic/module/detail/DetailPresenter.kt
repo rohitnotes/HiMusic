@@ -3,16 +3,17 @@ package com.wenhaiz.himusic.module.detail
 import com.wenhaiz.himusic.MyApp
 import com.wenhaiz.himusic.data.LoadAlbumDetailCallback
 import com.wenhaiz.himusic.data.LoadCollectDetailCallback
+import com.wenhaiz.himusic.data.LoadRankingDetailCallback
 import com.wenhaiz.himusic.data.LoadSingleRankingCallback
 import com.wenhaiz.himusic.data.MusicRepository
 import com.wenhaiz.himusic.data.bean.Album
 import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Collect_
-import com.wenhaiz.himusic.http.data.AlbumDetail
-import com.wenhaiz.himusic.http.data.CollectDetail
+import com.wenhaiz.himusic.http.data.RankList
 import com.wenhaiz.himusic.module.ranking.RankingContract
 
 internal class DetailPresenter(val view: DetailContract.View) : DetailContract.Presenter {
+
 
     private val musicRepository: MusicRepository = MusicRepository.getInstance(view.getViewContext())
 
@@ -84,6 +85,23 @@ internal class DetailPresenter(val view: DetailContract.View) : DetailContract.P
             }
         })
 
+    }
+
+    override fun loadRankingDetail(rank: RankList.Rank) {
+        musicRepository.loadRankingDetail(rank, object : LoadRankingDetailCallback {
+            override fun onSuccess(rank: RankList.Rank) {
+                view.onRankingDetailLoad(rank)
+            }
+
+            override fun onStart() {
+                view.onLoading()
+            }
+
+            override fun onFailure(msg: String) {
+                view.onFailure(msg)
+            }
+
+        })
     }
 
     companion object {

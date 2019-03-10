@@ -25,7 +25,6 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import butterknife.Unbinder
 import com.wenhaiz.himusic.R
-import com.wenhaiz.himusic.data.MusicProvider
 import com.wenhaiz.himusic.data.bean.LikedSong
 import com.wenhaiz.himusic.data.bean.LikedSong_
 import com.wenhaiz.himusic.data.bean.Song
@@ -474,22 +473,7 @@ class PLayActivity : AppCompatActivity(), PlayStatusObserver, PlayProxy {
 
     @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
     private fun setProvider() {
-        val provider = mCurrentSong!!.supplier
-        val providerStr = when (provider) {
-            MusicProvider.XIAMI -> {
-                getString(R.string.provider_xiami)
-            }
-            MusicProvider.QQMUSIC -> {
-                getString(R.string.provider_qq)
-            }
-            MusicProvider.NETEASE -> {
-                getString(R.string.provider_netease)
-            }
-            else -> {
-                getString(R.string.provider_xiami)
-            }
-        }
-        mTvProvider.text = providerStr
+        mTvProvider.text = mCurrentSong!!.supplier.providerName
     }
 
     override fun onSongCompleted() {
