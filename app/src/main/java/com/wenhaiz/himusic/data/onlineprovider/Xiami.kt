@@ -60,10 +60,6 @@ class Xiami(val context: Context) : MusicSource {
         val URL_INFIX_LOAD_ARTISTS = "/class/0/page/"
         val URL_HOME = "http://www.xiami.com"
         val CATEGORY_HOT_COLLECT = "热门歌单"
-        //        val URL_SEARCH_ARTIST = "/search/artist?key=%E7%94%B0"
-        val URL_HOT_COLLECT = "/collect/recommend/page/"
-        //type:all-全部 huayu-华语 oumei-欧美 ri-日本 han-韩国
-        val URL_NEW_ALBUM = "/music/newalbum/type/all/page/"
 
         //虾米音乐榜
         val URL_RANKING_DATA_MUSIC = "/chart/data?c=103&type=0&page=1&limit=100&_="
@@ -210,6 +206,9 @@ class Xiami(val context: Context) : MusicSource {
         GetCollectDetailRequest(collect.collectId).setDataCallback(object : BaseRequest.BaseDataCallback<CollectDetail>() {
             override fun onSuccess(data: CollectDetail) {
                 collect.addDetail(data)
+                collect.songs.forEach {
+                    it.supplier = MusicProvider.XIAMI
+                }
                 callback.onSuccess(collect)
             }
 
@@ -263,7 +262,6 @@ class Xiami(val context: Context) : MusicSource {
                 .setDataCallback(object : BaseRequest.BaseDataCallback<SongDetail>() {
                     override fun onSuccess(data: SongDetail) {
                         song.addDetailInfo(data.data)
-                        song.supplier = MusicProvider.XIAMI
                         callback.onSuccess(song)
                     }
 
@@ -310,6 +308,9 @@ class Xiami(val context: Context) : MusicSource {
                 .setDataCallback(object : BaseRequest.BaseDataCallback<AlbumDetail>() {
                     override fun onSuccess(data: AlbumDetail) {
                         album.addDetail(data.albumDetail)
+                        album.songs.forEach {
+                            it.supplier = MusicProvider.XIAMI
+                        }
                         callback.onSuccess(album)
                     }
 
