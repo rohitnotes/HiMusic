@@ -12,8 +12,4 @@ interface RankingContract {
     interface View : BaseView<Presenter> {
         fun onRankingListLoad(rankList: RankList)
     }
-
-    enum class GlobalRanking {
-        BILLBOARD, UK, ORICON
-    }
 }

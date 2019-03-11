@@ -4,13 +4,11 @@ import com.wenhaiz.himusic.MyApp
 import com.wenhaiz.himusic.data.LoadAlbumDetailCallback
 import com.wenhaiz.himusic.data.LoadCollectDetailCallback
 import com.wenhaiz.himusic.data.LoadRankingDetailCallback
-import com.wenhaiz.himusic.data.LoadSingleRankingCallback
 import com.wenhaiz.himusic.data.MusicRepository
 import com.wenhaiz.himusic.data.bean.Album
 import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Collect_
 import com.wenhaiz.himusic.http.data.RankList
-import com.wenhaiz.himusic.module.ranking.RankingContract
 
 internal class DetailPresenter(val view: DetailContract.View) : DetailContract.Presenter {
 
@@ -65,25 +63,6 @@ internal class DetailPresenter(val view: DetailContract.View) : DetailContract.P
 
             })
         }
-
-    }
-
-
-    override fun loadGlobalRanking(ranking: RankingContract.GlobalRanking) {
-        musicRepository.loadGlobalRanking(ranking, object : LoadSingleRankingCallback {
-            override fun onStart() {
-                view.onLoading()
-
-            }
-
-            override fun onSuccess(collect: Collect) {
-                view.onGlobalRankingLoad(collect)
-            }
-
-            override fun onFailure(msg: String) {
-                view.onFailure(msg)
-            }
-        })
 
     }
 

@@ -13,7 +13,7 @@ class RankingPresenter(val view: RankingContract.View) : RankingContract.Present
     }
 
     override fun loadRankingList() {
-        musicRepository.loadOfficialRanking(object : LoadRankingCallback {
+        musicRepository.loadRankingList(object : LoadRankingCallback {
             override fun onSuccess(rankList: RankList) {
                 view.onRankingListLoad(rankList)
             }

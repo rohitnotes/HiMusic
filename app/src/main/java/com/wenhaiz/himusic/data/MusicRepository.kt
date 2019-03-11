@@ -7,7 +7,6 @@ import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Song
 import com.wenhaiz.himusic.data.onlineprovider.Xiami
 import com.wenhaiz.himusic.http.data.RankList
-import com.wenhaiz.himusic.module.ranking.RankingContract
 
 internal class MusicRepository(context: Context) : MusicSource {
 
@@ -122,12 +121,8 @@ internal class MusicRepository(context: Context) : MusicSource {
         musicSource.loadCollectByCategory(category, page, callback)
     }
 
-    override fun loadOfficialRanking(callback: LoadRankingCallback) {
-        musicSource.loadOfficialRanking(callback)
-    }
-
-    override fun loadGlobalRanking(ranking: RankingContract.GlobalRanking, callback: LoadSingleRankingCallback) {
-        musicSource.loadGlobalRanking(ranking, callback)
+    override fun loadRankingList(callback: LoadRankingCallback) {
+        musicSource.loadRankingList(callback)
     }
 
     override fun loadRankingDetail(rank: RankList.Rank, callback: LoadRankingDetailCallback) {

@@ -28,8 +28,7 @@ interface MusicSource {
     fun loadArtistHotSongs(artist: Artist, page: Int, callback: LoadArtistHotSongsCallback)
     fun loadArtistAlbums(artist: Artist, page: Int, callback: LoadArtistAlbumsCallback)
     fun loadCollectByCategory(category: String, page: Int, callback: LoadCollectByCategoryCallback)
-    fun loadOfficialRanking(callback: LoadRankingCallback)
-    fun loadGlobalRanking(ranking: RankingContract.GlobalRanking, callback: LoadSingleRankingCallback)
+    fun loadRankingList(callback: LoadRankingCallback)
     fun loadRankingDetail(rank: RankList.Rank, callback: LoadRankingDetailCallback)
 }
 
@@ -93,8 +92,4 @@ interface LoadRankingCallback : BaseCallBack {
 
 interface LoadRankingDetailCallback : BaseCallBack {
     fun onSuccess(rank: RankList.Rank)
-}
-
-interface LoadSingleRankingCallback : BaseCallBack {
-    fun onSuccess(collect: Collect)
 }

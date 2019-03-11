@@ -1,10 +1,7 @@
 package com.wenhaiz.himusic.data.onlineprovider
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.os.AsyncTask
 import android.text.TextUtils
-import com.wenhaiz.himusic.R
 import com.wenhaiz.himusic.data.*
 import com.wenhaiz.himusic.data.bean.Album
 import com.wenhaiz.himusic.data.bean.Artist
@@ -27,17 +24,14 @@ import com.wenhaiz.himusic.http.request.GetRankListRequest
 import com.wenhaiz.himusic.http.request.GetRecommendAlbumRequest
 import com.wenhaiz.himusic.http.request.GetRecommendCollectRequest
 import com.wenhaiz.himusic.http.request.GetSongDetailRequest
-import com.wenhaiz.himusic.module.ranking.RankingContract
 import com.wenhaiz.himusic.utils.BaseResponseCallback
 import com.wenhaiz.himusic.utils.OkHttpUtil
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import java.io.IOException
 import java.net.URLDecoder
 import java.net.URLEncoder
 
@@ -55,32 +49,10 @@ class Xiami(val context: Context) : MusicSource {
 
         val INFIX_SEARCH_RECOMMEND = "&_="//后面加时间
 
-
-        //get hidden listen url when "listen file" is null
-        val PREFIX_SONG_DETAIL = "/song/playlist/id/"
-        val SUFFIX_SONG_DETAIL = "/object_name/default/object_id/0/cat/json"
-
         val URL_PREFIX_LOAD_ARTISTS = "/artist/index/c/2/type/"
         val URL_INFIX_LOAD_ARTISTS = "/class/0/page/"
         val URL_HOME = "http://www.xiami.com"
         val CATEGORY_HOT_COLLECT = "热门歌单"
-
-        //虾米音乐榜
-        val URL_RANKING_DATA_MUSIC = "/chart/data?c=103&type=0&page=1&limit=100&_="
-        //虾米原创榜
-        val URL_RANKING_DATA_ORIGINAL = "/chart/data?c=104&type=0&page=1&limit=100&_="
-        //虾米新歌榜
-        val URL_RANKING_DATA_NEW = "/chart/data?c=102&type=0&page=1&limit=100&_="
-        //billboard
-        val URL_RANKING_BILLBOARD = "/chart/data?c=204&type=0&page=1&limit=100&_="
-        //uk
-        val URL_RANKING_UK = "/chart/data?c=203&type=0&page=1&limit=100&_="
-        //oricon
-        val URL_RANKING_ORICON = "/chart/data?c=205&type=0&page=1&limit=100&_="
-
-        val RANKING_MUSIC = "虾米音乐榜"
-        val RANKING_ORIGIN = "虾米原创榜"
-        val RANKING_NEW = "虾米新歌榜"
 
         /*
    *parse "location" string and get listen file url
@@ -674,7 +646,7 @@ class Xiami(val context: Context) : MusicSource {
         return Integer.valueOf(idStr)
     }
 
-    override fun loadOfficialRanking(callback: LoadRankingCallback) {
+    override fun loadRankingList(callback: LoadRankingCallback) {
         GetRankListRequest()
                 .setDataCallback(object : BaseRequest.BaseDataCallback<RankList>() {
                     override fun onSuccess(data: RankList) {
@@ -693,124 +665,11 @@ class Xiami(val context: Context) : MusicSource {
                 .send()
     }
 
-    override fun loadGlobalRanking(ranking: RankingContract.GlobalRanking, callback: LoadSingleRankingCallback) {
-        val collect = Collect()
-        collect.source = MusicProvider.XIAMI
-        val suffix = when (ranking) {
-            RankingContract.GlobalRanking.BILLBOARD -> {
-                collect.title = "Billboard周榜"
-                collect.desc = "美国公告牌每周最热100首单曲，每周五更新"
-                collect.coverDrawable = R.drawable.ranking_billboard
-                URL_RANKING_BILLBOARD
-            }
-
-            RankingContract.GlobalRanking.UK
-            -> {
-                collect.coverDrawable = R.drawable.ranking_uk
-                collect.title = "英国UK榜"
-                collect.desc = "英国官方每周最热单曲排行榜，每周一更新"
-                URL_RANKING_UK
-            }
-            RankingContract.GlobalRanking.ORICON
-            -> {
-                collect.coverDrawable = R.drawable.ranking_oricon
-                collect.title = "日本 Oricon 周榜"
-                collect.desc = "日本公信榜上周销量前20位单曲，每周三更新"
-                URL_RANKING_ORICON
-            }
-        }
-        val url = URL_HOME + suffix + System.currentTimeMillis()
-        OkHttpUtil.getForXiami(context, url, object : BaseResponseCallback() {
-            override fun onStart() {
-                callback.onStart()
-            }
-
-            override fun onHtmlResponse(html: String) {
-                val songList = parseRankingSongs(Jsoup.parse(html))
-                collect.songs.addAll(songList)
-                callback.onSuccess(collect)
-            }
-
-            override fun onFailure(msg: String) {
-                callback.onFailure(msg)
-            }
-        })
-
-    }
-
     fun maskUrl(url: String): String {
         return if (url.startsWith("//")) {
             "https:$url"
         } else {
             url
-        }
-    }
-
-    private fun parseRankingSongs(document: Document): List<Song> {
-        val songElements = document.getElementsByClass("song")
-        val moreElements = document.getElementsByClass("more")
-
-        val songs = ArrayList<Song>()
-        for (i in 0 until songElements.size) {
-            val element = songElements[i]
-            val song = Song()
-            song.supplier = MusicProvider.XIAMI
-            song.miniAlbumCoverUrl = element.getElementsByClass("image").first()
-                    .select("img").first().attr("src")
-            song.albumName = ""
-            song.albumCoverUrl = song.miniAlbumCoverUrl.substring(0, song.miniAlbumCoverUrl.indexOf("@"))
-            val info = element.getElementsByClass("info").first()
-            song.name = info.select("p").first().select("a").first().text()
-            song.artistName = info.select("p").last().select("a").first().text()
-            val songId = moreElements[i].select("li").first().attr("onclick")
-            song.songId = songId.substring(songId.indexOf("(") + 1, songId.indexOf(",")).toLong()
-            songs.add(song)
-        }
-        return songs
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    inner class LoadRankingListTask(val collects: ArrayList<Collect>, private val rankingTitle: String, private val callback: LoadRankingCallback)
-        : AsyncTask<String, Void, Collect>() {
-
-        override fun doInBackground(vararg urls: String?): Collect? {
-            val url = urls[0]
-
-            try {
-                val document = Jsoup.connect(url).get()
-                val collect = Collect()
-                collect.title = rankingTitle
-                when (rankingTitle) {
-                    RANKING_MUSIC -> {
-                        collect.coverDrawable = R.mipmap.xiami_music
-                        collect.desc = "虾米音乐全曲库歌曲试听量排名"
-                    }
-                    RANKING_NEW -> {
-                        collect.coverDrawable = R.mipmap.xiami_new
-                        collect.desc = "虾米音乐30天内新歌试听量排名"
-                    }
-                    RANKING_ORIGIN -> {
-                        collect.coverDrawable = R.mipmap.xiami_original
-                        collect.desc = "虾米音乐人最新作品试听量排名"
-                    }
-                }
-                collect.source = MusicProvider.XIAMI
-                collect.songs.addAll(parseRankingSongs(document))
-                return collect
-            } catch (e: IOException) {
-                callback.onFailure("获取排行榜信息失败")
-            }
-            return null
-        }
-
-        override fun onPostExecute(result: Collect?) {
-            super.onPostExecute(result)
-            if (result != null) {
-                collects.add(result)
-                if (collects.size == 3) {
-//                    callback.onSuccess(collects)
-                }
-            }
         }
     }
 }
