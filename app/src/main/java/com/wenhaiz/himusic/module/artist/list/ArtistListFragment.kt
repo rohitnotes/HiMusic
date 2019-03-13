@@ -18,12 +18,12 @@ import butterknife.OnClick
 import butterknife.Unbinder
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.wenhaiz.himusic.R
-import com.wenhaiz.himusic.data.ArtistRegion
 import com.wenhaiz.himusic.data.bean.Artist
 import com.wenhaiz.himusic.ext.hide
 import com.wenhaiz.himusic.ext.isShowing
 import com.wenhaiz.himusic.ext.show
 import com.wenhaiz.himusic.ext.showToast
+import com.wenhaiz.himusic.http.request.GetArtistListRequest
 import com.wenhaiz.himusic.module.artist.detail.ArtistDetailFragment
 import com.wenhaiz.himusic.utils.GlideApp
 import com.wenhaiz.himusic.utils.addFragmentToMainView
@@ -48,7 +48,7 @@ class ArtistListFragment : Fragment(), ArtistListContract.View {
     private lateinit var mUnbinder: Unbinder
     private lateinit var mArtistAdapter: ArtistAdapter
     private var curPage = 1
-    private var curRegion: ArtistRegion = ArtistRegion.ALL
+    private var curLanguage: GetArtistListRequest.Language = GetArtistListRequest.Language.ALL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,13 +79,13 @@ class ArtistListFragment : Fragment(), ArtistListContract.View {
 
     override fun initView() {
         mTitle.text = getString(R.string.main_artist_list)
-        mPresenter.loadArtists(curRegion, curPage)
-        setTab(curRegion.ordinal)
+        mPresenter.loadArtists(curLanguage, curPage)
+        setTab(curLanguage.ordinal)
         mArtistAdapter = ArtistAdapter(ArrayList())
         mArtistList.adapter = mArtistAdapter
         mArtistList.layoutManager = LinearLayoutManager(context)
         mRefreshLayout.setOnLoadmoreListener {
-            mPresenter.loadArtists(curRegion, curPage)
+            mPresenter.loadArtists(curLanguage, curPage)
         }
     }
 
@@ -131,7 +131,7 @@ class ArtistListFragment : Fragment(), ArtistListContract.View {
                 removeFragment(fragmentManager!!, this)
             }
             R.id.loading_failed -> {
-                mPresenter.loadArtists(curRegion, curPage)
+                mPresenter.loadArtists(curLanguage, curPage)
             }
         }
     }
@@ -140,30 +140,30 @@ class ArtistListFragment : Fragment(), ArtistListContract.View {
     fun onTabClick(view: View) {
         val newRegion = when (view.id) {
             R.id.singer_all -> {
-                ArtistRegion.ALL
+                GetArtistListRequest.Language.ALL
             }
             R.id.singer_china -> {
-                ArtistRegion.CN
+                GetArtistListRequest.Language.CN
             }
             R.id.singer_en -> {
-                ArtistRegion.EA
+                GetArtistListRequest.Language.US
             }
             R.id.singer_japan -> {
-                ArtistRegion.JP
+                GetArtistListRequest.Language.JP
             }
             R.id.singer_korea -> {
-                ArtistRegion.KO
+                GetArtistListRequest.Language.KO
             }
             else -> {
-                ArtistRegion.ALL
+                GetArtistListRequest.Language.ALL
             }
         }
-        if (curRegion != newRegion) {
-            curRegion = newRegion
+        if (curLanguage != newRegion) {
+            curLanguage = newRegion
             curPage = 1
             mArtistAdapter.clear()
-            mPresenter.loadArtists(curRegion, curPage)
-            setTab(curRegion.ordinal)
+            mPresenter.loadArtists(curLanguage, curPage)
+            setTab(curLanguage.ordinal)
         }
     }
 
@@ -184,7 +184,7 @@ class ArtistListFragment : Fragment(), ArtistListContract.View {
     inner class ArtistAdapter(private val artists: List<Artist>) : RecyclerView.Adapter<ArtistAdapter.ViewHolder>() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val artist = artists[position]
-            holder.artistName.text = artist.name
+            holder.artistName.text = artist.artistName
             GlideApp.with(context)
                     .load(artist.miniImgUrl)
                     .placeholder(R.drawable.ic_main_singer)

@@ -2,12 +2,20 @@ package com.wenhaiz.himusic.data.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
+
+import com.google.gson.annotations.SerializedName;
 
 public class Artist implements Parcelable {
+    @SerializedName("artistId")
     private String artistId;
-    private String name;
+    @SerializedName("artistStringId")
+    private String artistStringId;
+    @SerializedName("artistName")
+    private String artistName;
     private String desc;
     private String miniImgUrl;
+    @SerializedName("artistLogo")
     private String imgUrl;
 
     public Artist() {
@@ -29,16 +37,8 @@ public class Artist implements Parcelable {
         this.artistId = artistId;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getMiniImgUrl() {
-        return miniImgUrl;
+        return TextUtils.isEmpty(miniImgUrl)?imgUrl:miniImgUrl;
     }
 
     public void setMiniImgUrl(String miniImgUrl) {
@@ -56,7 +56,8 @@ public class Artist implements Parcelable {
 
     protected Artist(Parcel in) {
         artistId = in.readString();
-        name = in.readString();
+        artistStringId = in.readString();
+        artistName = in.readString();
         desc = in.readString();
         miniImgUrl = in.readString();
         imgUrl = in.readString();
@@ -65,10 +66,27 @@ public class Artist implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(artistId);
-        dest.writeString(name);
+        dest.writeString(artistStringId);
+        dest.writeString(artistName);
         dest.writeString(desc);
         dest.writeString(miniImgUrl);
         dest.writeString(imgUrl);
+    }
+
+    public String getArtistStringId() {
+        return artistStringId;
+    }
+
+    public void setArtistStringId(String artistStringId) {
+        this.artistStringId = artistStringId;
+    }
+
+    public String getArtistName() {
+        return artistName;
+    }
+
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
     }
 
     @Override

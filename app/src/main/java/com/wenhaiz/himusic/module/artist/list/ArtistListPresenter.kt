@@ -1,9 +1,9 @@
 package com.wenhaiz.himusic.module.artist.list
 
-import com.wenhaiz.himusic.data.ArtistRegion
 import com.wenhaiz.himusic.data.LoadArtistsCallback
 import com.wenhaiz.himusic.data.MusicRepository
 import com.wenhaiz.himusic.data.bean.Artist
+import com.wenhaiz.himusic.http.request.GetArtistListRequest
 
 internal class ArtistListPresenter(val view: ArtistListContract.View) : ArtistListContract.Presenter {
     private val musicRepository: MusicRepository = MusicRepository.getInstance(view.getViewContext())
@@ -12,8 +12,8 @@ internal class ArtistListPresenter(val view: ArtistListContract.View) : ArtistLi
         view.setPresenter(this)
     }
 
-    override fun loadArtists(region: ArtistRegion, page: Int) {
-        musicRepository.loadArtists(region, page, object : LoadArtistsCallback {
+    override fun loadArtists(language: GetArtistListRequest.Language, page: Int) {
+        musicRepository.loadArtists(language, page, object : LoadArtistsCallback {
             override fun onStart() {
                 view.onLoading()
             }

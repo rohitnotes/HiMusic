@@ -8,6 +8,7 @@ import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Song
 import com.wenhaiz.himusic.http.data.RankList
 import com.wenhaiz.himusic.http.data.SearchTip
+import com.wenhaiz.himusic.http.request.GetArtistListRequest
 
 /**
  * 音乐数据接口类
@@ -23,7 +24,7 @@ interface MusicSource {
     fun loadSongDetail(song: Song, callback: LoadSongDetailCallback)
     fun searchByKeyword(keyword: String, callback: LoadSearchResultCallback)
     fun loadSearchTips(keyword: String, callback: LoadSearchTipsCallback)
-    fun loadArtists(region: ArtistRegion, page: Int, callback: LoadArtistsCallback)
+    fun loadArtists(language: GetArtistListRequest.Language, page: Int, callback: LoadArtistsCallback)
     fun loadArtistDetail(artist: Artist, callback: LoadArtistDetailCallback)
     fun loadArtistHotSongs(artist: Artist, page: Int, callback: LoadArtistHotSongsCallback)
     fun loadArtistAlbums(artist: Artist, page: Int, callback: LoadArtistAlbumsCallback)
