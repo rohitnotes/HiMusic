@@ -7,6 +7,10 @@ public class QueryPage {
     private int page;
     @SerializedName("pageSize")
     private int pageSize;
+    @SerializedName("pages")
+    private int pages;
+    @SerializedName("count")
+    private int count;
 
     public QueryPage(int page, int pageSize) {
         this.page = page;
@@ -27,5 +31,21 @@ public class QueryPage {
 
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public int getPages() {
+        return pages;
+    }
+
+    public void setPages(int pages) {
+        this.pages = pages;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 }

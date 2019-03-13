@@ -67,8 +67,8 @@ internal class MusicRepository(context: Context) : MusicSource {
         }
     }
 
-    override fun loadSearchRecommend(keyword: String, callback: LoadSearchRecommendCallback) {
-        musicSource.loadSearchRecommend(keyword, callback)
+    override fun loadSearchTips(keyword: String, callback: LoadSearchTipsCallback) {
+        musicSource.loadSearchTips(keyword, callback)
     }
 
     override fun searchByKeyword(keyword: String, callback: LoadSearchResultCallback) {
