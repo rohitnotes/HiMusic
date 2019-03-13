@@ -19,7 +19,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="10dp"
         android:layout_weight="1"
         android:gravity="center_vertical"
         android:orientation="vertical">
@@ -32,7 +32,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/colorBlack"
-            android:textSize="15sp" />
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/ranking_preview1"
@@ -42,7 +42,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/colorBlack"
-            android:textSize="15sp" />
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/ranking_preview2"
@@ -52,7 +52,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/colorBlack"
-            android:textSize="15sp" />
+            android:textSize="13sp" />
 
     </LinearLayout>
 

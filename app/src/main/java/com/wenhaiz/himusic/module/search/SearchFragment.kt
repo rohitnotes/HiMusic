@@ -23,10 +23,11 @@ import com.wenhaiz.himusic.data.bean.SearchHistory_
 import com.wenhaiz.himusic.data.bean.Song
 import com.wenhaiz.himusic.ext.hide
 import com.wenhaiz.himusic.ext.show
-import com.wenhaiz.himusic.ext.showToast
+import com.wenhaiz.himusic.http.data.SearchTip
 import com.wenhaiz.himusic.module.main.MainFragment
 import com.wenhaiz.himusic.module.play.service.PlayProxy
 import com.wenhaiz.himusic.utils.BoxUtil
+import com.wenhaiz.himusic.widget.SongOpsDialog
 
 class SearchFragment : Fragment(), SearchContract.View {
 
@@ -135,7 +136,7 @@ class SearchFragment : Fragment(), SearchContract.View {
         mPresenter.loadSearchRecommend(searchKeyword)
     }
 
-    override fun onSearchRecommendLoaded(recommends: List<String>) {
+    override fun onSearchRecommendLoaded(recommends: List<SearchTip>) {
         if (currentContent == CONTENT_RECOMMEND_KEYWORD) {
             activity!!.runOnUiThread {
                 if (mContentList.adapter is SearchRecommendAdapter) {
@@ -150,15 +151,13 @@ class SearchFragment : Fragment(), SearchContract.View {
 
     override fun onSearchResult(songs: List<Song>) {
         if (currentContent == CONTENT_SEARCH_RESULT) {
-            activity!!.runOnUiThread {
-                mSearchView.hide()
-                resultSongs = songs
-                mContentList.adapter = ResultSongsAdapter(resultSongs)
-                mContentList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            mSearchView.hide()
+            resultSongs = songs
+            mContentList.adapter = ResultSongsAdapter(resultSongs)
+            mContentList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
-                mLoading.hide()
-                mContentList.show()
-            }
+            mLoading.hide()
+            mContentList.show()
         }
     }
 
@@ -170,20 +169,10 @@ class SearchFragment : Fragment(), SearchContract.View {
 
     override fun onFailure(msg: String) {
         activity!!.runOnUiThread {
-            if (msg == SearchContract.SONG_NOT_AVAILABLE) {
-                context!!.showToast(getString(R.string.song_not_available))
-            } else {
-                mLoadFailed.show()
-                mLoading.hide()
-                mContentList.hide()
-                mSearchView.hide()
-            }
-        }
-    }
-
-    override fun onSongDetailLoad(song: Song) {
-        activity!!.runOnUiThread {
-            (activity as PlayProxy).playSong(song)
+            mLoadFailed.show()
+            mLoading.hide()
+            mContentList.hide()
+            mSearchView.hide()
         }
     }
 
@@ -206,15 +195,18 @@ class SearchFragment : Fragment(), SearchContract.View {
             val song = songs[position]
 
             holder.songName.text = song.name
-            val displayArtist = "${song.artistName}-${song.albumName}"
+            val displayArtist = "${song.artistName}·${song.albumName}"
             holder.artist.text = displayArtist
 
             holder.btnMore.setOnClickListener {
-
+                val dialog = SongOpsDialog(context!!, song, activity!!)
+                dialog.show()
             }
 
             holder.item.setOnClickListener {
-                mPresenter.loadSongDetail(song)
+                if (activity is PlayProxy) {
+                    (activity as PlayProxy).playSong(song)
+                }
             }
 
         }
@@ -269,7 +261,7 @@ class SearchFragment : Fragment(), SearchContract.View {
         }
     }
 
-    inner class SearchRecommendAdapter(private var keywords: List<String>)
+    inner class SearchRecommendAdapter(private var keywords: List<SearchTip>)
         : RecyclerView.Adapter<SearchRecommendAdapter.ViewHolder>() {
         override fun getItemCount(): Int = keywords.size
 
@@ -280,16 +272,16 @@ class SearchFragment : Fragment(), SearchContract.View {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val recommendKeyword = keywords[position]
-            holder.keyword.text = recommendKeyword
+            holder.keyword.text = recommendKeyword.tip
             holder.item.setOnClickListener {
-                searchKeyword = recommendKeyword
+                searchKeyword = recommendKeyword.tip
                 val mainFragment: MainFragment = fragmentManager!!.findFragmentById(R.id.main_container) as MainFragment
-                mainFragment.setSearchKeyword(recommendKeyword)
-                beginSearch(recommendKeyword)
+                mainFragment.setSearchKeyword(recommendKeyword.tip)
+                beginSearch(recommendKeyword.tip)
             }
         }
 
-        fun setData(newKeywords: List<String>) {
+        fun setData(newKeywords: List<SearchTip>) {
             keywords = newKeywords
             notifyDataSetChanged()
         }

@@ -19,6 +19,10 @@ public class API {
         public static final String GET_RANK_LIST = "/api/billboard/getBillboards";
         public static final String GET_RANK_DETAIL = "/api/billboard/getBillboardDetail";
 
+        public static final String SEARCH_SONGS = "/api/search/searchSongs";
+        public static final String GET_SEARCH_TIPS = "/api/search/searchTips";
+
+
 
 
         public static String getSongDetailUrl(Long songId) {

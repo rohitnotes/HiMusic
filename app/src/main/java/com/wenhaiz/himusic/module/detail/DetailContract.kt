@@ -13,15 +13,12 @@ interface DetailContract {
     interface View : BaseView<Presenter> {
         fun onCollectDetailLoad(collect: Collect)
         fun onAlbumDetailLoad(album: Album)
-        fun onGlobalRankingLoad(collect: Collect)
         fun onRankingDetailLoad(rank: RankList.Rank)
     }
 
     interface Presenter : BasePresenter {
         fun loadAlbumDetail(album: Album)
         fun loadCollectDetail(collect: Collect, isFromUser: Boolean)
-//        fun loadSongDetail(song: Song)
-        fun loadGlobalRanking(ranking: RankingContract.GlobalRanking)
         fun loadRankingDetail(rank: RankList.Rank)
     }
 

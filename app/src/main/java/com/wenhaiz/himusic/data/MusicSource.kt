@@ -7,7 +7,7 @@ import com.wenhaiz.himusic.data.bean.Banner
 import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Song
 import com.wenhaiz.himusic.http.data.RankList
-import com.wenhaiz.himusic.module.ranking.RankingContract
+import com.wenhaiz.himusic.http.data.SearchTip
 
 /**
  * 音乐数据接口类
@@ -22,14 +22,13 @@ interface MusicSource {
     fun loadAlbumDetail(album: Album, callback: LoadAlbumDetailCallback)
     fun loadSongDetail(song: Song, callback: LoadSongDetailCallback)
     fun searchByKeyword(keyword: String, callback: LoadSearchResultCallback)
-    fun loadSearchRecommend(keyword: String, callback: LoadSearchRecommendCallback)
+    fun loadSearchTips(keyword: String, callback: LoadSearchTipsCallback)
     fun loadArtists(region: ArtistRegion, page: Int, callback: LoadArtistsCallback)
     fun loadArtistDetail(artist: Artist, callback: LoadArtistDetailCallback)
     fun loadArtistHotSongs(artist: Artist, page: Int, callback: LoadArtistHotSongsCallback)
     fun loadArtistAlbums(artist: Artist, page: Int, callback: LoadArtistAlbumsCallback)
     fun loadCollectByCategory(category: String, page: Int, callback: LoadCollectByCategoryCallback)
-    fun loadOfficialRanking(callback: LoadRankingCallback)
-    fun loadGlobalRanking(ranking: RankingContract.GlobalRanking, callback: LoadSingleRankingCallback)
+    fun loadRankingList(callback: LoadRankingCallback)
     fun loadRankingDetail(rank: RankList.Rank, callback: LoadRankingDetailCallback)
 }
 
@@ -63,8 +62,8 @@ interface LoadSearchResultCallback : BaseCallBack {
     fun onSuccess(loadedSongs: List<Song>)
 }
 
-interface LoadSearchRecommendCallback : BaseCallBack {
-    fun onSuccess(recommendKeyword: List<String>)
+interface LoadSearchTipsCallback : BaseCallBack {
+    fun onSuccess(recommendKeyword: List<SearchTip>)
 }
 
 interface LoadArtistsCallback : BaseCallBack {
@@ -93,8 +92,4 @@ interface LoadRankingCallback : BaseCallBack {
 
 interface LoadRankingDetailCallback : BaseCallBack {
     fun onSuccess(rank: RankList.Rank)
-}
-
-interface LoadSingleRankingCallback : BaseCallBack {
-    fun onSuccess(collect: Collect)
 }

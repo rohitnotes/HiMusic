@@ -73,6 +73,8 @@
     <string name="http_frequency_request">请求过于频繁，请稍后再试吧！</string>
     <string name="http_wrong_format">不能反序列化成对应格式</string>
     <string name="error_json">Json 解析出错啦！</string>
+    <string name="no_search_result">没有搜索到结果</string>
+    <string name="search_failed">搜索失败</string>
 
     <!--filter category-->
     <array name="filter_language">

@@ -34,7 +34,6 @@ import com.wenhaiz.himusic.module.main.MainActivity
 import com.wenhaiz.himusic.module.main.local.EditCollectActivity
 import com.wenhaiz.himusic.module.main.local.LocalFragment
 import com.wenhaiz.himusic.module.play.service.PlayProxy
-import com.wenhaiz.himusic.module.ranking.RankingContract
 import com.wenhaiz.himusic.utils.BoxUtil
 import com.wenhaiz.himusic.utils.GlideApp
 import com.wenhaiz.himusic.utils.ScreenUtil
@@ -323,12 +322,6 @@ class DetailFragment : Fragment(), DetailContract.View {
 
         if (!isCollectFromUser && isCurCollectLiked() != null) {
             setLikedIcon(true)
-        }
-    }
-
-    override fun onGlobalRankingLoad(collect: Collect) {
-        activity!!.runOnUiThread {
-            //            setRankingDetail(collect)
         }
     }
 
