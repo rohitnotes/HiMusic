@@ -8,14 +8,7 @@ import com.wenhaiz.himusic.data.bean.Artist
 import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Song
 import com.wenhaiz.himusic.data.bean.SongDetail
-import com.wenhaiz.himusic.http.data.AlbumDetail
-import com.wenhaiz.himusic.http.data.CollectDetail
-import com.wenhaiz.himusic.http.data.RankDetail
-import com.wenhaiz.himusic.http.data.RankList
-import com.wenhaiz.himusic.http.data.RecommendListNewAlbumInfo
-import com.wenhaiz.himusic.http.data.RecommendListRecommendInfo
-import com.wenhaiz.himusic.http.data.SearchSongResult
-import com.wenhaiz.himusic.http.data.SearchTips
+import com.wenhaiz.himusic.http.data.*
 import com.wenhaiz.himusic.http.request.*
 import com.wenhaiz.himusic.utils.BaseResponseCallback
 import com.wenhaiz.himusic.utils.OkHttpUtil
@@ -264,119 +257,71 @@ class Xiami(val context: Context) : MusicSource {
     }
 
     override fun loadArtistDetail(artist: Artist, callback: LoadArtistDetailCallback) {
-        val url = URL_HOME + "/artist/" + artist.artistId
-        OkHttpUtil.getForXiami(context, url, object : BaseResponseCallback() {
-            override fun onStart() {
-                callback.onStart()
-            }
+        GetArtistDetailRequest(artist)
+                .setDataCallback(object : BaseRequest.BaseDataCallback<ArtistDetail>() {
+                    override fun onSuccess(data: ArtistDetail) {
+                        artist.addDetail(data.detail)
+                        callback.onSuccess(artist)
+                    }
 
-            override fun onHtmlResponse(html: String) {
-                super.onHtmlResponse(html)
-                val detailedArtist = parseAndAddArtistDetail(html, artist)
-                callback.onSuccess(detailedArtist)
-            }
+                    override fun onFailure(code: String?, msg: String?) {
+                        callback.onFailure(msg ?: "")
+                    }
 
-            override fun onFailure(msg: String) {
-                super.onFailure(msg)
-                callback.onFailure(msg)
-            }
+                    override fun beforeRequest() {
+                        callback.onStart()
+                    }
 
-        })
+                })
+                .send()
     }
 
-    //get desc and imgUrl
-    private fun parseAndAddArtistDetail(html: String, artist: Artist): Artist {
-        val document = Jsoup.parse(html)
-        val block = document.getElementById("artist_block")
-        val info = block.getElementById("artist_info")
-        val desc = info.select("tr").last()
-                .getElementsByClass("record").first()
-                .text()
-        artist.desc = desc
-        val img = block.getElementById("artist_photo")
-        val imgUrl = img.select("a").first().attr("href")
-        artist.imgUrl = imgUrl
-        return artist
-    }
 
     override fun loadArtistHotSongs(artist: Artist, page: Int, callback: LoadArtistHotSongsCallback) {
-        val url = URL_HOME + "/artist/top-" + artist.artistId + "?page=$page"
-        OkHttpUtil.getForXiami(context, url, object : BaseResponseCallback() {
-            override fun onStart() {
-                callback.onStart()
-            }
+        GetArtistHotSongsRequest(artist, page)
+                .setDataCallback(object : BaseRequest.BaseDataCallback<HotSongs>() {
+                    override fun onSuccess(data: HotSongs) {
+                        val songList = data.data.map {
+                            it.toSong()
+                        }
+                        callback.onSuccess(songList)
+                    }
 
-            override fun onHtmlResponse(html: String) {
-                super.onHtmlResponse(html)
-                try {
-                    val hotSongs = parseArtistHotSongs(artist, html)
-                    callback.onSuccess(hotSongs)
-                } catch (e: NullPointerException) {
-                    callback.onFailure("没有更多歌曲了")
-                }
-            }
+                    override fun onFailure(code: String?, msg: String?) {
+                        callback.onFailure(msg ?: "")
+                    }
 
-            override fun onFailure(msg: String) {
-                super.onFailure(msg)
-                callback.onFailure(msg)
-            }
+                    override fun beforeRequest() {
+                        callback.onStart()
+                    }
 
-        })
-    }
-
-    private fun parseArtistHotSongs(artist: Artist, html: String): List<Song> {
-        val document = Jsoup.parse(html)
-        val songs = ArrayList<Song>()
-        val trackList = document.getElementsByClass("track_list").first()
-        val tracks = trackList.select("tr")
-        for (track in tracks) {
-            val song = Song()
-            song.name = track.getElementsByClass("song_name").first()
-                    .select("a").first()
-                    .attr("title")
-            val onClick = track.getElementsByClass("song_act").first()
-                    .getElementsByClass("song_play").first()
-                    .attr("onClick")
-            val extra = track.getElementsByClass("song_name").first()
-                    .getElementsByClass("show_zhcn").first()
-            if (extra != null) {
-                //临时显示用
-                song.albumName = extra.text()
-            } else {
-                song.albumName = ""
-            }
-            val songId = onClick.substring(onClick.indexOf("'") + 1, onClick.indexOf(",") - 1)
-            song.songId = songId.toLong()
-            song.artistName = artist.artistName
-            song.supplier = MusicProvider.XIAMI
-            songs.add(song)
-        }
-        return songs
+                })
+                .send()
     }
 
     override fun loadArtistAlbums(artist: Artist, page: Int, callback: LoadArtistAlbumsCallback) {
 
-        val url = URL_HOME + "/artist/album-" + artist.artistId + "?page=$page"
-        OkHttpUtil.getForXiami(context, url, object : BaseResponseCallback() {
-            override fun onStart() {
-                callback.onStart()
-            }
-
-            override fun onHtmlResponse(html: String) {
-                super.onHtmlResponse(html)
-                try {
-                    val albums = parseArtistAlbums(html)
-                    callback.onSuccess(albums)
-                } catch (e: NullPointerException) {
-                    callback.onFailure("没有更多专辑了")
-                }
-            }
-
-            override fun onFailure(msg: String) {
-                callback.onFailure(msg)
-            }
-
-        })
+//        val url = URL_HOME + "/artist/album-" + artist.artistId + "?page=$page"
+//        OkHttpUtil.getForXiami(context, url, object : BaseResponseCallback() {
+//            override fun onStart() {
+//                callback.onStart()
+//            }
+//
+//            override fun onHtmlResponse(html: String) {
+//                super.onHtmlResponse(html)
+//                try {
+//                    val albums = parseArtistAlbums(html)
+//                    callback.onSuccess(albums)
+//                } catch (e: NullPointerException) {
+//                    callback.onFailure("没有更多专辑了")
+//                }
+//            }
+//
+//            override fun onFailure(msg: String) {
+//                callback.onFailure(msg)
+//            }
+//
+//        })
     }
 
     private fun parseArtistAlbums(html: String): List<Album> {

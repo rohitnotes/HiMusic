@@ -2,10 +2,7 @@ package com.wenhaiz.himusic.module.artist.detail
 
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -20,53 +17,29 @@ import butterknife.OnClick
 import butterknife.Unbinder
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.wenhaiz.himusic.R
-import com.wenhaiz.himusic.data.bean.Album
 import com.wenhaiz.himusic.data.bean.Artist
 import com.wenhaiz.himusic.data.bean.Song
 import com.wenhaiz.himusic.ext.hide
 import com.wenhaiz.himusic.ext.isShowing
 import com.wenhaiz.himusic.ext.show
 import com.wenhaiz.himusic.ext.showToast
-import com.wenhaiz.himusic.module.detail.DetailContract
-import com.wenhaiz.himusic.module.detail.DetailFragment
 import com.wenhaiz.himusic.module.main.MainActivity
 import com.wenhaiz.himusic.module.play.service.PlayProxy
 import com.wenhaiz.himusic.utils.GlideApp
-import com.wenhaiz.himusic.utils.addFragmentToMainView
 import com.wenhaiz.himusic.utils.removeFragment
 
 class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
-
-    @BindView(R.id.detail_pager)
-    lateinit var mPager: ViewPager
-    @BindView(R.id.detail_pager_tab)
-    lateinit var mTab: TabLayout
     @BindView(R.id.detail_artist_name)
     lateinit var mArtistName: TextView
     @BindView(R.id.detail_artist_photo)
     lateinit var mArtistPhoto: ImageView
 
-
     //歌手热门歌曲
-    lateinit var mHotSongsView: LinearLayout
     private lateinit var mHotSongList: RecyclerView
     private lateinit var mHotSongRefresh: SmartRefreshLayout
     lateinit var mShuffleAll: LinearLayout
     private lateinit var mHotSongAdapter: HotSongsAdapter
     private var curHotSongPage = 1
-
-
-    //歌手专辑
-    lateinit var mAlbumsView: LinearLayout
-    private lateinit var mAlbumList: RecyclerView
-    private lateinit var mAlbumRefresh: SmartRefreshLayout
-    private lateinit var mAlbumAdapter: AlbumAdapter
-    private var curAlbumPage = 1
-
-    //歌手详情
-    lateinit var mArtistInfoView: LinearLayout
-    private lateinit var mArtistDesc: TextView
-
     private lateinit var mUnbinder: Unbinder
     lateinit var mPresenter: ArtistDetailContract.Presenter
     lateinit var artist: Artist
@@ -80,35 +53,20 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val contentView = inflater.inflate(R.layout.fragment_artist_detail, container, false)
-
-        mHotSongsView = inflater.inflate(R.layout.fragment_artist_detail_hot_songs, container, false) as LinearLayout
-        mHotSongList = mHotSongsView.findViewById(R.id.detail_song_list)
-        mHotSongRefresh = mHotSongsView.findViewById(R.id.hotSongRefresh)
-        mShuffleAll = mHotSongsView.findViewById(R.id.shuffle_all)
-
-        mAlbumsView = inflater.inflate(R.layout.fragment_artist_detail_albums, container, false) as LinearLayout
-        mAlbumList = mAlbumsView.findViewById(R.id.detail_album_list)
-        mAlbumRefresh = mAlbumsView.findViewById(R.id.album_refresh)
-
-        mArtistInfoView = inflater.inflate(R.layout.fragment_artist_detail_info, container, false) as LinearLayout
-        mArtistDesc = mArtistInfoView.findViewById(R.id.detail_artist_desc)
+        mHotSongList = contentView.findViewById(R.id.detail_song_list)
+        mHotSongRefresh = contentView.findViewById(R.id.hotSongRefresh)
+        mShuffleAll = contentView.findViewById(R.id.shuffle_all)
         mUnbinder = ButterKnife.bind(this, contentView)
         initView()
         return contentView
     }
 
     override fun initView() {
-        mPager.adapter = DetailPagerAdapter()
-        mTab.setupWithViewPager(mPager)
         mPresenter.loadArtistDetail(artist)
         mArtistName.text = artist.artistName
         mArtistPhoto.setOnClickListener { }
-
         mPresenter.loadArtistHotSongs(artist, curHotSongPage)
-        mPresenter.loadArtistAlbums(artist, curAlbumPage)
-
         initHotSongView()
-        initAlbumView()
     }
 
     private fun initHotSongView() {
@@ -123,14 +81,6 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
         }
     }
 
-    private fun initAlbumView() {
-        mAlbumAdapter = AlbumAdapter(context!!, ArrayList())
-        mAlbumList.adapter = mAlbumAdapter
-        mAlbumList.layoutManager = LinearLayoutManager(context)
-        mAlbumRefresh.setOnLoadmoreListener {
-            mPresenter.loadArtistAlbums(artist, curAlbumPage)
-        }
-    }
 
     @OnClick(R.id.action_bar_back)
     fun onClick(view: View) {
@@ -151,111 +101,35 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
     }
 
     override fun onFailure(msg: String) {
-        activity!!.runOnUiThread {
-            if (mAlbumRefresh.isLoading) {
-                mAlbumRefresh.finishLoadmore(200, false)
-            }
-            if (mHotSongRefresh.isLoading) {
-                mHotSongRefresh.finishLoadmore(200, false)
-            }
-            context!!.showToast(msg)
+        if (mHotSongRefresh.isLoading) {
+            mHotSongRefresh.finishLoadmore(200, false)
         }
+        context!!.showToast(msg)
     }
 
     override fun onLoading() {
     }
 
     override fun onArtistDetail(artist: Artist) {
-        activity!!.runOnUiThread {
-            GlideApp.with(this).load(artist.imgUrl)
+        GlideApp.with(this).load(artist.imgUrl)
                     .into(mArtistPhoto)
-            mArtistDesc.text = artist.desc
-        }
     }
 
     override fun onHotSongsLoad(hotSongs: List<Song>) {
-        activity!!.runOnUiThread {
-            if (mHotSongRefresh.isLoading) {
-                mHotSongRefresh.finishLoadmore(200, true)
-            }
-            if (!mShuffleAll.isShowing()) {
-                mShuffleAll.show()
-            }
-            curHotSongPage++
-            mHotSongAdapter.addData(hotSongs)
+        if (mHotSongRefresh.isLoading) {
+            mHotSongRefresh.finishLoadmore(200, true)
         }
-    }
-
-    override fun onAlbumsLoad(albums: List<Album>) {
-        activity!!.runOnUiThread {
-            if (mAlbumRefresh.isLoading) {
-                mAlbumRefresh.finishLoadmore(200, true)
-            }
-            curAlbumPage++
-            mAlbumAdapter.addData(albums)
+        if (!mShuffleAll.isShowing()) {
+            mShuffleAll.show()
         }
-    }
+        curHotSongPage++
+        mHotSongAdapter.addData(hotSongs)
 
-    override fun onSongDetailLoaded(song: Song) {
-        (activity as PlayProxy).playSong(song)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         mUnbinder.unbind()
-    }
-
-
-    inner class DetailPagerAdapter : PagerAdapter() {
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val pageView = when (position) {
-                0 -> {
-                    mHotSongsView
-                }
-                1 -> {
-                    mAlbumsView
-                }
-                2 -> {
-                    mArtistInfoView
-                }
-                else -> {
-                    mHotSongsView
-                }
-            }
-            container.addView(pageView, position)
-            return pageView
-        }
-
-        override fun getItemPosition(`object`: Any): Int {
-            return super.getItemPosition(`object`)
-        }
-
-        override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-            container.removeViewAt(position)
-//            super.destroyItem(container, position, `object`)
-        }
-
-        override fun getPageTitle(position: Int): CharSequence {
-            return when (position) {
-                0 -> {
-                    "热门歌曲"
-                }
-                1 -> {
-                    "专辑"
-                }
-                2 -> {
-                    "艺人详情"
-                }
-                else -> {
-                    ""
-                }
-            }
-        }
-
-        override fun isViewFromObject(view: View, `object`: Any): Boolean = view == `object`
-
-        override fun getCount(): Int = 3
-
     }
 
     inner class HotSongsAdapter(val context: Context, var hotSongs: List<Song>) : RecyclerView.Adapter<HotSongsAdapter.ViewHolder>() {
@@ -272,9 +146,9 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
             } else {
                 holder.album.hide()
             }
-            holder.item.setOnClickListener({
-                mPresenter.loadSongDetail(song)
-            })
+            holder.item.setOnClickListener {
+                (activity as PlayProxy).playSong(song)
+            }
         }
 
         override fun getItemCount(): Int = hotSongs.size
@@ -296,45 +170,4 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
             notifyDataSetChanged()
         }
     }
-
-    inner class AlbumAdapter(val context: Context, private var albums: List<Album>) : RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val itemView = LayoutInflater.from(context).inflate(R.layout.item_artist_detail_album, parent, false)
-            return ViewHolder(itemView)
-        }
-
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val album = albums[position]
-            GlideApp.with(context).load(album.miniCoverUrl)
-                    .placeholder(R.drawable.ic_main_all_music)
-                    .into(holder.albumCover)
-            holder.albumName.text = album.title
-            val publishDate = "发行时间:${album.publishDateStr}"
-            holder.albumPublishDate.text = publishDate
-            holder.item.setOnClickListener {
-                val detailFragment = DetailFragment()
-                val data = Bundle()
-                data.putLong(DetailContract.ARGS_ID, album.id)
-                data.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.ALBUM)
-                detailFragment.arguments = data
-                addFragmentToMainView(fragmentManager!!, detailFragment)
-
-            }
-        }
-
-        fun addData(data: List<Album>) {
-            (albums as ArrayList).addAll(data)
-            notifyDataSetChanged()
-        }
-
-        override fun getItemCount(): Int = albums.size
-
-        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val albumCover: ImageView = itemView.findViewById(R.id.detail_album_cover)
-            val albumName: TextView = itemView.findViewById(R.id.detail_album_name)
-            val albumPublishDate: TextView = itemView.findViewById(R.id.detail_album_publish_date)
-            val item: LinearLayout = itemView.findViewById(R.id.detail_album_item)
-        }
-    }
-
 }

@@ -1,77 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorWhite"
     android:orientation="vertical">
 
-    <!--content-->
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="250dp">
-                <!--歌手照片-->
-                <ImageView
-                    android:id="@+id/detail_artist_photo"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_main_singer"
-                    tools:ignore="ContentDescription" />
-
-                <!--歌手名-->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:id="@+id/detail_artist_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="30dp"
-                        android:gravity="center_horizontal"
-                        android:text="John Mayer"
-                        android:textColor="@color/colorWhite"
-                        android:textSize="22sp" />
-                </RelativeLayout>
-            </FrameLayout>
-
-            <!--hotSong album profile-->
-            <android.support.v4.view.ViewPager
-                android:id="@+id/detail_pager"
-                android:layout_width="match_parent"
-                android:layout_height="520dp">
-
-                <android.support.design.widget.TabLayout
-                    android:id="@+id/detail_pager_tab"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_gravity="top"
-                    app:tabGravity="fill"
-                    app:tabSelectedTextColor="@color/colorBlack"
-                    app:tabTextAppearance="@style/tabLayoutText"
-                    app:tabTextColor="@color/colorGray">
-
-                </android.support.design.widget.TabLayout>
-
-            </android.support.v4.view.ViewPager>
-        </LinearLayout>
-
-    </ScrollView>
-
     <!--action bar-->
     <LinearLayout
+        android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/action_bar_height"
         android:gravity="center_vertical"
@@ -84,7 +22,6 @@
             android:layout_height="@dimen/action_bar_btn_width"
             android:layout_marginStart="5dp"
             android:src="@drawable/ic_action_back"
-            android:tint="@color/colorWhite"
             tools:ignore="ContentDescription" />
 
         <TextView
@@ -93,9 +30,9 @@
             android:layout_height="@dimen/action_bar_btn_width"
             android:layout_weight="1"
             android:gravity="center"
+            android:text="@string/artist_detail"
             android:textColor="@color/colorBlack"
-            android:textSize="@dimen/main_tab_btn_text_size"
-            android:visibility="invisible" />
+            android:textSize="@dimen/main_tab_btn_text_size" />
 
         <android.support.v4.widget.Space
             android:layout_width="@dimen/action_bar_btn_width"
@@ -103,4 +40,127 @@
             android:layout_marginEnd="5dp" />
     </LinearLayout>
 
-</FrameLayout>
+    <RelativeLayout
+        android:id="@+id/profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title">
+        <!--歌手照片-->
+        <ImageView
+            android:id="@+id/detail_artist_photo"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_marginLeft="20dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_main_singer"
+            tools:ignore="ContentDescription" />
+
+        <!--歌手名-->
+        <TextView
+            android:id="@+id/detail_artist_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@id/detail_artist_photo"
+            android:textColor="@color/colorBlack"
+            android:textSize="20sp" />
+
+    </RelativeLayout>
+
+    <!--content-->
+
+    <!--<include-->
+        <!--layout="@layout/fragment_artist_detail_hot_songs"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_below="@id/profile" />-->
+
+    <LinearLayout
+        android:layout_below="@id/profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/shuffle_all"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@drawable/selector_white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="2dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="5dp"
+                android:src="@drawable/ic_main_play"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="@string/shuffle_all"
+                android:textColor="@color/colorBlack"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/colorDivider" />
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/hotSongRefresh"
+            app:srlEnableRefresh="false"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/detail_song_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </android.support.v7.widget.RecyclerView>
+
+            <com.scwang.smartrefresh.layout.footer.BallPulseFooter
+                app:srlAccentColor="@color/colorBlack"
+                app:srlPrimaryColor="@color/colorBlack"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </com.scwang.smartrefresh.layout.footer.BallPulseFooter>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+
+    </LinearLayout>
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:orientation="vertical">-->
+
+    <!--&lt;!&ndash;hotSong album profile&ndash;&gt;-->
+    <!--<android.support.v4.view.ViewPager-->
+    <!--android:id="@+id/detail_pager"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="520dp">-->
+
+    <!--<android.support.design.widget.TabLayout-->
+    <!--android:id="@+id/detail_pager_tab"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="40dp"-->
+    <!--android:layout_gravity="top"-->
+    <!--app:tabGravity="fill"-->
+    <!--app:tabSelectedTextColor="@color/colorBlack"-->
+    <!--app:tabTextAppearance="@style/tabLayoutText"-->
+    <!--app:tabTextColor="@color/colorGray">-->
+
+    <!--</android.support.design.widget.TabLayout>-->
+
+    <!--</android.support.v4.view.ViewPager>-->
+    <!--</LinearLayout>-->
+
+</RelativeLayout>

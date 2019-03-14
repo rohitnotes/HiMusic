@@ -10,18 +10,12 @@ interface ArtistDetailContract {
     interface Presenter : BasePresenter {
         //获取信息和图片
         fun loadArtistDetail(artist: Artist)
-
         fun loadArtistHotSongs(artist: Artist, page: Int)
-        fun loadArtistAlbums(artist: Artist, page: Int)
-        fun loadSongDetail(song: Song)
     }
 
     interface View : BaseView<Presenter> {
         fun onArtistDetail(artist: Artist)
         fun onHotSongsLoad(hotSongs: List<Song>)
-        fun onAlbumsLoad(albums: List<Album>)
-        fun onSongDetailLoaded(song: Song)
-
     }
 
 }

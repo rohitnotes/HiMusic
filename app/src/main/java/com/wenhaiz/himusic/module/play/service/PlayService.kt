@@ -143,7 +143,7 @@ class PlayService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
             musicRepository.loadSongDetail(newPlaySong, object : LoadSongDetailCallback {
                 override fun onSuccess(loadedSong: Song) {
                     newPlaySong = loadedSong
-                    if (!TextUtils.isEmpty(newPlaySong.listenFileUrl)) {
+                    if (!TextUtils.isEmpty(newPlaySong.listenFileUrl) || newPlaySong.canListen) {
                         setSongAndPrepareAsync(newPlaySong)
                     } else {
                         notifyPlayStatusChanged(STATUS_ERROR, "歌曲无法播放，可能需要付费。")

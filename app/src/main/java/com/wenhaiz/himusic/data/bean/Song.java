@@ -61,7 +61,6 @@ public final class Song implements Parcelable, Serializable {
     private String miniAlbumCoverUrl;
     @Transient
     private MusicProvider supplier;
-//    private boolean isDownload;
     private String providerName;
     public boolean isPlaying = false;
     @SerializedName("singers")
@@ -76,20 +75,20 @@ public final class Song implements Parcelable, Serializable {
     }
 
     public void addDetailInfo(SongDetail.DetailData detail) {
-        lyricUrl = Xiami.Companion.maskUrl(detail.getTrackList().get(0).getLyricInfo().getLyricFile());
-        miniAlbumCoverUrl = Xiami.Companion.maskUrl(detail.getTrackList().get(0).getAlbumPic());
-        listenFileUrl = Xiami.Companion.maskUrl(Xiami.Companion.getListenUrlFromLocation(detail.getTrackList().get(0).getLocation()));
-    }
-
-    public void addPlayInfo(List<PlayInfo.Info.InfoBean> infoBeans) {
-        for (PlayInfo.Info.InfoBean info : infoBeans) {
-            if (!TextUtils.isEmpty(info.getListenFile())) {
-                listenFileUrl = info.getListenFile();
-                break;
-            }
-        }
-        if (TextUtils.isEmpty(listenFileUrl)) {
+        List<SongDetail.TrackInfo> trackList = detail.getTrackList();
+        if (trackList == null || trackList.isEmpty()) {
+            //不能播放
             canListen = false;
+            return;
+        }
+        lyricUrl = Xiami.Companion.maskUrl(trackList.get(0).getLyricInfo().getLyricFile());
+        miniAlbumCoverUrl = Xiami.Companion.maskUrl(trackList.get(0).getPic());
+        listenFileUrl = Xiami.Companion.maskUrl(Xiami.Companion.getListenUrlFromLocation(trackList.get(0).getLocation()));
+        if (TextUtils.isEmpty(albumCoverUrl)) {
+            albumCoverUrl = Xiami.Companion.maskUrl(trackList.get(0).getAlbumPic());
+        }
+        if (length <= 0) {
+            length = trackList.get(0).getLength() * 1000;
         }
     }
 
