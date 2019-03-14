@@ -3,7 +3,6 @@ package com.wenhaiz.himusic.data
 import com.wenhaiz.himusic.base.BaseCallBack
 import com.wenhaiz.himusic.data.bean.Album
 import com.wenhaiz.himusic.data.bean.Artist
-import com.wenhaiz.himusic.data.bean.Banner
 import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Song
 import com.wenhaiz.himusic.http.data.RankList
@@ -16,7 +15,6 @@ import com.wenhaiz.himusic.http.request.GetArtistListRequest
  * Created by Wenhai on 2017/8/4.
  */
 interface MusicSource {
-    fun loadBanner(callback: LoadBannerCallback)
     fun loadHotCollect(page: Int = 1, callback: LoadCollectCallback)
     fun loadNewAlbum(page: Int = 1, callback: LoadAlbumCallback)
     fun loadCollectDetail(collect: Collect, callback: LoadCollectDetailCallback)
@@ -35,10 +33,6 @@ interface MusicSource {
 
 
 //callbacks
-interface LoadBannerCallback : BaseCallBack {
-    fun onSuccess(banners: List<Banner>)
-}
-
 interface LoadCollectCallback : BaseCallBack {
     fun onSuccess(collectList: List<Collect>)
 }
