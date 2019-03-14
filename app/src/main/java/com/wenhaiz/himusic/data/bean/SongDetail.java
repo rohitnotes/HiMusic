@@ -71,6 +71,26 @@ public class SongDetail extends BaseData {
         private String location;
         @SerializedName("album_pic")
         private String albumPic;
+        @SerializedName("pic")
+        private String pic;
+        @SerializedName("length")
+        private int length;
+
+        public int getLength() {
+            return length;
+        }
+
+        public void setLength(int length) {
+            this.length = length;
+        }
+
+        public String getPic() {
+            return pic;
+        }
+
+        public void setPic(String pic) {
+            this.pic = pic;
+        }
 
         public long getSongId() {
             return songId;

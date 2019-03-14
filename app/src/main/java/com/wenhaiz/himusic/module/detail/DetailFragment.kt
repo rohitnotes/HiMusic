@@ -131,14 +131,6 @@ class DetailFragment : Fragment(), DetailContract.View {
                 val rank: RankList.Rank = arguments!!.getSerializable(DetailContract.ARGS_ID) as RankList.Rank
                 mPresenter.loadRankingDetail(rank)
             }
-            DetailContract.LoadType.GLOBAL_RANKING -> {//全球排行榜
-//                val ranking: RankingContract.GlobalRanking = arguments!!.getSerializable(DetailContract.ARGS_GLOBAL_RANKING) as RankingContract.GlobalRanking
-//                mPresenter.loadGlobalRanking(ranking)
-            }
-            DetailContract.LoadType.OFFICIAL_RANKING -> {//官方排行榜
-//                val collect: Collect = arguments!!.getParcelable(DetailContract.ARGS_COLLECT)
-//                setRankingDetail(collect)
-            }
             DetailContract.LoadType.ALBUM -> {//专辑
                 val album = arguments!!.getSerializable(DetailContract.ARGS_ID) as Album
                 mPresenter.loadAlbumDetail(album)
@@ -336,10 +328,6 @@ class DetailFragment : Fragment(), DetailContract.View {
         mSongListAdapter.setData(rank.songs)
         mLoading.hide()
         mSongList.show()
-    }
-
-    private fun setRankingDetail(rank: RankList.Rank) {
-
     }
 
     override fun onAlbumDetailLoad(album: Album) {

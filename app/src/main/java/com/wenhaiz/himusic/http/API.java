@@ -21,11 +21,21 @@ public class API {
 
         public static final String SEARCH_SONGS = "/api/search/searchSongs";
         public static final String GET_SEARCH_TIPS = "/api/search/searchTips";
-        public static final String GET_ARTIST_LIST = "/api/artist/getHotArtists";
+//        public static final String GET_ARTIST_LIST = "/api/artist/getHotArtists";
+//        public static final String GET_ARTIST_DETAIL = "/api/artist/initialize";
 
 
         public static String getSongDetailUrl(Long songId) {
             return BASE + "/song/playlist/id/" + songId + "/object_name/default/object_id/0/cat/json";
+        }
+
+        public static String getArtistDetailUrl(String artistId, int page) {
+            return "http://api.xiami.com/web?v=2.0&app_key=1&id=" + artistId +
+                    "&page=" + page + "&limit=20&_ksTS=1459931285956_216&r=artist/detail";
+        }
+
+        public static String getArtistHotSongsUrl(String artistId, int page) {
+            return "http://api.xiami.com/web?v=2.0&app_key=1&id=" + artistId + "&page=" + page + "&limit=20&r=artist/hot-songs";
         }
     }
 

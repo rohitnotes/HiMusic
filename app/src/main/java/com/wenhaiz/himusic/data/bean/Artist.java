@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.google.gson.annotations.SerializedName;
+import com.wenhaiz.himusic.http.data.ArtistDetailData;
 
 public class Artist implements Parcelable {
     @SerializedName("artistId")
@@ -17,8 +18,18 @@ public class Artist implements Parcelable {
     private String miniImgUrl;
     @SerializedName("artistLogo")
     private String imgUrl;
+    private String company;
+
 
     public Artist() {
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
     }
 
     public String getDesc() {
@@ -71,6 +82,17 @@ public class Artist implements Parcelable {
         dest.writeString(desc);
         dest.writeString(miniImgUrl);
         dest.writeString(imgUrl);
+    }
+
+    public void addDetail(ArtistDetailData detailData) {
+        miniImgUrl = detailData.getLogo();
+        if (miniImgUrl.indexOf("_") == miniImgUrl.length() - 6) {
+            String urlPre = miniImgUrl.substring(0, miniImgUrl.indexOf("_"));
+            String tail = miniImgUrl.substring(miniImgUrl.lastIndexOf("."));
+            imgUrl = urlPre + tail;
+        } else {
+            imgUrl = miniImgUrl;
+        }
     }
 
     public String getArtistStringId() {
