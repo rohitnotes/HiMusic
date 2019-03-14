@@ -7,7 +7,6 @@ import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Song
 import com.wenhaiz.himusic.data.onlineprovider.Xiami
 import com.wenhaiz.himusic.http.data.RankList
-import com.wenhaiz.himusic.http.request.GetArtistListRequest
 
 internal class MusicRepository(context: Context) : MusicSource {
 
@@ -95,10 +94,6 @@ internal class MusicRepository(context: Context) : MusicSource {
 
     override fun loadNewAlbum(page: Int, callback: LoadAlbumCallback) {
         musicSource.loadNewAlbum(page, callback)
-    }
-
-    override fun loadArtists(language: GetArtistListRequest.Language, page: Int, callback: LoadArtistsCallback) {
-        musicSource.loadArtists(language, page, callback)
     }
 
     override fun loadArtistDetail(artist: Artist, callback: LoadArtistDetailCallback) {

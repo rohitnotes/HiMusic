@@ -26,7 +26,6 @@ import com.wenhaiz.himusic.ext.isShowing
 import com.wenhaiz.himusic.ext.show
 import com.wenhaiz.himusic.ext.showToast
 import com.wenhaiz.himusic.module.albumlist.AlbumListFragment
-import com.wenhaiz.himusic.module.artist.list.ArtistListFragment
 import com.wenhaiz.himusic.module.collect.CollectFilterFragment
 import com.wenhaiz.himusic.module.collectlist.CollectListFragment
 import com.wenhaiz.himusic.module.detail.DetailContract
@@ -131,7 +130,7 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
     }
 
 
-    @OnClick(R.id.main_btn_more_collect, R.id.main_btn_more_albums, R.id.main_online_btn_singer,
+    @OnClick(R.id.main_btn_more_collect, R.id.main_btn_more_albums,
             R.id.main_online_btn_collect, R.id.main_online_btn_ranking_list, R.id.loading_failed)
     fun onClick(view: View) {
         when (view.id) {
@@ -140,9 +139,6 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
             }
             R.id.main_btn_more_albums -> {
                 addFragmentToMainView(fragmentManager!!, AlbumListFragment())
-            }
-            R.id.main_online_btn_singer -> {
-                addFragmentToMainView(fragmentManager!!, ArtistListFragment())
             }
             R.id.main_online_btn_collect -> {
                 addFragmentToMainView(fragmentManager!!, CollectFilterFragment())

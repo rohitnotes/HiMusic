@@ -9,7 +9,6 @@ import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Song
 import com.wenhaiz.himusic.data.bean.SongDetail
 import com.wenhaiz.himusic.http.data.AlbumDetail
-import com.wenhaiz.himusic.http.data.Artists
 import com.wenhaiz.himusic.http.data.CollectDetail
 import com.wenhaiz.himusic.http.data.RankDetail
 import com.wenhaiz.himusic.http.data.RankList
@@ -262,26 +261,6 @@ class Xiami(val context: Context) : MusicSource {
 
                 }
         ).send()
-    }
-
-    override fun loadArtists(language: GetArtistListRequest.Language,
-                             page: Int, callback: LoadArtistsCallback) {
-        GetArtistListRequest(language)
-                .setDataCallback(object : BaseRequest.BaseDataCallback<Artists>() {
-                    override fun onSuccess(data: Artists) {
-                        callback.onSuccess(data.hotArtists)
-                    }
-
-                    override fun onFailure(code: String?, msg: String?) {
-                        callback.onFailure(msg ?: "")
-                    }
-
-                    override fun beforeRequest() {
-                        callback.onStart()
-                    }
-
-                })
-                .send()
     }
 
     override fun loadArtistDetail(artist: Artist, callback: LoadArtistDetailCallback) {
