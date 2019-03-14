@@ -5,8 +5,6 @@ import com.wenhaiz.himusic.R
 import com.wenhaiz.himusic.data.*
 import com.wenhaiz.himusic.data.bean.Album
 import com.wenhaiz.himusic.data.bean.Artist
-import com.wenhaiz.himusic.data.bean.Banner
-import com.wenhaiz.himusic.data.bean.BannerType
 import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.data.bean.Song
 import com.wenhaiz.himusic.data.bean.SongDetail
@@ -22,8 +20,6 @@ import com.wenhaiz.himusic.http.request.*
 import com.wenhaiz.himusic.utils.BaseResponseCallback
 import com.wenhaiz.himusic.utils.OkHttpUtil
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
 import java.net.URLDecoder
 import java.net.URLEncoder
 
@@ -33,12 +29,10 @@ import java.net.URLEncoder
  */
 class Xiami(val context: Context) : MusicSource {
     companion object {
-        val TAG = "Xiami"
+        const val TAG = "Xiami"
 
-        val URL_PREFIX_LOAD_ARTISTS = "/artist/index/c/2/type/"
-        val URL_INFIX_LOAD_ARTISTS = "/class/0/page/"
-        val URL_HOME = "http://www.xiami.com"
-        val CATEGORY_HOT_COLLECT = "热门歌单"
+        const val URL_HOME = "http://www.xiami.com"
+        const val CATEGORY_HOT_COLLECT = "热门歌单"
 
         /**
          *parse "location" string and get listen file url
@@ -69,58 +63,6 @@ class Xiami(val context: Context) : MusicSource {
                 url
             }
         }
-    }
-
-
-    override fun loadBanner(callback: LoadBannerCallback) {
-        val url = URL_HOME
-        OkHttpUtil.getForXiami(context, url, object : BaseResponseCallback() {
-            override fun onStart() {
-                callback.onStart()
-            }
-
-            override fun onHtmlResponse(html: String) {
-                val banners = parseBanners(html)
-                callback.onSuccess(banners)
-            }
-
-            override fun onFailure(msg: String) {
-                super.onFailure(msg)
-                callback.onFailure(msg)
-            }
-
-        })
-    }
-
-    fun parseBanners(html: String): List<Banner> {
-        val document = Jsoup.parse(html)
-        val slider: Element? = document.getElementById("slider")
-        val items: Elements = slider!!.getElementsByClass("item")
-        val banners = ArrayList<Banner>()
-        for (item in items) {
-            val banner = Banner()
-            val a = item.select("a").first()
-            val imgUrl = a.select("img").first().attr("src")
-            banner.imgUrl = maskUrl(imgUrl)
-//            LogUtil.d(TAG, banner.imgUrl)
-            val href = a.attr("href")
-            when {
-                href.contains("album/") -> {
-                    banner.type = BannerType.ALBUM
-                    banner.id = href.substring(href.lastIndexOf("/") + 1).toLong()
-                }
-                href.contains("song/") -> {
-                    banner.type = BannerType.SONG
-                    banner.id = href.substring(href.lastIndexOf("/") + 1).toLong()
-                }
-                else -> {
-                    banner.type = BannerType.OTHER
-                    banner.id = 0
-                }
-            }
-            banners.add(banner)
-        }
-        return banners
     }
 
     override fun loadHotCollect(page: Int, callback: LoadCollectCallback) {
@@ -321,72 +263,6 @@ class Xiami(val context: Context) : MusicSource {
         ).send()
     }
 
-    override fun loadArtists(region: ArtistRegion, page: Int, callback: LoadArtistsCallback) {
-        val type = when (region) {
-            ArtistRegion.ALL -> {
-                0
-            }
-            ArtistRegion.CN -> {
-                1
-            }
-            ArtistRegion.EA -> {
-                2
-            }
-            ArtistRegion.JP -> {
-                3
-            }
-            ArtistRegion.KO -> {
-                4
-            }
-        }
-        val url = URL_HOME + URL_PREFIX_LOAD_ARTISTS + "$type" + URL_INFIX_LOAD_ARTISTS + page
-        OkHttpUtil.getForXiami(context, url, object : BaseResponseCallback() {
-            override fun onStart() {
-                callback.onStart()
-            }
-
-            override fun onFailure(msg: String) {
-                super.onFailure(msg)
-                callback.onFailure(msg)
-            }
-
-            override fun onHtmlResponse(html: String) {
-                super.onHtmlResponse(html)
-                try {
-                    val artists: ArrayList<Artist> = parseArtistList(html)
-                    callback.onSuccess(artists)
-                } catch (e: NullPointerException) {
-                    callback.onFailure("没有更多艺人了")
-                }
-            }
-
-        })
-
-    }
-
-    private fun parseArtistList(html: String): ArrayList<Artist> {
-        val result = ArrayList<Artist>()
-        val document = Jsoup.parse(html)
-        val artists = document.getElementById("artists")
-        val artistElements = artists.getElementsByClass("artist")
-        for (artistElement in artistElements) {
-            val artist = Artist()
-            val img = artistElement.getElementsByClass("image").first()
-            artist.name = artistElement.getElementsByClass("info").first()
-                    .select("a").first().attr("title")
-            artist.miniImgUrl = img.select("img").first()
-                    .attr("src")
-            val homePageSuffix = artistElement.getElementsByClass("image").first()
-                    .select("a").first()
-                    .attr("href")
-            val artistId = homePageSuffix.substring(homePageSuffix.lastIndexOf("/") + 1)
-            artist.artistId = artistId
-            result.add(artist)
-        }
-        return result
-
-    }
-
     override fun loadArtistDetail(artist: Artist, callback: LoadArtistDetailCallback) {
         val url = URL_HOME + "/artist/" + artist.artistId
         OkHttpUtil.getForXiami(context, url, object : BaseResponseCallback() {
@@ -471,7 +347,7 @@ class Xiami(val context: Context) : MusicSource {
             }
             val songId = onClick.substring(onClick.indexOf("'") + 1, onClick.indexOf(",") - 1)
             song.songId = songId.toLong()
-            song.artistName = artist.name
+            song.artistName = artist.artistName
             song.supplier = MusicProvider.XIAMI
             songs.add(song)
         }
@@ -603,13 +479,5 @@ class Xiami(val context: Context) : MusicSource {
 
                 })
                 .send()
-    }
-
-    fun maskUrl(url: String): String {
-        return if (url.startsWith("//")) {
-            "https:$url"
-        } else {
-            url
-        }
     }
 }

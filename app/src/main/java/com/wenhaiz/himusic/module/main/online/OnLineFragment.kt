@@ -19,17 +19,13 @@ import butterknife.OnClick
 import butterknife.Unbinder
 import com.scwang.smartrefresh.layout.SmartRefreshLayout
 import com.wenhaiz.himusic.R
-import com.wenhaiz.himusic.data.MusicProvider
 import com.wenhaiz.himusic.data.bean.Album
-import com.wenhaiz.himusic.data.bean.Banner
-import com.wenhaiz.himusic.data.bean.BannerType
 import com.wenhaiz.himusic.data.bean.Collect
 import com.wenhaiz.himusic.ext.hide
 import com.wenhaiz.himusic.ext.isShowing
 import com.wenhaiz.himusic.ext.show
 import com.wenhaiz.himusic.ext.showToast
 import com.wenhaiz.himusic.module.albumlist.AlbumListFragment
-import com.wenhaiz.himusic.module.artist.list.ArtistListFragment
 import com.wenhaiz.himusic.module.collect.CollectFilterFragment
 import com.wenhaiz.himusic.module.collectlist.CollectListFragment
 import com.wenhaiz.himusic.module.detail.DetailContract
@@ -38,13 +34,8 @@ import com.wenhaiz.himusic.module.ranking.RankingFragment
 import com.wenhaiz.himusic.utils.GlideApp
 import com.wenhaiz.himusic.utils.LogUtil
 import com.wenhaiz.himusic.utils.addFragmentToMainView
-import com.youth.banner.BannerConfig
-import com.youth.banner.Transformer
-import com.youth.banner.loader.ImageLoader
 
 class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
-    @BindView(R.id.main_banner)
-    lateinit var mBanner: com.youth.banner.Banner
     @BindView(R.id.main_hot_collects)
     lateinit var mHotCollects: GridView
     @BindView(R.id.main_new_albums)
@@ -86,7 +77,6 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
     override fun initView() {
         initHotCollectGirdView()
         initNewAlbumsGridView()
-        initBanner()
         initRefreshLayout()
         loadData()
     }
@@ -117,20 +107,8 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
         }
     }
 
-    private fun initBanner() {
-        //设置指示器类型：圆形
-        mBanner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR)
-        //设置指示器位置：水平居中
-        mBanner.setIndicatorGravity(BannerConfig.CENTER)
-        //设置图片加载器
-        mBanner.setImageLoader(GlideLoaderForBanner())
-        mBanner.setBannerAnimation(Transformer.Accordion)
-    }
-
-
     private fun initRefreshLayout() {
         mRefreshLayout.setOnRefreshListener {
-            mPresenter.loadBanner(MusicProvider.XIAMI)
             mPresenter.loadHotCollects()
             mPresenter.loadHotCollects()
         }
@@ -147,13 +125,12 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
 
     //加载 banner、热门歌单和最新专辑
     private fun loadData() {
-//        mPresenter.loadBanner(MusicProvider.XIAMI)
         mPresenter.loadHotCollects()
         mPresenter.loadNewAlbums()
     }
 
 
-    @OnClick(R.id.main_btn_more_collect, R.id.main_btn_more_albums, R.id.main_online_btn_singer,
+    @OnClick(R.id.main_btn_more_collect, R.id.main_btn_more_albums,
             R.id.main_online_btn_collect, R.id.main_online_btn_ranking_list, R.id.loading_failed)
     fun onClick(view: View) {
         when (view.id) {
@@ -162,9 +139,6 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
             }
             R.id.main_btn_more_albums -> {
                 addFragmentToMainView(fragmentManager!!, AlbumListFragment())
-            }
-            R.id.main_online_btn_singer -> {
-                addFragmentToMainView(fragmentManager!!, ArtistListFragment())
             }
             R.id.main_online_btn_collect -> {
                 addFragmentToMainView(fragmentManager!!, CollectFilterFragment())
@@ -222,51 +196,8 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
         }
     }
 
-
-    override fun onBannerLoad(banners: List<Banner>) {
-        activity!!.runOnUiThread {
-            if (mRefreshLayout.isRefreshing) {
-                mRefreshLayout.finishRefresh(200, true)
-            }
-            val imgUrls = ArrayList<String>()
-            banners.mapTo(imgUrls) { it.imgUrl }
-            mBanner.setImages(imgUrls)
-            mBanner.start()
-            mBanner.setOnBannerListener { position: Int ->
-                onBannerClick(banners[position])
-            }
-        }
-    }
-
-    private fun onBannerClick(clickBanner: Banner) {
-        @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
-        when (clickBanner.type) {
-            BannerType.SONG -> {
-                val data = Bundle()
-                data.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.SONG)
-                data.putLong(DetailContract.ARGS_ID, clickBanner.id)
-                showDetail(data)
-            }
-            BannerType.ALBUM -> {
-                val data = Bundle()
-                data.putSerializable(DetailContract.ARGS_LOAD_TYPE, DetailContract.LoadType.ALBUM)
-                data.putLong(DetailContract.ARGS_ID, clickBanner.id)
-                showDetail(data)
-            }
-            BannerType.COLLECT -> {
-                LogUtil.d(TAG, "click collect")
-            }
-            BannerType.OTHER -> {
-                LogUtil.d(TAG, "click other")
-            }
-        }
-
-    }
-
-
     override fun onResume() {
         super.onResume()
-        mBanner.startAutoPlay()
         if (isFirstStart) {
             isFirstStart = false
             mScrollView.smoothScrollTo(0, 0)
@@ -278,7 +209,6 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
     override fun onPause() {
         super.onPause()
         mScrollY = mScrollView.scrollY
-        mBanner.stopAutoPlay()
     }
 
 
@@ -289,12 +219,6 @@ class OnLineFragment : android.support.v4.app.Fragment(), OnLineContract.View {
 
     companion object {
         const val TAG = "OnLineFragment"
-    }
-
-    class GlideLoaderForBanner : ImageLoader() {
-        override fun displayImage(context: Context?, path: Any?, imageView: ImageView?) {
-            GlideApp.with(context).load(path).into(imageView)
-        }
     }
 
     class HotCollectsAdapter(val context: Context, var hotCollects: List<Collect>) : BaseAdapter() {

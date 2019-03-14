@@ -339,7 +339,7 @@ public final class Song implements Parcelable, Serializable {
     public Artist getArtist() {
         Artist artist = new Artist();
         artist.setArtistId(String.valueOf(artistId));
-        artist.setName(artistName);
+        artist.setArtistName(artistName);
         return artist;
     }
 

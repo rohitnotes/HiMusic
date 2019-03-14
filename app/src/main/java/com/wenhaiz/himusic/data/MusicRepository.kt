@@ -88,21 +88,12 @@ internal class MusicRepository(context: Context) : MusicSource {
         musicSource.loadSongDetail(song, callback)
     }
 
-
-    override fun loadBanner(callback: LoadBannerCallback) {
-        musicSource.loadBanner(callback)
-    }
-
     override fun loadHotCollect(page: Int, callback: LoadCollectCallback) {
         musicSource.loadHotCollect(page, callback)
     }
 
     override fun loadNewAlbum(page: Int, callback: LoadAlbumCallback) {
         musicSource.loadNewAlbum(page, callback)
-    }
-
-    override fun loadArtists(region: ArtistRegion, page: Int, callback: LoadArtistsCallback) {
-        musicSource.loadArtists(region, page, callback)
     }
 
     override fun loadArtistDetail(artist: Artist, callback: LoadArtistDetailCallback) {

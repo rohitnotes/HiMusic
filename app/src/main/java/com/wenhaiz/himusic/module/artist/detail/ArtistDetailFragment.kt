@@ -101,7 +101,7 @@ class ArtistDetailFragment : Fragment(), ArtistDetailContract.View {
         mPager.adapter = DetailPagerAdapter()
         mTab.setupWithViewPager(mPager)
         mPresenter.loadArtistDetail(artist)
-        mArtistName.text = artist.name
+        mArtistName.text = artist.artistName
         mArtistPhoto.setOnClickListener { }
 
         mPresenter.loadArtistHotSongs(artist, curHotSongPage)

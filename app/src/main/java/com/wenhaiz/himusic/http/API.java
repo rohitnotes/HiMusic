@@ -13,7 +13,7 @@ public class API {
 
         public static final String GET_ALBUM_DETAIL = "/api/album/initialize";
 
-        public static final String GET_SONG_DETAIL = "/api/song/getSongDetails";
+//        public static final String GET_SONG_DETAIL = "/api/song/getSongDetails";
         public static final String GET_SONG_PLAY_INFO = "/api/song/getPlayInfo";
 
         public static final String GET_RANK_LIST = "/api/billboard/getBillboards";
@@ -21,8 +21,7 @@ public class API {
 
         public static final String SEARCH_SONGS = "/api/search/searchSongs";
         public static final String GET_SEARCH_TIPS = "/api/search/searchTips";
-
-
+        public static final String GET_ARTIST_LIST = "/api/artist/getHotArtists";
 
 
         public static String getSongDetailUrl(Long songId) {
